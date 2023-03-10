@@ -29,6 +29,26 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web' //이거 안쓰니까 바로 꺼지는 문제
+
+
+
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+
+//	//코드 수정시 서버 재시작
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+
+//	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
+//	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '4.1.4'
+
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+
+
 }
 
 tasks.named('test') {
