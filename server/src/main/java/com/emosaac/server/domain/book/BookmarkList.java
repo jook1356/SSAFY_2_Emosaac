@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Embeddable
-public class BookmarkList extends BaseEntity {
+public class BookmarkList {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true) //orphanRemoval 없으면 삭제가 안됨.
     private final List<BookMark> bookmarkList = new ArrayList<>();

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-public class TagToon extends BaseEntity {
+public class TagToon{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

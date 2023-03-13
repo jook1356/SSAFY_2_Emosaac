@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name="ItemBasedCFModel")
-public class ItemBasedCFModel extends BaseEntity {
+public class ItemBasedCFModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

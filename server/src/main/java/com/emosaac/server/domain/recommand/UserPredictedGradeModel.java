@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name="UserPredictedGradeModel")
-public class UserPredictedGradeModel extends BaseEntity {
+public class UserPredictedGradeModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
