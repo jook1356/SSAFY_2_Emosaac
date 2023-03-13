@@ -44,7 +44,6 @@ public class BookResponse {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.postId = post.getBookId();
         this.title = post.getTitle();
-        this.content = post.getContent();
         this.createdDate = post.getCreatedDate().format(myFormatObj);
         if(post.getModifiedDate()!=null) {
             this.modifiedDate = post.getModifiedDate().format(myFormatObj);

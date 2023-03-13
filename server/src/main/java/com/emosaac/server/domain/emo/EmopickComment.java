@@ -1,6 +1,7 @@
-package com.emosaac.server.domain.book;
+package com.emosaac.server.domain.emo;
 
 import com.emosaac.server.domain.BaseEntity;
+import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,11 +20,11 @@ import java.util.List;
 @Entity
 @DynamicInsert //@DynamicInsert사용
 @DynamicUpdate
-public class BookComment extends BaseEntity {
+public class EmopickComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "DETAIL_COMMENT_NO")
+    @Column(name = "EMO_COMMENT_NO")
     private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,15 +32,15 @@ public class BookComment extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="book_id")
-    private Book book;
+    @JoinColumn(name="EMOPICK_NO")
+    private Emopick emopick;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private BookComment parent;
+    private EmopickComment parent;
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
-    private List<BookComment> children = new ArrayList<>();
+    private List<EmopickComment> children = new ArrayList<>();
 
     private Integer depth;//0과1
 
