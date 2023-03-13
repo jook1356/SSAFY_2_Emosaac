@@ -6,6 +6,7 @@ import { atom, useAtom } from "jotai";
 import mainStore, { darkMode } from "@/jotai/atom";
 
 export default function Home() {
+  
   const [isDarkTheme] = useAtom(darkMode);
 
   const click = () => {
