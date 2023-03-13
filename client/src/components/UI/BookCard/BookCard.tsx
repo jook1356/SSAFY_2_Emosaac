@@ -10,17 +10,27 @@ interface Props {
     height: string;
 }
 
-const BookCard = ({title, img, platform, showPlatform}: Props) => {
+const BookCard = ({title, img, platform, showPlatform, width, height}: Props) => {
 
 
     return (
-        <div>
+        <div css={cardWrapper()}>
 
         </div>
     )
 }
 
+interface CardWrapperProps {
+    width: string;
+    height: string;
+}
 
+const cardWrapper = ({width, height}: CardWrapperProps) => {
+    return css`
+        width: ${width};
+        height: ${height};
+    `
+}
 
 
 export default BookCard
