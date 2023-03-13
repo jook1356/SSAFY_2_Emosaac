@@ -50,5 +50,8 @@ public class EmopickComment extends BaseEntity {
     @ColumnDefault("false")
     private Boolean isDelete; //삭제여부
 
+    @Embedded
+    private final EmoCommentLikeList emoCommentLikeList = new EmoCommentLikeList();
+
 
 }

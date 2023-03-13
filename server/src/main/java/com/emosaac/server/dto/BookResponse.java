@@ -44,10 +44,10 @@ public class BookResponse {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.postId = post.getBookId();
         this.title = post.getTitle();
-        this.createdDate = post.getCreatedDate().format(myFormatObj);
-        if(post.getModifiedDate()!=null) {
-            this.modifiedDate = post.getModifiedDate().format(myFormatObj);
-        }
+//        this.createdDate = post.getCreatedDate().format(myFormatObj);
+//        if(post.getModifiedDate()!=null) {
+//            this.modifiedDate = post.getModifiedDate().format(myFormatObj);
+//        }
 
 //        this.likeStatus = post.getPostLikeList().getPostLikeList().parallelStream()
 //                .anyMatch(l -> l.ownedBy(user.getUserId()));

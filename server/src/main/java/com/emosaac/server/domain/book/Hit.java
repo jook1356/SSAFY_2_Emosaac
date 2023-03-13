@@ -14,18 +14,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-public class Gerne {
+public class Hit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "GENRE_CD")
-    private Long gerneId;
-    /*
-    - 웹소설
-    - 로맨스: 20 로판: 21  판타지: 23 무협: 24 BL/GL: 25  현판: 27 미스터리: 28
-    - 웹툰
-    - 로맨스:  10 로판:  11 드라마: 12  판타지: 13  액션/무협: 14  BL/GL: 15 공포: 16
-*/
-    private String name;
+    @Column(name = "HIT_NO")
+    private Long hitId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BOOK_NO")
+    private Book book;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_NO")
+    private User user;
 }

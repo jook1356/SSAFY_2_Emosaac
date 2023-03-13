@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @DynamicUpdate
 @Table(name = "book")
-public class Book extends BaseEntity {
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,11 +62,11 @@ public class Book extends BaseEntity {
 
     private String flag; //이게 뭐더라
 
-
-
-
     @Embedded
     private final BookCommentList commentList = new BookCommentList();
+
+    @Embedded
+    private final BookmarkList bookmarkList = new BookmarkList();
 
 }
 
