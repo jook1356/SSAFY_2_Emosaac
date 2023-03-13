@@ -29,7 +29,7 @@ public class Score{
     @JoinColumn(name = "BOOK_NO")
     private Book book;
 
-    private Long score;
+    private double score;
 
 
 }
