@@ -4,83 +4,99 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 import { throttle } from "lodash"
 
 import Test from "./Test";
+import BookCard from "../BookCard/BookCard";
 
 
 
-const ScrollableCarousel = ({content}: any) => {
+const ScrollableCarousel = ({API}: any) => {
     const wrapperRef = useRef<HTMLInputElement>(null)
-    const [curPage, setCurPage] = useState(0)
-    const [maxPage, setMaxPage] = useState(0)
-    const [wrapperWidth, setWrapperWidth] = useState(0)
+    const cardsRef = useRef<any>([])
+    const [bookListData, setBookListData] = useState<object[]>([])
 
-
-    const getMaxPage = () => {
-        if (wrapperRef.current !== null) {
-            const calc = Math.ceil(wrapperRef.current.scrollWidth / wrapperRef.current.clientWidth) - 1
-            setMaxPage(() => calc)
-        }
+    const cardLayout = {
+        width: '150px',
+        height: '300px',
+        minWidth: '150px',
+        minHeight: '300px',
+        padding: '10px',
     }
 
-    const getCurPage = () => {
-        if (wrapperRef.current !== null) {
-            const calc = (wrapperRef.current.scrollLeft - 1) / wrapperRef.current.clientWidth
-            setCurPage(() => calc)
-        }
-    }
+
 
     const nextBtnClickHandler = () => {
         if (wrapperRef.current !== null) {
-            if (maxPage - curPage <= 2) {
-                const page = Math.floor((wrapperRef.current.scrollLeft + 1) / wrapperRef.current.clientWidth)
-                wrapperRef.current.scrollTo({ left: wrapperRef.current.clientWidth * (page + 2) + 1, top: 0, behavior: "smooth" });
-                setCurPage(() => maxPage)
-            } else {
-                const page = Math.floor((wrapperRef.current.scrollLeft + 1) / wrapperRef.current.clientWidth)
-                wrapperRef.current.scrollTo({ left: wrapperRef.current.clientWidth * (page + 1) + 1, top: 0, behavior: "smooth" });
-                getCurPage()
-            }
-            
-            getMaxPage()
-            
+            const page = Math.ceil((wrapperRef.current.scrollLeft) / (wrapperRef.current.clientWidth - 10)) + 1
+            const quantityPerPage = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth) - 1
+            const idx = cardsRef.current.length > page * quantityPerPage ? page * quantityPerPage : cardsRef.current.length - 1
+            console.log(page, quantityPerPage)
+            console.log(cardsRef)
+            wrapperRef.current.scrollTo({ left: cardsRef.current[idx].offsetLeft, top: 0, behavior: "smooth" });
+            fetchMoreData()
         }  
     }
 
     const prevBtnClickHandler = () => {
         if (wrapperRef.current !== null) {
-            const page = Math.ceil((wrapperRef.current.scrollLeft - 1) / wrapperRef.current.clientWidth)
-            wrapperRef.current.scrollTo({ left: wrapperRef.current.clientWidth * (page - 1) + 1, top: 0, behavior: "smooth" });
-            getMaxPage()
-            getCurPage()
+            const page = Math.ceil((wrapperRef.current.scrollLeft) / (wrapperRef.current.clientWidth - 10)) - 1
+            const quantityPerPage = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth) - 1
+            console.log(page, quantityPerPage)
+            console.log(cardsRef)
+            wrapperRef.current.scrollTo({ left: cardsRef.current[page * quantityPerPage].offsetLeft, top: 0, behavior: "smooth" });
         }  
     }
 
 
+    const fetchMoreData = () => {
+        if (wrapperRef.current !== null && wrapperRef.current.scrollWidth - wrapperRef.current.scrollLeft - 100 < wrapperRef.current.clientWidth) {
+            API(bookListData.length, bookListData.length + 8)
+            .then((res: object[]) => {
+                setBookListData((prev) => [...prev, ...res])
+            })
+        }
+    }
 
     const onScrollHandler = useMemo(() => 
         throttle(() => {
-            getCurPage()
-            getMaxPage()
+            fetchMoreData()
         }, 300),
-    [curPage, getCurPage, getMaxPage]);
+    [bookListData, setBookListData]);
+
+    useEffect(() => {
+        fetchMoreData()
+    }, [])
 
 
 
+    const renderCards = bookListData.map((el, idx) => {
+        return (
+            <div ref={(el) => (cardsRef.current[idx] = el)} css={cardWrapperCSS({padding: cardLayout.padding})}>
+                <BookCard bookData={el} showPlatform={true} {...cardLayout}/>
+            </div>
+        )
+    })
 
-    const modifiedContent = React.cloneElement(content, {wrapperRef: wrapperRef, curPage: curPage, maxPage: maxPage});
-    
+
     return (
         <div css={carouselWrapper}>
             <div css={prevBtn} onClick={prevBtnClickHandler}>〈</div>
             <div css={nextBtn} onClick={nextBtnClickHandler}>〉</div>
             <div ref={wrapperRef} css={carousel} onWheel={onScrollHandler} onTouchMove={onScrollHandler}>
-                {modifiedContent}
+                {renderCards}
             </div>
-            {curPage}, {maxPage}
+
         </div>
     )
 }
 
 export default ScrollableCarousel
+
+
+const cardWrapperCSS = ({padding}:{padding: string}) => {
+    return css`
+        padding-left: ${padding};
+        padding-right: ${padding};
+    `
+}
 
 const carouselWrapper = css`
     width: 100%;

@@ -5,7 +5,7 @@ export const recvBooks = async (startIdx: number, recvRange: number) => {
     const promise = await new Promise(resolve => {
         setTimeout(function (){
             resolve(data.slice(startIdx, recvRange))
-        }, 2000)
+        }, 500)
     })
 
     return promise

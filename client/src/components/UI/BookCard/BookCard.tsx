@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { ReferrerEnum } from "next/dist/lib/metadata/types/metadata-types";
-
 
 
 interface BookData {
