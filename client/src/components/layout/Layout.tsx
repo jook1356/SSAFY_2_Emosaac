@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import { Global } from "@/styles/ThemeProvider";
-import NavigationBar from "../UI/NavigationBar/NavigationBar";
+// import NavigationBar from "../UI/NavigationBar/NavigationBar";
 
 interface Props {
   children: any;
@@ -10,7 +10,7 @@ interface Props {
 const Layout = (props: Props) => {
   return (
     <div css={Global}>
-      <NavigationBar />
+      {/* <NavigationBar /> */}
       {props.children}
     </div>
   );
