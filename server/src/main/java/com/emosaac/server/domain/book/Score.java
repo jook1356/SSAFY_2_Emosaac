@@ -25,6 +25,10 @@ public class Score{
     @JoinColumn(name = "USER_NO")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BOOK_NO")
+    private Book book;
+
     private Long score;
 
 

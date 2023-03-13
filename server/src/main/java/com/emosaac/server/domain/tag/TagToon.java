@@ -23,7 +23,7 @@ public class TagToon{
     @Column(name = "TAG_NAME")
     private String name;
 
-    @Column(name = "BOOK_NO_LIST")
+    @Column(name = "BOOK_NO_LIST", columnDefinition = "TEXT")
     private String bookList;
 
 }

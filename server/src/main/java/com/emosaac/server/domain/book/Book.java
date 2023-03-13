@@ -22,9 +22,7 @@ public class Book {
     @Column(name = "BOOK_NO")
     private Long bookId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_NO")
-    private User user;
+    private String author;
 
     private String title;
 
@@ -39,6 +37,9 @@ public class Book {
 
     @Column(columnDefinition = "TEXT")
     private String story;
+
+    @Column(columnDefinition = "TEXT")
+    private String tag;
 
     private Integer views;//조회수
 
