@@ -41,25 +41,25 @@ public class Book {
     @Column(columnDefinition = "TEXT")
     private String tag;
 
-    private Integer views;//조회수
+    private String views;//조회수
 
-    private String grade;
+    private double grade; // 플랫폼에서 가져온 평점
 
     @Column(name = "PLAT_CD")
     private String platform;
 
-    private String series;
+    private String series; //현재까지 총 몇 편인지
 
     private String href;
 
     @Column(name = "TYPE_CD")
-    private String type; //0: 카,1:네,2:리
+    private Integer type; //0: 카,1:네,2:리
 
-    private String SCORE;
+    private double score; //우리 페이지 사용자가 체점
 
-    private Integer hit;
+    private Integer hit; //우리 사이트에서 조회수
 
-    private String regist;
+    private String regist; //1화 등록 날짜
 
     private String flag; //이게 뭐더라
 
