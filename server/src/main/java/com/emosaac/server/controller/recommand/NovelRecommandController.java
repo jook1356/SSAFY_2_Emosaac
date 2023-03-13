@@ -22,7 +22,7 @@ public class NovelRecommandController {
     @Autowired
     NovelRecommandService novelRecommandService;
 
-    @ApiOperation(value = "인기작 top 30", notes = "웹툰 인기작 top 30 리스트를 조회한다.")
+    @ApiOperation(value = "인기작 top 30", notes = "소설 인기작 top 30 리스트를 조회한다.")
     @GetMapping("/best30")
     public ResponseEntity<CommonResponse> findBestList(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size,
