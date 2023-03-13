@@ -27,10 +27,6 @@ public class User extends BaseEntity {
     @Size(max = 100)
     private String nickName;
 
-    @Column(name = "DEPARTMENT")
-    @Size(max = 100)
-    private String department;
-
     @Column(name = "USER_NAME", length = 100)
     @NotNull
     @Size(max = 100)
@@ -60,6 +56,14 @@ public class User extends BaseEntity {
     @Column(name = "DISCRIPTIOIN", length = 200)
     @Nullable
     private String discription;
+
+    @Column(name = "GENDER")
+    @Nullable
+    private boolean gender;
+
+    @Column(name = "AGE")
+    @Nullable
+    private Integer age;
 
     String providerId;
 
