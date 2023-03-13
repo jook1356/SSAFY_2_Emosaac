@@ -46,37 +46,37 @@ public class NovelController {
 
     @ApiOperation(value = "작품 디테일", notes = "작품의 상세정보를 조회한다.")
     @GetMapping("/{novelId}")
-    public ResponseEntity<CommonResponse> findDetailByWebtoon(@RequestParam(required=false, defaultValue = "date") String criteria,
+    public ResponseEntity<CommonResponse> findDetailByNovel(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                               @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByWebtoon(size, criteria, id)
+                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByNovel(size, criteria, id)
         ));
     }
 
     @ApiOperation(value = "북마크", notes = "작품의 북마크를 설정한다.")
     @PutMapping("/bookmark/{novelId}")
-    public ResponseEntity<CommonResponse> setBookmarkByWebtoon(@RequestParam(required=false, defaultValue = "date") String criteria,
+    public ResponseEntity<CommonResponse> setBookmarkByNovel(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                                @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                                @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "북마크 수정 성공", novelService.setBookmarkByWebtoon(size, criteria, id)
+                HttpStatus.CREATED, "북마크 수정 성공", novelService.setBookmarkByNovel(size, criteria, id)
         ));
     }
 
     @ApiOperation(value = "읽음 유무", notes = "작품의 읽음 여부를 설정한다.")
     @PutMapping("/{novelId}")
-    public ResponseEntity<CommonResponse> setReadByWebtoon(@RequestParam(required=false, defaultValue = "date") String criteria,
+    public ResponseEntity<CommonResponse> setReadByNovel(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                            @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.setReadByWebtoon(size, criteria, id)
+                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.setReadByNovel(size, criteria, id)
         ));
     }
 
