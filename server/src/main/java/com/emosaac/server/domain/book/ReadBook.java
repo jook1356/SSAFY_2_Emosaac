@@ -1,5 +1,6 @@
 package com.emosaac.server.domain.book;
 
+import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-public class Read {
+public class ReadBook extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
