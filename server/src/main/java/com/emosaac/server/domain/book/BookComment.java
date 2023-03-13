@@ -1,4 +1,4 @@
-package com.emosaac.server.domain.webtoon;
+package com.emosaac.server.domain.book;
 
 import com.emosaac.server.domain.BaseEntity;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 @DynamicInsert //@DynamicInsert사용
 @DynamicUpdate
-public class WebToonComment extends BaseEntity {
+public class BookComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,15 +30,15 @@ public class WebToonComment extends BaseEntity {
 //    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="webtoon_id")
-    private Webtoon webtoon;
+    @JoinColumn(name="book_id")
+    private Book book;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private WebToonComment parent;
+    private BookComment parent;
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
-    private List<WebToonComment> children = new ArrayList<>();
+    private List<BookComment> children = new ArrayList<>();
 
     private Integer depth;//0과1
 

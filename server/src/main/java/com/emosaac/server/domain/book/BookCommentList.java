@@ -1,4 +1,4 @@
-package com.emosaac.server.domain.webtoon;
+package com.emosaac.server.domain.book;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Embeddable
-public class WebToonCommentList {
+public class BookCommentList {
 
-    @OneToMany(mappedBy = "webtoon", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<WebToonComment> postCommentList = new ArrayList<>();
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<BookComment> commentList = new ArrayList<>();
 
 }

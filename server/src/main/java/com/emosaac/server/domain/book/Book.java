@@ -1,27 +1,25 @@
-package com.emosaac.server.domain.webtoon;
+package com.emosaac.server.domain.book;
 
 import com.emosaac.server.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-@Table(name = "Webtoon")
-public class Webtoon extends BaseEntity {
+@Table(name = "book")
+public class Book extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "webtoon_id")
-    private Long webtoonId;
+    @Column(name = "book_id")
+    private Long bookId;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id")
@@ -39,7 +37,7 @@ public class Webtoon extends BaseEntity {
     private String img;
 
     @Embedded
-    private final WebToonCommentList postCommentList = new WebToonCommentList();
+    private final BookCommentList commentList = new BookCommentList();
 
 }
 
