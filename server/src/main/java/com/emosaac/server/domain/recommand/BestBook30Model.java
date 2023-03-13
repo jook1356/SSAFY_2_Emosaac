@@ -16,8 +16,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name="BestBookTenModel")
-public class BestBookTenModel {
+@Table(name="BestBook30Model")
+public class BestBook30Model {
 
     @Id
     @Column(name="BEST_NO")
