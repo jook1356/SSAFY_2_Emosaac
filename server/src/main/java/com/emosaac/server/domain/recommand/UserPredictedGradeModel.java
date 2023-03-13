@@ -18,17 +18,17 @@ public class UserPredictedGradeModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="PRED_GRADE_NO")
-    int id;
+    private Integer id;
 
     // search_log - user
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="USER_NO")
-    User user;
+    private User user;
 
     // search_log - book
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="BOOK_NO")
-    Book book;
+    private Book book;
 }

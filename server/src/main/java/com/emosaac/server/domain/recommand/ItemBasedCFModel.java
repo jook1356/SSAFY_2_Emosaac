@@ -17,11 +17,11 @@ public class ItemBasedCFModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ITEM_NO")
-    int id;
+    private Integer id;
 
     // search_log - book
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="BOOK_NO")
-    Book book;
+    private Book book;
 }

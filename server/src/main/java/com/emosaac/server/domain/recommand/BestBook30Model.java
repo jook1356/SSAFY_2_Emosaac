@@ -1,11 +1,6 @@
 package com.emosaac.server.domain.recommand;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.emosaac.server.domain.book.Book;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -20,8 +15,9 @@ import lombok.Setter;
 public class BestBook30Model {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="BEST_NO")
-    int id;
+    private Integer bestBookId;
 
     // book-bookGrade
     @JsonBackReference
