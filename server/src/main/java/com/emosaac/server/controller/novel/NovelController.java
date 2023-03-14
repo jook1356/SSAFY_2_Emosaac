@@ -19,9 +19,8 @@ public class NovelController {
     NovelService novelService;
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 소설 리스트를 조회한다.")
-    @GetMapping("")
-    public ResponseEntity<CommonResponse> findDayList(@RequestParam(value="day") int day,
-                                                      @RequestParam(required=false, defaultValue = "date") String criteria,
+    @GetMapping("/day/{day}")
+    public ResponseEntity<CommonResponse> findDayList(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                       @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
@@ -32,9 +31,8 @@ public class NovelController {
     }
 
     @ApiOperation(value = "장르별 리스트", notes = "장르별 소설 리스트를 조회한다.")
-    @GetMapping("")
-    public ResponseEntity<CommonResponse> findGenreList(@RequestParam(value="genre") int genre,
-                                                        @RequestParam(required=false, defaultValue = "date") String criteria,
+    @GetMapping("/genre/{genreId}")
+    public ResponseEntity<CommonResponse> findGenreList(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                         @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
