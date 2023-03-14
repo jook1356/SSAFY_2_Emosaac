@@ -12,6 +12,10 @@ const ScrollableCarousel = ({API}: any) => {
     const wrapperRef = useRef<HTMLInputElement>(null)
     const cardsRef = useRef<any>([])
     const [bookListData, setBookListData] = useState<object[]>([])
+    const [page, setPage] = useState<number>(0)
+    const [wrapperWidth, setWrapperWidth] = useState<number>(0)
+    const [standard, setStandard] = useState<number>(0)
+    const [quantityPerPage, setQuantityPerPage] = useState<number>(10)
 
     const cardLayout = {
         width: '150px',
@@ -21,15 +25,29 @@ const ScrollableCarousel = ({API}: any) => {
         padding: '10px',
     }
 
-
+    const generatePage = (value: number) => {
+        if (wrapperRef.current !== null && wrapperRef.current.clientWidth !== wrapperWidth) {
+            const width = wrapperRef.current.clientWidth
+            const quantity = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth)
+            const newPage = Math.ceil(standard / quantity)
+            setPage(() => newPage)
+            setWrapperWidth(() => width)
+            setQuantityPerPage(() => quantity)
+            return newPage + value
+        } else {
+            return page + value
+        }
+    }
 
     const nextBtnClickHandler = () => {
         if (wrapperRef.current !== null) {
-            const page = Math.ceil((wrapperRef.current.scrollLeft) / (wrapperRef.current.clientWidth - 10)) + 1
-            const quantityPerPage = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth) - 1
-            const idx = cardsRef.current.length > page * quantityPerPage ? page * quantityPerPage : cardsRef.current.length - 1
-            console.log(page, quantityPerPage)
-            console.log(cardsRef)
+            const quantity = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth)
+            const nextStandard = generatePage(1) * quantity
+            const idx = nextStandard < cardsRef.current.length ? nextStandard : cardsRef.current.length - 1
+            if (nextStandard < cardsRef.current.length) {
+                setPage((prev) => prev + 1)
+            }
+            setStandard(() => idx)
             wrapperRef.current.scrollTo({ left: cardsRef.current[idx].offsetLeft, top: 0, behavior: "smooth" });
             fetchMoreData()
         }  
@@ -37,18 +55,21 @@ const ScrollableCarousel = ({API}: any) => {
 
     const prevBtnClickHandler = () => {
         if (wrapperRef.current !== null) {
-            const page = Math.ceil((wrapperRef.current.scrollLeft) / (wrapperRef.current.clientWidth - 10)) - 1
-            const quantityPerPage = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth) - 1
-            console.log(page, quantityPerPage)
-            console.log(cardsRef)
-            wrapperRef.current.scrollTo({ left: cardsRef.current[page * quantityPerPage].offsetLeft, top: 0, behavior: "smooth" });
+            const quantity = Math.floor(wrapperRef.current.clientWidth / cardsRef.current[0].clientWidth)
+            const prevStandard = generatePage(-1) * quantity
+            const idx = prevStandard >= 0 ? prevStandard : 0
+            if (prevStandard >= 0) {
+                setPage((prev) => prev - 1)
+            }
+            setStandard(() => idx)
+            wrapperRef.current.scrollTo({ left: cardsRef.current[idx].offsetLeft, top: 0, behavior: "smooth" });
         }  
     }
 
 
     const fetchMoreData = () => {
         if (wrapperRef.current !== null && wrapperRef.current.scrollWidth - wrapperRef.current.scrollLeft - 100 < wrapperRef.current.clientWidth) {
-            API(bookListData.length, bookListData.length + 8)
+            API(bookListData.length, bookListData.length + quantityPerPage + 1)
             .then((res: object[]) => {
                 setBookListData((prev) => [...prev, ...res])
             })
@@ -57,6 +78,7 @@ const ScrollableCarousel = ({API}: any) => {
 
     const onScrollHandler = useMemo(() => 
         throttle(() => {
+            generatePage(0)
             fetchMoreData()
         }, 300),
     [bookListData, setBookListData]);
