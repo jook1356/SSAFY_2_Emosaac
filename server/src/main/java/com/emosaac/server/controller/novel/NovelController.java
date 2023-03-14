@@ -27,7 +27,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(size, criteria, id)
+                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(dayCode, size, criteria, id)
         ));
     }
 
@@ -40,7 +40,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(size, criteria, id)
+                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(genreCode, size, criteria, id)
         ));
     }
 
