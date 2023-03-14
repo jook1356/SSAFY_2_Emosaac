@@ -19,9 +19,8 @@ public class WebtoonController {
     WebtoonService webtoonService;
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 웹툰 리스트를 조회한다.")
-    @GetMapping("")
-    public ResponseEntity<CommonResponse> findDayList(@RequestParam(value="day") int day,
-                                                      @RequestParam(required=false, defaultValue = "date") String criteria,
+    @GetMapping("/day/{day}")
+    public ResponseEntity<CommonResponse> findDayList(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                       @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
@@ -32,9 +31,8 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "장르별 리스트", notes = "장르별 웹툰 리스트를 조회한다.")
-    @GetMapping("")
-    public ResponseEntity<CommonResponse> findGenreList(@RequestParam(value="genre") int genre,
-                                                        @RequestParam(required=false, defaultValue = "date") String criteria,
+    @GetMapping("/genre/{genreId}")
+    public ResponseEntity<CommonResponse> findGenreList(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                         @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
@@ -45,7 +43,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "작품 디테일", notes = "작품의 상세정보를 조회한다.")
-    @GetMapping("/{novelId}")
+    @GetMapping("/{webtoonId}")
     public ResponseEntity<CommonResponse> findDetailByWebtoon(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                             @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
@@ -57,7 +55,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "북마크", notes = "작품의 북마크를 설정한다.")
-    @PutMapping("/bookmark/{novelId}")
+    @PutMapping("/bookmark/{webtoonId}")
     public ResponseEntity<CommonResponse> setBookmarkByWebtoon(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                              @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                              @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
@@ -69,7 +67,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "읽음 유무", notes = "작품의 읽음 여부를 설정한다.")
-    @PutMapping("/{novelId}")
+    @PutMapping("/{webtoonId}")
     public ResponseEntity<CommonResponse> setReadByWebtoon(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                          @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
@@ -81,7 +79,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "평점 조회", notes = "사용자가 설정한 평점을 조회한다.")
-    @GetMapping("/score/{novelId}")
+    @GetMapping("/score/{webtoonId}")
     public ResponseEntity<CommonResponse> findScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                           @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
@@ -94,7 +92,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "평점 등록", notes = "사용자가 설정한 평점을 등록한다.")
-    @PostMapping("/score/{novelId}")
+    @PostMapping("/score/{webtoonId}")
     public ResponseEntity<CommonResponse> setScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                          @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
@@ -107,7 +105,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "평점 수정", notes = "사용자가 설정한 평점을 수정한다.")
-    @PutMapping("/score/{novelId}")
+    @PutMapping("/score/{webtoonId}")
     public ResponseEntity<CommonResponse> updateScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                             @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
@@ -120,7 +118,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "평점 삭제", notes = "사용자가 설정한 평점을 삭제한다.")
-    @DeleteMapping("/score/{novelId}")
+    @DeleteMapping("/score/{webtoonId}")
     public ResponseEntity<CommonResponse> deleteScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                             @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
@@ -133,7 +131,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "같은 작가 다른 작품", notes = "같은 작가 다른 작품을 조회한다.")
-    @GetMapping("/author/{novelId}")
+    @GetMapping("/author/{webtoonId}")
     public ResponseEntity<CommonResponse> findListByAuthor(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                            @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
@@ -145,7 +143,7 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "유사한 작품", notes = "유사한 작품들을 조회한다.")
-    @GetMapping("/recommand/{novelId}")
+    @GetMapping("/recommand/{webtoonId}")
     public ResponseEntity<CommonResponse> findListByItem(@RequestParam(required=false, defaultValue = "date") String criteria,
                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                          @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
