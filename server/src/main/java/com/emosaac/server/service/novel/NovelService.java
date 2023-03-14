@@ -1,12 +1,17 @@
 package com.emosaac.server.service.novel;
 
+import com.emosaac.server.common.SlicedResponse;
+import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.novel.NovelDayResponse;
 import com.emosaac.server.repository.novel.NovelQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -17,9 +22,10 @@ public class NovelService {
 
     private final NovelQueryRepository novelQueryRepository;
 
-    public List<NovelDayResponse> findDayList(Long dayCode, int size, String criteria, Long id) {
+    public SlicedResponse<NovelDayResponse> findDayList(String day, int size, String criteria, Long prevId) {
 
-        return null;
+        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByDay(day, PageRequest.ofSize(size), prevId);
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     public Object findGenreList(Long genreCode, int size, String criteria, Long id) {
