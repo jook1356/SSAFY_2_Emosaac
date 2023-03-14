@@ -1,14 +1,16 @@
 :root {
   --main-color: #ffb800;
   --main-color-2: #ffe296;
-  --text-color: #000;
-  --text-color-2: #676767;
-  --text-color-3: #cecece;
-  --border-color: #cecece;
-  --border-color-2: #e6e6e6;
+  --text-color: #090a0d;
+  --text-color-2: #121319;
+  --text-color-3: #1b1d25;
+  --text-color-4: #2e313d;
+  --border-color: #bcc0cf;
+  --border-color-2: #d8dbe7;
   --back-color: #fff;
-  --back-color-2: #f8f8f8;
-  --back-dolor-3: #eeeeee;
+  --back-color-2: #e6e9f3;
+  --back-color-3: #d8dbe7;
+  --back-color-4: #bcc0cf;
   --alert-color: #ff1e1e;
 }
 
@@ -16,13 +18,15 @@
   --main-color: #ffb800;
   --main-color-2: #ffe296;
   --text-color: #fff;
-  --text-color-2: #c3c3c3;
-  --text-color-3: #8f8f8f;
-  --border-color: #8f8f8f;
-  --border-color-2: #686868;
-  --back-color: #000;
-  --back-color-2: #242424;
-  --back-dolor-3: #454545;
+  --text-color-2: #e6e9f3;
+  --text-color-3: #d8dbe7;
+  --text-color-4: #bcc0cf;
+  --border-color: #2e313d;
+  --border-color-2: #1b1d25;
+  --back-color: #090a0d;
+  --back-color-2: #121319;
+  --back-color-3: #1b1d25;
+  --back-color-4: #2e313d;
   --alert-color: #ff1e1e;
 }
 
@@ -128,6 +132,9 @@ nav,
 section {
   display: block;
 }
+html {
+  background-color: var(--back-color);
+}
 body {
   line-height: 1;
 }
@@ -149,6 +156,13 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+button {
+  border: none;
 }
 h1 {
   font-size: 36px;
