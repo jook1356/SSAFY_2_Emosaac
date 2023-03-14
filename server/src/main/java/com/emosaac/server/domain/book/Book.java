@@ -46,7 +46,7 @@ public class Book {
     private double grade; // 플랫폼에서 가져온 평점
 
     @Column(name = "PLAT_CD")
-    private String platform; //0: 카,1:네,2:리
+    private Integer platform; //0: 카,1:네,2:리
 
     private String series; //현재까지 총 몇 편인지
 

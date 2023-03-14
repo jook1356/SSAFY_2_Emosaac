@@ -1,20 +1,28 @@
 package com.emosaac.server.service.novel;
 
+import com.emosaac.server.dto.novel.NovelDayResponse;
+import com.emosaac.server.repository.novel.NovelQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NovelService {
-    public Object findDayList(int size, String criteria, Long id) {
+
+    private final NovelQueryRepository novelQueryRepository;
+
+    public List<NovelDayResponse> findDayList(Long dayCode, int size, String criteria, Long id) {
+
         return null;
     }
 
-    public Object findGenreList(int size, String criteria, Long id) {
+    public Object findGenreList(Long genreCode, int size, String criteria, Long id) {
         return null;
     }
 
