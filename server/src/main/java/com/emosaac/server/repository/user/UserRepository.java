@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUserId(String userId); //프로바이더 아이디
+    Optional<User> findByUserId(String userId); //프로바이더 아이디
 
     @Query("select u from User u where  u.userId = :userId")
     User findByMyId(@Param("userId") Long userId);
@@ -19,15 +20,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where  u.email = :userEmail")
     User findByUserEmail(@Param("userEmail")String userEmail);
 
-    @Query("select u from User u where  u.email = :userEmail and u.providerId =:ProviderId")
-    Optional<User> findByEmailPAndProviderId(@Param("userEmail")String userEmail, @Param("ProviderId")String ProviderId);
     @Query("select u from User u where u.providerId =:ProviderId")
-    Optional<User> findByProviderId(@Param("ProviderId")String ProviderId);
+    Optional<User> findByProviderId(@Param("ProviderId")String provider);
 
-    @Query("select u from User u where u.email = :email")
-    Optional<User> findByEmail(String email);
+    @Query(value = "select * from User u where u.provider_type = :providerType and u.email = :userEmail", nativeQuery = true)
+    Optional<User> findByEmailANDProviderType(@Param("userEmail")String userEmail, @Param("providerType")String provider);
 
 
-    Optional<User> existsUserByEmail(String email);
+
 
 }

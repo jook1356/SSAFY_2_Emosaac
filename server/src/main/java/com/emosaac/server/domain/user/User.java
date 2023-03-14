@@ -45,7 +45,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(name = "IMAGE_URL", length = 512)
-    @NotNull
+//    @NotNull
     @Size(max = 512)
     private String imageUrl;
 

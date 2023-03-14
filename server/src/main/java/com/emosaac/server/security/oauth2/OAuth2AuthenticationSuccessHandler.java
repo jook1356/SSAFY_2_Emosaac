@@ -4,16 +4,12 @@ import com.emosaac.server.common.exception.ArgumentMismatchException;
 import com.emosaac.server.config.properties.AppProperties;
 import com.emosaac.server.domain.user.AuthProvider;
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.domain.user.UserRefreshToken;
-import com.emosaac.server.dto.user.UserResponse;
 import com.emosaac.server.repository.user.UserRefreshTokenRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import com.emosaac.server.security.TokenProvider;
 import com.emosaac.server.security.oauth2.user.OAuth2UserInfo;
 import com.emosaac.server.security.oauth2.user.OAuth2UserInfoFactory;
-import com.emosaac.server.utils.CookieUtil;
 import com.emosaac.server.utils.CookieUtils;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +32,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static com.emosaac.server.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
@@ -55,6 +53,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final UserRepository userRepository;
 
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+
+//    private final AuthProvider providerType;
 
 
     @Override
@@ -90,17 +90,29 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtils.addCookie(response, "accessToken", token, 180);
 
         String userEmail = authentication.getName();
-        System.out.println(userEmail);
-//        System.out.println(authentication.getId());
 
-        Optional<User> userOptional = userRepository.findByEmail(userEmail);
 
-        UserResponse user = UserResponse.from(userOptional.get());
+//        Optional<User> userOptional = userRepository.findByEmail(userEmail); //원래 코드
 
-        System.out.println(user.getNickname());
+//        UserResponse user = UserResponse.from(userOptional.get());
+
+        boolean flag = false;
+
+
+        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
+        String providerType =  (String) authToken.getAuthorizedClientRegistrationId();
+        System.out.println("providerType  "+providerType);
+
+        Optional<User> userOptional = userRepository.findByEmailANDProviderType(authentication.getName(), providerType);
+
+        if(userOptional.isPresent()) {
+            if(userOptional.get().getNickName()!=null){ //이미 회원
+                flag = true;
+            }
+        }
 
         String code = "";
-        if(user.getNickname() != null){
+        if(flag){
             code = "200";
         }else{
             code = "201";
@@ -115,12 +127,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         /////////////////////////////////////////
         // refresh 토큰 설정
 //        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-
+//
 //        AuthToken refreshToken = tokenProvider.createAuthToken(
 //                appProperties.getAuth().getTokenSecret(),
 //                new Date(now.getTime() + refreshTokenExpiry)
 //        );
-
+//
 //        String refreshToken = tokenProvider.createToken(authentication);
 //
 //        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
