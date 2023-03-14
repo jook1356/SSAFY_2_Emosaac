@@ -6,21 +6,24 @@ import { throttle } from "lodash";
 import Test from "./Test";
 import BookCard from "../BookCard/BookCard";
 
-const ScrollableCarousel = ({ API }: any) => {
+const ScrollableCarousel = ({ API, identifier }: any) => {
   const wrapperRef = useRef<HTMLInputElement>(null);
   const cardsRef = useRef<any>([]);
   const [bookListData, setBookListData] = useState<object[]>([]);
+  type BookList = object | string
+  const [bookListResult, setBookListResult] = useState<BookList[]>([]);
   const [page, setPage] = useState<number>(0);
   const [wrapperWidth, setWrapperWidth] = useState<number>(0);
   const [standard, setStandard] = useState<number>(0);
   const [quantityPerPage, setQuantityPerPage] = useState<number>(10);
+  const [loadingTag, setLoadingTag] = useState<string[]>(Array(9).fill('LOADING'))
 
   const cardLayout = {
-    width: "150px",
-    height: "300px",
+    width: "10vw",
+    height: "15vw",
     minWidth: "150px",
-    minHeight: "300px",
-    padding: "10px",
+    minHeight: "225px",
+    padding: "0.5vw",
   };
 
   const generatePage = (value: number) => {
@@ -85,10 +88,14 @@ const ScrollableCarousel = ({ API }: any) => {
   };
 
   const fetchMoreData = () => {
+    let standard = 0
+    if (wrapperRef.current !== null && cardsRef.current[0] !== null) {
+      standard = Math.ceil(wrapperRef.current.scrollLeft / cardsRef.current[0]?.clientWidth)
+    }
     if (
-      wrapperRef.current !== null &&
-      wrapperRef.current.scrollWidth - wrapperRef.current.scrollLeft - 100 <
-        wrapperRef.current.clientWidth
+      (wrapperRef.current !== null &&
+      wrapperRef.current.scrollWidth - wrapperRef.current.scrollLeft - 200 <
+        wrapperRef.current.clientWidth) || bookListData.length - loadingTag.length - standard <= loadingTag.length
     ) {
       API(bookListData.length, bookListData.length + quantityPerPage + 1).then(
         (res: object[]) => {
@@ -99,10 +106,16 @@ const ScrollableCarousel = ({ API }: any) => {
   };
 
   const onScrollHandler = useMemo(
+    
     () =>
       throttle(() => {
-        generatePage(0);
-        fetchMoreData();
+        if (wrapperRef.current !== null) {
+          fetchMoreData();
+          const standard = Math.ceil(wrapperRef.current.scrollLeft / cardsRef.current[0].clientWidth)
+          setStandard(() => standard);
+        }
+        
+
       }, 300),
     [bookListData, setBookListData]
   );
@@ -111,16 +124,29 @@ const ScrollableCarousel = ({ API }: any) => {
     fetchMoreData();
   }, []);
 
-  const renderCards = bookListData.map((el, idx) => {
+  const generateLoadingData = () => {
+    setBookListResult(() => [...bookListData, ...loadingTag])
+  }
+
+  useEffect(() => {
+    generateLoadingData()
+  }, [bookListData])
+
+  const renderCards = bookListResult.map((el, idx) => {
     return (
       <div
+        key={`${identifier}-${idx}`}
         ref={(el) => (cardsRef.current[idx] = el)}
         css={cardWrapperCSS({ padding: cardLayout.padding })}
       >
-        <BookCard bookData={el} showPlatform={true} {...cardLayout} />
+        <BookCard bookData={el} showPlatform={true} width={cardLayout.width} height={cardLayout.height} minWidth={cardLayout.minWidth} minHeight={cardLayout.minHeight} />
       </div>
     );
   });
+
+
+
+
 
   return (
     <div css={carouselWrapper}>
@@ -158,17 +184,19 @@ const carouselWrapper = css`
 
 const carousel = css`
   display: flex;
-  width: 100%;
+  width: 100vw;
   padding-left: 48px;
   box-sizing: border-box;
   overflow-x: scroll;
+  
+  
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 
 const prevBtn = css`
-  z-index: 10;
+  z-index: 99999;
   position: absolute;
   left: 0;
   height: 100%;
@@ -195,7 +223,7 @@ const prevBtn = css`
 `;
 
 const nextBtn = css`
-  z-index: 10;
+  z-index: 99999;
   position: absolute;
   right: 0;
   height: 100%;

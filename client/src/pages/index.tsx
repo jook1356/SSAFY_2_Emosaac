@@ -7,7 +7,21 @@ import { recvBooks } from "../api/DummyData";
 export default function Home() {
   return (
     <div>
-      <ScrollableCarousel API={recvBooks} />
+      <div css={temp} />
+      <ScrollableCarousel API={recvBooks} identifier={'test1'}/>
+      {/* <div css={temp1} /> */}
+
     </div>
   );
 }
+
+const temp = css`
+  width: 50vw;
+  height: 200px;
+`
+
+const temp1 = css`
+  width: 50vw;
+  height: 100vh;
+`
+

@@ -1,5 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
+import { useState, useRef } from "react"
+
+import ridi from '../../../assets/platform_ridi.webp'
+import naverSeries from '../../../assets/platform_naver_series.webp'
+import naverWebtoon from '../../../assets/platform_naver_webtoon.webp'
+import kakaoPage from '../../../assets/platform_kakao_page.png'
+
+import BookCardModal from "@/components/bookCardModal/BookCardModal";
+import Portal from "@/components/function/Portal";
 
 interface BookData {
   title: string;
@@ -24,54 +33,91 @@ const BookCard = ({
   minWidth,
   minHeight,
 }: Props) => {
-  const platformBar = <div css={platformBarCSS}></div>;
+
+  const wrapperRef = useRef<HTMLInputElement>(null);
+  const [modalToggler, setModalToggler] = useState<boolean>(false)
+
+  const platformBar = (
+    <div css={platformBarCSS}></div>
+  )
+
+  const modalHandler = () => {
+    setModalToggler(() => true)
+    console.log(wrapperRef)
+    console.log(wrapperRef.current && wrapperRef.current.getBoundingClientRect().top)
+  }
+  
+
+  const modal = (
+    <Portal selector=".overlay-root">
+      <BookCardModal modalToggler={modalToggler} setModalToggler={setModalToggler} bookData={bookData} parentRef={wrapperRef} />
+    </Portal>
+  )
 
   return (
-    <div>
-      <div css={cardWrapperCSS({ width, height, minWidth, minHeight })}>
+    <div css={cardOuterWrapper} ref={wrapperRef} onMouseEnter={modalHandler} >
+      {modalToggler && modal}
+      
+      <div  css={cardInnerWrapperCSS({ width, height, minWidth, minHeight })}>
         <div
           css={skeletonLoadingTagCSS({
             state: bookData !== "LOADING" ? true : false,
           })}
         />
-        <img src={bookData && bookData.img} alt={bookData && bookData.title} />
-        {showPlatform && platformBar}
+        <img src={bookData && bookData.img} alt={bookData && bookData.title} css={imageCSS} />
+        {showPlatform && bookData !== "LOADING" && platformBar}
       </div>
     </div>
   );
 };
 
-interface CardWrapperProps {
+const cardOuterWrapper = css`
+  position: relative;
+  
+`
+
+
+interface CardInnerWrapperProps {
   width: string | undefined;
   height: string | undefined;
   minWidth: string | undefined;
   minHeight: string | undefined;
 }
 
-const cardWrapperCSS = ({
+const cardInnerWrapperCSS = ({
   width,
   height,
   minWidth,
   minHeight,
-}: CardWrapperProps) => {
+}: CardInnerWrapperProps) => {
   return css`
     width: ${width !== null ? width : "100px"};
     height: ${height !== null ? height : "200px"};
     ${minWidth && `min-width: ${minWidth}`};
-    ${minHeight && `min-width: ${minHeight}`};
+    ${minHeight && `min-height: ${minHeight}`};
     position: relative;
     overflow: hidden;
     border-radius: 10px;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
   `;
 };
 
 const platformBarCSS = css`
   width: 100%;
-  height: 48px;
+  height: 3vw;
+  min-height: 36px;
+  background-color: rgba(0,0,0,0.2);
   position: absolute;
   bottom: 0;
 `;
+
+const imageCSS = css`
+  width: auto;
+  height: 100%;
+`
 
 interface skeletonLoadingTagCSSProps {
   state: boolean;

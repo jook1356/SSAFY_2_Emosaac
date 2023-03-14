@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import Image from "next/image";
-import emossacLogo from "../../assets/emosaac_logo.png";
+import emosaacLogo from "../../assets/emosaac_logo.png";
 import kakao from "../../assets/social_kakao.png";
 import naver from "../../assets/social_naver.png";
 import OauthLoginButton from "../UI/OauthLogin/OauthLoginButton";
@@ -12,7 +12,7 @@ export default function OauthLogin() {
         <section>
           <Image
             css={imageWrapperCSS}
-            src={emossacLogo}
+            src={emosaacLogo}
             alt="이모작의 로고입니다."
           />
         </section>
