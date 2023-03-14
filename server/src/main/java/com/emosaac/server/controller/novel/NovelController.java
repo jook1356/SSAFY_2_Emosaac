@@ -19,15 +19,15 @@ public class NovelController {
     NovelService novelService;
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 소설 리스트를 조회한다.")
-    @GetMapping("/day/{dayCode}")
-    public ResponseEntity<CommonResponse> findDayList(@PathVariable Long dayCode,
+    @GetMapping("/day/{day}")
+    public ResponseEntity<CommonResponse> findDayList(@PathVariable String day,
                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                      @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+                                                      @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(dayCode, size, criteria, id)
+                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(day, size, criteria, prevId)
         ));
     }
 

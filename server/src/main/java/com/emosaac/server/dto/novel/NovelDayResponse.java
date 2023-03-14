@@ -18,13 +18,13 @@ public class NovelDayResponse {
     private String title;
     private String author;
 
+    @QueryProjection
     public NovelDayResponse(Book book){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
         this.title = book.getTitle();
         this.author = book.getAuthor();
-
     }
 
 }
