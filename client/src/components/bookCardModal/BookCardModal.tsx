@@ -64,9 +64,11 @@ interface wrapperCSSProps {
 
 const wrapperCSS = ({modalToggler, parentRef, wrapperRef, widthValue, heightValue}: wrapperCSSProps) => {
     const isLeftEdge = widthValue - parentRef?.current?.clientWidth >= parentRef?.current?.getBoundingClientRect().left
-    const isRightEdge = parentRef?.current?.getBoundingClientRect().left + (widthValue / 2) >= document.body.offsetWidth
-    const leftStandard = `left: ${modalToggler && isLeftEdge === false ? parentRef?.current?.getBoundingClientRect().left - (parentRef?.current?.clientWidth / 2) : parentRef?.current?.getBoundingClientRect().left}px;`
-    const rightStandard = `right: ${document.body.offsetWidth - (parentRef?.current?.getBoundingClientRect().left + parentRef?.current?.clientWidth)}`
+    const isRightEdge = parentRef?.current?.getBoundingClientRect().left + (widthValue - ((widthValue - parentRef?.current?.clientWidth) / 2)) >= document.body.offsetWidth
+
+    const leftStandard = `left: ${modalToggler && isLeftEdge === true ? '0' : parentRef?.current?.getBoundingClientRect().left - ((widthValue - parentRef?.current?.clientWidth) / 2)}px;` // parentRef?.current?.getBoundingClientRect().left
+    const rightStandard = `left: ${modalToggler && isRightEdge === true ? document.body.offsetWidth - widthValue : parentRef?.current?.getBoundingClientRect().left}px`
+    const activated = isRightEdge === true ? rightStandard : leftStandard
     return css`
         position: absolute;
         z-index: 9999;
@@ -77,7 +79,7 @@ const wrapperCSS = ({modalToggler, parentRef, wrapperRef, widthValue, heightValu
         width: ${modalToggler ? `${widthValue}px` : `${parentRef?.current?.clientWidth}px`};
         height: ${modalToggler ? `${heightValue}px` : `${parentRef?.current?.clientHeight}px`};
         opacity: ${modalToggler ? '255' : '0'};
-        ${isRightEdge === true ? rightStandard : leftStandard};
+        ${modalToggler === true ? activated : `left: ${parentRef?.current?.getBoundingClientRect().left}px`};
 
         background-color: white;
         border-radius: 10px;
