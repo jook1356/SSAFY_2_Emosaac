@@ -23,7 +23,7 @@ const Test = () => {
 const boxStyle = css`
   min-width: 100%;
   height: 128px;
-  background-color: red;
+  background-color: var(--main-color);
   border: 2px solid black;
   box-sizing: border-box;
 `;
