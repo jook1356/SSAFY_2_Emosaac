@@ -24,7 +24,7 @@ public class WebtoonController {
                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                       @RequestParam(value = "id", required = false, defaultValue = "100")Long id) {
-
+//
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "요일별 리스트 조회 성공", webtoonService.findDayList(day, size, criteria, id)
