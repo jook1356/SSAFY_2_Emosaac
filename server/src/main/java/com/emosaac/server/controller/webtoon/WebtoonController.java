@@ -19,8 +19,9 @@ public class WebtoonController {
     WebtoonService webtoonService;
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 웹툰 리스트를 조회한다.")
-    @GetMapping("/day/{day}")
-    public ResponseEntity<CommonResponse> findDayList(@RequestParam(required=false, defaultValue = "date") String criteria,
+    @GetMapping("/day/{dayCode}")
+    public ResponseEntity<CommonResponse> findDayList(@PathVariable Long dayCode,
+                                                      @RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                       @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
@@ -31,8 +32,9 @@ public class WebtoonController {
     }
 
     @ApiOperation(value = "장르별 리스트", notes = "장르별 웹툰 리스트를 조회한다.")
-    @GetMapping("/genre/{genreId}")
-    public ResponseEntity<CommonResponse> findGenreList(@RequestParam(required=false, defaultValue = "date") String criteria,
+    @GetMapping("/genre/{genreCode}")
+    public ResponseEntity<CommonResponse> findGenreList(@PathVariable Long genreCode,
+                                                        @RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                         @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
 
