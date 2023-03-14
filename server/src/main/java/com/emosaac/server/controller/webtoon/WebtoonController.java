@@ -19,15 +19,15 @@ public class WebtoonController {
     WebtoonService webtoonService;
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 웹툰 리스트를 조회한다.")
-    @GetMapping("/day/{dayCode}")
-    public ResponseEntity<CommonResponse> findDayList(@PathVariable Long dayCode,
+    @GetMapping("/day/{day}")
+    public ResponseEntity<CommonResponse> findDayList(@PathVariable String day,
                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                      @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
-
+                                                      @RequestParam(value = "id", required = false, defaultValue = "100")Long id) {
+//
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", webtoonService.findDayList(size, criteria, id)
+                HttpStatus.OK, "요일별 리스트 조회 성공", webtoonService.findDayList(day, size, criteria, id)
         ));
     }
 
