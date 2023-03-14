@@ -24,7 +24,7 @@ public class NovelService {
 
     public SlicedResponse<NovelDayResponse> findDayList(String day, int size, String criteria, Long prevId) {
 
-        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByDay(day, PageRequest.ofSize(size), prevId);
+        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByDay(day, PageRequest.ofSize(size), prevId, criteria);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
