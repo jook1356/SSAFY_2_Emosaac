@@ -4,6 +4,7 @@ import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.DayToon;
 import com.emosaac.server.dto.BookResponse;
 import com.emosaac.server.dto.QBookResponse;
+//import com.emosaac.server.dto.webtoon.QWebtoonDayResponse;
 import com.emosaac.server.dto.webtoon.QWebtoonDayResponse;
 import com.emosaac.server.dto.webtoon.WebtoonDayResponse;
 import com.querydsl.core.QueryResults;

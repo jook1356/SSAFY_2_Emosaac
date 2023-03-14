@@ -65,7 +65,6 @@ public class NovelRecommandController {
                                                        @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
                                                        @ApiIgnore @CurrentUser UserPrincipal user) {
 
-
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "최근 읽은 작품과 비슷한 작품 조회 성공", novelRecommandService.findItemList(size, criteria, id, user.getId()))
         );
