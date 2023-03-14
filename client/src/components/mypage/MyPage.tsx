@@ -38,14 +38,36 @@ export default function MyPage() {
         <article css={recommendCSS}>
           <div>
             <div>가장 많이 본 장르의 작품을 추천해줄게요</div>
-            <div css={imagewrapperCSS}>
-              <Image css={imageCSS} src={thumbnail} alt="많이 본 장르 썸네일" />
+            <div css={contentCSS}>
+              <div css={imagewrapperCSS}>
+                <Image
+                  css={imageCSS}
+                  src={thumbnail}
+                  alt="많이 본 장르 썸네일"
+                />
+              </div>
+              <div css={contentwrapperCSS}>
+                <h3>제목</h3>
+                <div>줄거리 ...으로 줄이기</div>
+                <div>자체평점</div>
+              </div>
             </div>
           </div>
           <div>
             <div>가장 적게 본 장르의 작품을 추천해줄게요</div>
-            <div css={imagewrapperCSS}>
-              <Image css={imageCSS} src={thumbnail} alt="적게 본 장르 썸네일" />
+            <div css={contentCSS}>
+              <div css={imagewrapperCSS}>
+                <Image
+                  css={imageCSS}
+                  src={thumbnail}
+                  alt="적게 본 장르 썸네일"
+                />
+              </div>
+              <div css={contentwrapperCSS}>
+                <h3>제목</h3>
+                <div>줄거리 ...으로 줄이기</div>
+                <div>자체평점</div>
+              </div>
             </div>
           </div>
         </article>
@@ -56,6 +78,7 @@ export default function MyPage() {
 const userinfoCSS = css`
   display: flex;
   margin-left: 105px;
+  margin-top: 50px;
 `;
 const profileimagewrapperCSS = css`
   border-radius: 100%;
@@ -89,6 +112,7 @@ const chartCSS = css`
   height: 350px;
   margin-top: 80px;
   margin-left: 60px;
+  left: 0px;
 `;
 const recommendCSS = css`
   margin-top: 80px;
@@ -98,12 +122,22 @@ const recommendCSS = css`
     /* line-height: 200px; */
   }
 `;
+const contentCSS = css`
+  display: flex;
+`;
+
 const imagewrapperCSS = css`
   width: 150px;
   height: 200px;
   margin-top: 20px;
   overflow: hidden;
 `;
+const contentwrapperCSS = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+`;
+
 const imageCSS = css`
   height: calc(100% - 16px);
   width: 100%;
