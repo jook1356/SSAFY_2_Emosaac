@@ -59,18 +59,18 @@ public class userController {
     }
 
 
-//    @GetMapping("/{userId}/novel/genres")
-//    @ApiOperation(value = "나의 웹툰과 소설 선호 장르 보여주기", notes = "웹툰 선호 리스트/소설 선호 리스트 반환")
-//    public ResponseEntity<CommonResponse> getUserGenre(@PathVariable Long userId){
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, "나의 웹툰과 소설 선호 장르 조회 성공", userService.getUserGerne(userId)));
-//    }
+    @GetMapping("/{userId}/novel/genres")
+    @ApiOperation(value = "나의 웹툰과 소설 선호 장르 보여주기", notes = "웹툰 선호 리스트/소설 선호 리스트 반환")
+    public ResponseEntity<CommonResponse> getUserGenre(@PathVariable Long userId){
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "나의 웹툰과 소설 선호 장르 조회 성공", userService.getUserGerne(userId)));
+    }
 
     @PutMapping("/{userId}/webtoon/genres")
     @ApiOperation(value = "나의 웹툰 선호 장르 수정", notes = "나의 웹툰 선호 장르 수정하고 선호 장르를 반환")
     public ResponseEntity<CommonResponse> updateUserNovelGenre(@PathVariable Long userId, @RequestBody @Valid UserGenreRequest request){
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "나의 웹툰 선호 장르 수정 성공", userService.updateUserWebtoonGenre(userId, request)));
+                HttpStatus.CREATED, "나의 웹툰 선호 장르 수정 성공", userService.updateUserWebtoonGenre(userId, request)));
 
     }
 
@@ -78,7 +78,7 @@ public class userController {
     @ApiOperation(value = "나의 소설 선호 장르 수정", notes = "나의 소설 선호 장르 수정하고 선호 장르를 반환")
     public ResponseEntity<CommonResponse> updateUserWebtoonGenre(@PathVariable Long userId, @RequestBody @Valid UserGenreRequest request){
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "나의 소설 선호 장르 수정 성공", userService.updateUserNovelGenre(userId, request)));
+                HttpStatus.CREATED, "나의 소설 선호 장르 수정 성공", userService.updateUserNovelGenre(userId, request)));
     }
 
 

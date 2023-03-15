@@ -17,6 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -35,10 +39,10 @@ public class UserService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
-        if(nickNameCheck(request.getNickName())==true){
+        if (nickNameCheck(request.getNickName()) == true) {
             throw new ArgumentMismatchException("닉네임 중복입니다");
         }
-        
+
         user.setUserInfo(request); //이미지 링크 수정 빼야함, 따로 처리 필요
 
         //이미지 널이면 디폴트 이미지 처리
@@ -55,50 +59,67 @@ public class UserService {
         return flag;
     }
 
-    public UserResponse getUserGerne(Long userId) { //그냥 유저 정보 조회해도 나오니까 안써도 될것 같음
+    public UserGenreResponse getUserGerne(Long userId) { //그냥 유저 정보 조회해도 나오니까 안써도 될것 같음
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        String webtoon = user.getFavoriteWebtoonGenre();
-        String novel =user.getFavoriteNovelGenre();
-//        return UserGenreResponse.from(webtoon, novel);
-        return UserResponse.from(user);
+        Map<Object, Object> mapWebtoon= stringToMap(user.getFavoriteWebtoonGenre());
+        Map<Object, Object> mapNovel=  stringToMap(user.getFavoriteNovelGenre());
+
+//        String novel = user.getFavoriteNovelGenre();
+        return UserGenreResponse.from(mapWebtoon, mapNovel);
     }
+
     @Transactional
-    public UserResponse updateUserNovelGenre(Long userId, UserGenreRequest request) {
+    public UserGenreResponse updateUserWebtoonGenre(Long userId, UserGenreRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+
+        Map<Object, Object> mapWebtoon = listToMap(request);
+        user.updateFavoriteWebtoonGenre(mapWebtoon.get("str").toString());
+        mapWebtoon.remove("str");
+//        user.updateFavoriteWebtoonGenre(request.getGerne());
+        Map<Object, Object> mapNovel=  stringToMap(user.getFavoriteNovelGenre());
+
+        return UserGenreResponse.from(mapWebtoon, mapNovel);
+
+    }
+
+    @Transactional
+    public UserGenreResponse updateUserNovelGenre(Long userId, UserGenreRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 //        user.updateFavoriteNovelGenre(request.getGerne());
-        String str = convertGenreName(request);
-        user.updateFavoriteNovelGenre(str);
-        return UserResponse.from(user);
-//        return UserGenreResponse.from(user.getFavoriteWebtoonGenre(), user.getFavoriteNovelGenre());
-    }
-    @Transactional
-    public UserResponse updateUserWebtoonGenre(Long userId, UserGenreRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-
-        String str = convertGenreName(request);
-        user.updateFavoriteWebtoonGenre(str);
-//        user.updateFavoriteWebtoonGenre(request.getGerne());
-//        return UserGenreResponse.from(user.getFavoriteWebtoonGenre(), user.getFavoriteNovelGenre());
-        return UserResponse.from(user);
-
+        Map<Object, Object> mapNovel = listToMap(request);
+        user.updateFavoriteNovelGenre(mapNovel.get("str").toString());
+        mapNovel.remove("str");
+        Map<Object, Object> mapWebtoon =  stringToMap(user.getFavoriteWebtoonGenre());
+        return UserGenreResponse.from(mapWebtoon, mapNovel);
     }
 
-    public String convertGenreName(UserGenreRequest request) {
+
+
+    public Map<Object, Object> listToMap(UserGenreRequest request) {
         String str = "";
-        for(String tmp :request.getGerne()){
-            Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreId", tmp));
-            str += genre.getName()+"^";
+        Map<Object, Object> map =new HashMap<>();
+        if (!request.getGerne().isEmpty()) {
+            for (String tmp : request.getGerne()) {
+                Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreId", tmp));
+                str += genre.getGerneId() + "^";
+                map.put(genre.getGerneId(), genre);
+            }
         }
-        return str;
+        map.put("str", str);
+        return map;
     }
 
-//    public void validUser(Long currentUser, Long postUser) {
-//
-//        if (currentUser == postUser || currentUser.equals(postUser)) {
-//            return;
-//        }
-//        else {
-//            throw new ResourceForbiddenException("본인이 아닙니다");
-//        }
-//    }
+    public Map<Object, Object> stringToMap(String request) {
+        Map<Object, Object> map =new HashMap<>();
+        if (request != null) {
+            String[] list = request.split("\\^");
+            for (int i = 0; i < list.length; i++) {
+                String tmp = list[i];
+                Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreId", tmp));
+                map.put(genre.getGerneId(), genre);
+            }
+        }
+        return map;
+    }
+
 }
