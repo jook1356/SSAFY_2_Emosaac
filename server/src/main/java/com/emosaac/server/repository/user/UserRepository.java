@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.providerId =:ProviderId")
     Optional<User> findByProviderId(@Param("ProviderId")String provider);
 
-    @Query(value = "select * from User u where u.provider_type = :providerType and u.email = :userEmail", nativeQuery = true)
+    @Query(value = "select * from user u where u.provider_type = :providerType and u.email = :userEmail", nativeQuery = true)
     Optional<User> findByEmailANDProviderType(@Param("userEmail")String userEmail, @Param("providerType")String provider);
 
 
