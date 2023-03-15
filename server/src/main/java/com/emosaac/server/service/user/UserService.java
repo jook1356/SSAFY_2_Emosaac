@@ -5,6 +5,7 @@ import com.emosaac.server.common.exception.ResourceForbiddenException;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Genre;
 import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.genre.GenreResponse;
 import com.emosaac.server.dto.user.UserGenreRequest;
 import com.emosaac.server.dto.user.UserGenreResponse;
 import com.emosaac.server.dto.user.UserRequest;
@@ -17,6 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,10 +41,10 @@ public class UserService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
-        if(nickNameCheck(request.getNickName())==true){
+        if (nickNameCheck(request.getNickName()) == true) {
             throw new ArgumentMismatchException("닉네임 중복입니다");
         }
-        
+
         user.setUserInfo(request); //이미지 링크 수정 빼야함, 따로 처리 필요
 
         //이미지 널이면 디폴트 이미지 처리
@@ -55,50 +61,57 @@ public class UserService {
         return flag;
     }
 
-    public UserResponse getUserGerne(Long userId) { //그냥 유저 정보 조회해도 나오니까 안써도 될것 같음
+    //나의 선호 웹툰 장르
+    public List<GenreResponse> getUserWebtoonGerne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        String webtoon = user.getFavoriteWebtoonGenre();
-        String novel =user.getFavoriteNovelGenre();
-//        return UserGenreResponse.from(webtoon, novel);
-        return UserResponse.from(user);
+        return stringToEntity(user.getFavoriteWebtoonGenre()).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
+
+    //나의 선호 소설 장르
+    public List<GenreResponse> getUserNovelGerne(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+        return stringToEntity(user.getFavoriteNovelGenre()).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+    }
+
+    //웹툰 선호 장르 변경
     @Transactional
-    public UserResponse updateUserNovelGenre(Long userId, UserGenreRequest request) {
+    public List<GenreResponse> updateUserWebtoonGenre(Long userId, UserGenreRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-//        user.updateFavoriteNovelGenre(request.getGerne());
-        String str = convertGenreName(request);
-        user.updateFavoriteNovelGenre(str);
-        return UserResponse.from(user);
-//        return UserGenreResponse.from(user.getFavoriteWebtoonGenre(), user.getFavoriteNovelGenre());
+        user.setFavoriteWebtoonGenre(listToString(request));
+        return getUserWebtoonGerne(user.getUserId());
     }
+
+    //소설 선호 장르 변경
     @Transactional
-    public UserResponse updateUserWebtoonGenre(Long userId, UserGenreRequest request) {
+    public List<GenreResponse> updateUserNovelGenre(Long userId, UserGenreRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-
-        String str = convertGenreName(request);
-        user.updateFavoriteWebtoonGenre(str);
-//        user.updateFavoriteWebtoonGenre(request.getGerne());
-//        return UserGenreResponse.from(user.getFavoriteWebtoonGenre(), user.getFavoriteNovelGenre());
-        return UserResponse.from(user);
-
+        user.setFavoriteNovelGenre(listToString(request));
+        return getUserNovelGerne(user.getUserId());
     }
 
-    public String convertGenreName(UserGenreRequest request) {
+
+    public String listToString(UserGenreRequest request) {
         String str = "";
-        for(String tmp :request.getGerne()){
-            Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreId", tmp));
-            str += genre.getName()+"^";
+        if (!request.getGerne().isEmpty()) {
+            for (String tmp : request.getGerne()) {
+                Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("GenreResponse", "genreId", tmp));
+                str += genre.getGerneId() + "^";
+            }
         }
         return str;
     }
 
-//    public void validUser(Long currentUser, Long postUser) {
-//
-//        if (currentUser == postUser || currentUser.equals(postUser)) {
-//            return;
-//        }
-//        else {
-//            throw new ResourceForbiddenException("본인이 아닙니다");
-//        }
-//    }
+    public List<Genre> stringToEntity(String request) {
+        List<Genre> tmpList = new ArrayList<>();
+        if (request != null) {
+            String[] list = request.split("\\^");
+            for (int i = 0; i < list.length; i++) {
+                String tmp = list[i];
+                Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("GenreResponse", "genreId", tmp));
+                tmpList.add(genre);
+            }
+        }
+        return tmpList;
+    }
+
 }
