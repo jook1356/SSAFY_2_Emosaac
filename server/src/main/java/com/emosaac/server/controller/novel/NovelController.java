@@ -23,11 +23,12 @@ public class NovelController {
     public ResponseEntity<CommonResponse> findDayList(@PathVariable String day,
                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                      @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId) {
+                                                      @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
+                                                      @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(day, size, criteria, prevId)
+                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(day, size, criteria, prevId, prevScore)
         ));
     }
 

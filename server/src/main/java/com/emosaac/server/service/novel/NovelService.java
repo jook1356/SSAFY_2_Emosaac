@@ -25,9 +25,9 @@ public class NovelService {
     private final NovelQueryRepository novelQueryRepository;
 
     // 요일별 소설 리스트
-    public SlicedResponse<NovelDayResponse> findDayList(String day, int size, String criteria, Long prevId) {
+    public SlicedResponse<NovelDayResponse> findDayList(String day, int size, String criteria, Long prevId, Double prevScore) {
 
-        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByDay(day, PageRequest.ofSize(size), prevId, criteria);
+        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByDay(day, PageRequest.ofSize(size), prevId, prevScore, criteria);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
@@ -38,6 +38,7 @@ public class NovelService {
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
+    // 소설 상세 조회
     public NovelDetailResponse findDetailByNovel(Long bookId) {
 //               Post post = postRepository.findPost(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
         Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
