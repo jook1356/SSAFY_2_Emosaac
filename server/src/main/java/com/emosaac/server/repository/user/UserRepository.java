@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "select * from user u where u.provider_type = :providerType and u.email = :userEmail", nativeQuery = true)
     Optional<User> findByEmailANDProviderType(@Param("userEmail")String userEmail, @Param("providerType")String provider);
 
-
+    Optional<User> findByUserId(Long userId);
 
 
 }
