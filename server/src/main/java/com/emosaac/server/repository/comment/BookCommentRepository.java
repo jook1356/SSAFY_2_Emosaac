@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,7 @@ public interface BookCommentRepository extends JpaRepository<BookComment, Long> 
     @Modifying
     @Query("delete from BookComment c where c.commentId = :commentId")
     void deleteByCommentId(@Param("commentId") Long commentId);
+
+    @Query("SELECT c FROM BookComment c WHERE c.book.bookId = :postId")
+    List<BookComment> findCommentByBookId(@Param("postId")Long postId);
 }

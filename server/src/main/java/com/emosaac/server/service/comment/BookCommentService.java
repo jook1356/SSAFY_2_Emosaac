@@ -5,13 +5,16 @@ import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.BookComment;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.CommentSaveRequest;
 import com.emosaac.server.dto.comment.CommentUpdateRequest;
 import com.emosaac.server.repository.book.BookRepository;
+import com.emosaac.server.repository.comment.BookCommentQueryRepository;
 import com.emosaac.server.repository.comment.BookCommentRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,7 @@ public class BookCommentService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final BookCommentRepository bookCommentRepository;
+    private final BookCommentQueryRepository bookCommentQueryRepository;
     @Transactional
     public Long createBookComment(Long userId, Long bookId, CommentSaveRequest request) {
         Book book = bookRepository.findByBookId(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
@@ -84,21 +88,34 @@ public class BookCommentService {
         return commentId;
     }
 
-//    public Object findBookCommentList(Long bookId, int offset, int size) {
-//        return convertNestedStructure(bookCommentRepository.findCommentByPostId(bookId));
-//    }
-//
-//    private List<CommentUpdateRequest.CommentResponse> convertNestedStructure(List<BookComment> comments) {
-//        List<CommentUpdateRequest.CommentResponse> result = new ArrayList<>();
-//        Map<Long, CommentUpdateRequest.CommentResponse> map = new HashMap<>();
-//        comments.stream().forEach(c -> {
-//            CommentUpdateRequest.CommentResponse dto = CommentUpdateRequest.CommentResponse.from(c);
-//            map.put(dto.getCommentId(), dto);
-//            if(c.getParent() != null) {
-//                map.get(c.getParent().getCommentId()).getChildren().add(dto);
-//            }
-//            else result.add(dto);
-//        });
-//        return result;
-//    }
+
+    public Object findBookCommentList(Long bookId, int offset, int size) {
+//        List<BookComment> l1 = bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, 10));
+//        List<BookComment> l2 = bookCommentRepository.findCommentByBookId(bookId);
+//        System.out.println("l1");
+//        for(BookComment bc : l1){
+//            System.out.println(bc.getCommentId());
+//        }
+//        System.out.println("l2");
+//        for(BookComment bc : l2){
+//            System.out.println(bc.getCommentId());
+//        }
+//        return null;
+        return convertNestedStructure(bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, 2)));
+//        return convertNestedStructure(bookCommentRepository.findCommentByBookId(bookId));
+    }
+
+    private List<CommentResponse> convertNestedStructure(List<BookComment> comments) {
+        List<CommentResponse> result = new ArrayList<>();
+        Map<Long, CommentResponse> map = new HashMap<>();
+        comments.stream().forEach(c -> {
+            CommentResponse dto = CommentResponse.from(c);
+            map.put(dto.getCommentId(), dto);
+            if(c.getParent() != null) {
+                map.get(c.getParent().getCommentId()).getChildren().add(dto);
+            }
+            else result.add(dto);
+        });
+        return result;
+    }
 }
