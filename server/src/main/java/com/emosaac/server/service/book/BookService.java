@@ -51,7 +51,7 @@ public class BookService {
 
         Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
 
-        book.addHit();
+        book.addHit(); // 이부분은 다시,,
         book.setAvgScore();
 
         Boolean bookmarkStatus = false;

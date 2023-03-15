@@ -121,6 +121,6 @@ public class BookQueryRepository {
             return book.genre.gerneId.eq(28L);
         }
 
-        return null;
+        return book.genre.gerneId.eq(Long.valueOf(criteria)); // 장르 코드로 사용할 때
     }
 }
