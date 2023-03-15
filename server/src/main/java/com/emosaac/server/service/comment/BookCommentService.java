@@ -101,7 +101,7 @@ public class BookCommentService {
 //            System.out.println(bc.getCommentId());
 //        }
 //        return null;
-        return convertNestedStructure(bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, 2)));
+        return convertNestedStructure(bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, size)));
 //        return convertNestedStructure(bookCommentRepository.findCommentByBookId(bookId));
     }
 
