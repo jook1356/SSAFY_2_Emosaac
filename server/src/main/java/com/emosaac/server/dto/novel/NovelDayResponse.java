@@ -18,6 +18,7 @@ public class NovelDayResponse {
     private String title;
     private String author;
     private String href;
+    private double score;
 
     @QueryProjection
     public NovelDayResponse(Book book){
@@ -27,6 +28,7 @@ public class NovelDayResponse {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.href = book.getHref();
+        this.score = book.getScore();
     }
 
 }
