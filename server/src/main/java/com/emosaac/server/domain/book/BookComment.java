@@ -2,7 +2,9 @@ package com.emosaac.server.domain.book;
 
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.comment.CommentUpdateRequest;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -10,6 +12,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.sql.ConnectionBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,5 +52,26 @@ public class BookComment extends BaseEntity {
     @ColumnDefault("false")
     private Boolean isDelete; //삭제여부
 
+    public void setChild(BookComment bookComment) {
+        this.children.add(bookComment);
+    }
+
+    @Builder
+    public BookComment(User user, Book book, String content, BookComment parent, Integer depth) {
+        this.user = user;
+        this.book = book;
+        this.content = content;
+        this.parent = parent;
+        this.depth = depth;
+    }
+
+    public void update(CommentUpdateRequest request){
+        this.content = request.getContent();
+    }
+
+    public void updateDeleteStatus() {
+        this.isDelete = true;
+        this.content = null;
+    }
 
 }
