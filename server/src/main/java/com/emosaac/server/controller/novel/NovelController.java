@@ -3,7 +3,7 @@ package com.emosaac.server.controller.novel;
 import com.emosaac.server.common.CommonResponse;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
-import com.emosaac.server.service.novel.NovelService;
+import com.emosaac.server.service.book.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,9 @@ import java.nio.DoubleBuffer;
 @RequestMapping("/api/novels")
 @Api(tags = {"소설 컨트롤러"})
 public class NovelController {
+
     @Autowired
-    NovelService novelService;
+    BookService bookService;
 
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 소설 리스트를 조회한다.")
@@ -33,7 +34,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", novelService.findDayList(day, size, criteria, prevId, prevScore)
+                HttpStatus.OK, "요일별 리스트 조회 성공", bookService.findDayList(day, size, criteria, prevId, prevScore, 1)
         ));
     }
 
@@ -46,7 +47,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(genreCode, size, criteria, prevId)
+                HttpStatus.OK, "장르별 리스트 조회 성공", bookService.findGenreList(genreCode, size, criteria, prevId, 1)
         ));
     }
 
@@ -57,7 +58,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByNovel(bookId, userPrincipal.getId())
+                HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByBook(bookId, userPrincipal.getId(), 1)
         ));
     }
 
@@ -70,18 +71,18 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "북마크 수정 성공", novelService.toggleBookmarkByNovel(novelId, userPrincipal.getId())
+                HttpStatus.CREATED, "북마크 수정 성공", bookService.toggleBookmarkByBook(novelId, userPrincipal.getId())
         ));
     }
 
     @ApiOperation(value = "읽음 유무", notes = "작품의 읽음 여부를 설정한다.")
-    @PutMapping("/{novelId}")
+    @PutMapping("/read-check/{novelId}")
     public ResponseEntity<CommonResponse> setReadByNovel(@PathVariable Long novelId,
                                                          @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.setReadByNovel(novelId, userPrincipal.getId())
+                HttpStatus.CREATED, "읽음 유무 설정 성공", bookService.toggleReadByBook(novelId, userPrincipal.getId())
         ));
     }
 
@@ -94,7 +95,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "평점 조회 성공", novelService.findScoreByUser(novelId, userPrincipal.getId())
+                HttpStatus.OK, "평점 조회 성공", bookService.findScoreByUser(novelId, userPrincipal.getId())
         ));
     }
 
@@ -106,7 +107,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "평점 수정 성공", novelService.updateScoreByUser(novelId, userPrincipal.getId(), score)
+                HttpStatus.CREATED, "평점 수정 성공", bookService.updateScoreByUser(novelId, userPrincipal.getId(), score)
         ));
     }
 
@@ -114,25 +115,21 @@ public class NovelController {
 
     @ApiOperation(value = "같은 작가 다른 작품", notes = "같은 작가 다른 작품을 조회한다.")
     @GetMapping("/author/{novelId}")
-    public ResponseEntity<CommonResponse> findListByAuthor(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                           @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+    public ResponseEntity<CommonResponse> findListByAuthor(@PathVariable Long novelId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "같은 작가 다른 작품 조회 성공", novelService.findListByAuthor(size, criteria, id)
+                HttpStatus.OK, "같은 작가 다른 작품 조회 성공", bookService.findListByAuthor(novelId)
         ));
     }
 
     @ApiOperation(value = "유사한 작품", notes = "유사한 작품들을 조회한다.")
     @GetMapping("/recommand/{novelId}")
-    public ResponseEntity<CommonResponse> findListByItem(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                         @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+    public ResponseEntity<CommonResponse> findListByItem(@PathVariable Long novelId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "유사한 작품 조회 성공", novelService.findListByItem(size, criteria, id)
+                HttpStatus.OK, "유사한 작품 조회 성공", bookService.findListByItem(novelId)
         ));
     }
 }

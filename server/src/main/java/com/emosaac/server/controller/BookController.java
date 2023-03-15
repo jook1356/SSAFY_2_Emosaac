@@ -1,7 +1,7 @@
 package com.emosaac.server.controller;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.service.BookService;
+import com.emosaac.server.service.TestBookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import springfox.documentation.annotations.ApiIgnore;
 public class BookController {
 
     @Autowired
-    BookService bookService;
+    TestBookService bookService;
 
     @ApiOperation(value = "내가 쓴 게시물 리스트 조회", notes = "내가 쓴 게시물 목록을 조회한다.(최근날짜순)")
     @GetMapping("/users")

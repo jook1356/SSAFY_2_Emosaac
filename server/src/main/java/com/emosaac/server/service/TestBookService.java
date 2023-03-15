@@ -4,7 +4,7 @@ import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.BookResponse;
 import com.emosaac.server.dto.QBookResponse;
-import com.emosaac.server.repository.BookQueryRepository;
+import com.emosaac.server.repository.TestBookQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class BookService {
+public class TestBookService {
 
-    private final BookQueryRepository bookQueryRepository;
+    private final TestBookQueryRepository bookQueryRepository;
 
 
     public SlicedResponse<BookResponse> findPostListByUser(int offset, int size, String criteria, Long id) {//내가 쓴 글 조회/오프셋

@@ -1,18 +1,18 @@
-package com.emosaac.server.service.novel;
+package com.emosaac.server.service.book;
 
 import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.BookMark;
+import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.domain.book.Score;
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.dto.novel.NovelDayResponse;
-import com.emosaac.server.dto.novel.NovelDetailResponse;
+import com.emosaac.server.dto.book.BookDayResponse;
+import com.emosaac.server.dto.book.BookDetailResponse;
+import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.bookmark.BookmarkRepository;
-import com.emosaac.server.repository.novel.NovelQueryRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
 import com.emosaac.server.repository.score.ScoreQueryRepository;
-import com.emosaac.server.repository.score.ScoreRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,41 +21,38 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class NovelService {
-
-    private final NovelQueryRepository novelQueryRepository;
+public class BookService {
+    private final BookQueryRepository bookQueryRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ReadRepository readRepository;
-    private final ScoreRepository scoreRepository;
     private final ScoreQueryRepository scoreQueryRepository;
     private final UserRepository userRepository;
 
-    // 요일별 소설 리스트
-    public SlicedResponse<NovelDayResponse> findDayList(String day, int size, String criteria, Long prevId, Double prevScore) {
+    // 요일별 작품 리스트
+    public SlicedResponse<BookDayResponse> findDayList(String day, int size, String criteria, Long prevId, Double prevScore, int typeCd) {
 
-        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByDay(day, PageRequest.ofSize(size), prevId, prevScore, criteria);
+        Slice<BookDayResponse> page = bookQueryRepository.findBookListByDay(typeCd, day, PageRequest.ofSize(size), prevId, prevScore, criteria);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
-    // 장르벌 소설 리스트
-    public SlicedResponse<NovelDayResponse> findGenreList(Long genreCode, int size, String criteria, Long prevId) {
+    // 장르벌 작품 리스트
+    public SlicedResponse<BookDayResponse> findGenreList(Long genreCode, int size, String criteria, Long prevId, int typeCd) {
 
-        Slice<NovelDayResponse> page = novelQueryRepository.findBookListByGenre(genreCode, PageRequest.ofSize(size), prevId, criteria);
+        Slice<BookDayResponse> page = bookQueryRepository.findBookListByGenre(typeCd, genreCode, PageRequest.ofSize(size), prevId, criteria);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
-    // 소설 상세 조회
-    public NovelDetailResponse findDetailByNovel(Long bookId, Long userId) {
+    // 작품 상세 조회
+    public BookDetailResponse findDetailByBook(Long bookId, Long userId, int typeCd) {
 
-        Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
 
         book.addHit();
+        book.setAvgScore();
 
         Boolean bookmarkStatus = false;
         if(bookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
@@ -71,25 +68,30 @@ public class NovelService {
         double score = 0.0;
         if(myScore != null) score = myScore.getScore();
 
-        return new NovelDetailResponse(book, bookmarkStatus, readStatus, score);
+        return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
     }
 
     @Transactional
-    public Boolean toggleBookmarkByNovel(Long bookId, Long userId) {
-        Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+    public Boolean toggleBookmarkByBook(Long bookId, Long userId) {
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
         User user = userRepository.findByMyId(userId);
         //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
         BookMark bookMark = BookMark.builder().book(book).user(user).build();
         return book.toggleBookmark(bookMark);
     }
 
-    public Object setReadByNovel(Long bookId, Long userId) {
-        return null;
+    @Transactional
+    public Object toggleReadByBook(Long bookId, Long userId) {
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        User user = userRepository.findByMyId(userId);
+        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        ReadBook readBook = ReadBook.builder().book(book).user(user).build();
+        return book.toggleReadBook(readBook);
     }
 
     /* 평점 */
     public Double findScoreByUser(Long bookId, Long userId) {
-        Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
         User user = userRepository.findByMyId(userId);
         //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
 
@@ -100,7 +102,7 @@ public class NovelService {
 
     @Transactional
     public Double updateScoreByUser(Long bookId, Long userId, Double score) {
-        Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
         User user = userRepository.findByMyId(userId);
         //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
 
@@ -119,11 +121,13 @@ public class NovelService {
     }
 
     /**/
-    public Object findListByAuthor(int size, String criteria, Long id) {
+    public Object findListByAuthor(Long bookId) {
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
         return null;
     }
 
-    public Object findListByItem(int size, String criteria, Long id) {
+    /* 추천 알고리즘 적용 */
+    public Object findListByItem(Long novelId) {
         return null;
     }
 }

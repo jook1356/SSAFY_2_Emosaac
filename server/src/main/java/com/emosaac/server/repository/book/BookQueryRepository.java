@@ -1,8 +1,8 @@
-package com.emosaac.server.repository.novel;
+package com.emosaac.server.repository.book;
 
 import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.dto.novel.NovelDayResponse;
-import com.emosaac.server.dto.novel.QNovelDayResponse;
+import com.emosaac.server.dto.book.BookDayResponse;
+import com.emosaac.server.dto.book.QBookDayResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -20,15 +20,16 @@ import static com.emosaac.server.domain.book.QBook.book;
 
 @RequiredArgsConstructor
 @Repository
-public class NovelQueryRepository {
+public class BookQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     // 요일별 소설 리스트
-    public Slice<NovelDayResponse> findBookListByDay(String day, PageRequest page, Long prevId, Double prevScore, String criteria) {
-        List<NovelDayResponse> content = jpaQueryFactory.select(new QNovelDayResponse(book))
+    public Slice<BookDayResponse> findBookListByDay(int typeCd, String day, PageRequest page, Long prevId, Double prevScore, String criteria) {
+        List<BookDayResponse> content = jpaQueryFactory.select(new QBookDayResponse(book))
                 .from(book)
                 .where(
+                        book.type.eq(typeCd),
                         book.day.contains(day),
                         book.type.eq(1),
                         //no-offset 페이징 처리
@@ -51,10 +52,11 @@ public class NovelQueryRepository {
     }
 
     // 장르별 소설 리스트
-    public Slice<NovelDayResponse> findBookListByGenre(Long genreCode, PageRequest page, Long prevId, String criteria) {
-        List<NovelDayResponse> content = jpaQueryFactory.select(new QNovelDayResponse(book))
+    public Slice<BookDayResponse> findBookListByGenre(int typeCd, Long genreCode, PageRequest page, Long prevId, String criteria) {
+        List<BookDayResponse> content = jpaQueryFactory.select(new QBookDayResponse(book))
                 .from(book)
                 .where(
+                        book.type.eq(typeCd),
                         book.genre.gerneId.eq(genreCode),
                         book.type.eq(1),
                         //no-offset 페이징 처리
@@ -75,7 +77,7 @@ public class NovelQueryRepository {
     }
 
     // 소설 상세 조회
-    public Optional<Book> findBookByNovel(Long bookId) {
+    public Optional<Book> findBookByBook(Long bookId) {
         return Optional.ofNullable(jpaQueryFactory.select(book)
                 .from(book)
                 .where(
@@ -103,7 +105,7 @@ public class NovelQueryRepository {
         return book.bookId.desc();
     }
 
-/*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
+    /*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
     private Predicate filterGenreCd(String criteria) {
         if(criteria.contains("로맨스")){
             return book.genre.gerneId.eq(10L);
