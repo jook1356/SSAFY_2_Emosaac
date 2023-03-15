@@ -15,6 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Slf4j
 @Service
@@ -27,7 +32,7 @@ public class BookCommentService {
     @Transactional
     public Long createBookComment(Long userId, Long bookId, CommentSaveRequest request) {
         Book book = bookRepository.findByBookId(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+        User user = userRepository.findByMyId(userId);
 
         BookComment bookComment = null;
         if(request.getParentId() != null){
@@ -78,4 +83,22 @@ public class BookCommentService {
         }
         return commentId;
     }
+
+//    public Object findBookCommentList(Long bookId, int offset, int size) {
+//        return convertNestedStructure(bookCommentRepository.findCommentByPostId(bookId));
+//    }
+//
+//    private List<CommentUpdateRequest.CommentResponse> convertNestedStructure(List<BookComment> comments) {
+//        List<CommentUpdateRequest.CommentResponse> result = new ArrayList<>();
+//        Map<Long, CommentUpdateRequest.CommentResponse> map = new HashMap<>();
+//        comments.stream().forEach(c -> {
+//            CommentUpdateRequest.CommentResponse dto = CommentUpdateRequest.CommentResponse.from(c);
+//            map.put(dto.getCommentId(), dto);
+//            if(c.getParent() != null) {
+//                map.get(c.getParent().getCommentId()).getChildren().add(dto);
+//            }
+//            else result.add(dto);
+//        });
+//        return result;
+//    }
 }
