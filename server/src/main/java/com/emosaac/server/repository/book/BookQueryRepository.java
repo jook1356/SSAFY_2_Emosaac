@@ -31,7 +31,6 @@ public class BookQueryRepository {
                 .where(
                         book.type.eq(typeCd),
                         book.day.contains(day),
-                        book.type.eq(1),
                         //no-offset 페이징 처리
 //                        ltBookId(prevId),
                         cursorIdAndCursorScore(prevId, prevScore),
@@ -58,7 +57,6 @@ public class BookQueryRepository {
                 .where(
                         book.type.eq(typeCd),
                         book.genre.gerneId.eq(genreCode),
-                        book.type.eq(1),
                         //no-offset 페이징 처리
                         ltBookId(prevId)
                 )
