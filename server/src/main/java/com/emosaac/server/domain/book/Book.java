@@ -77,5 +77,12 @@ public class Book {
     @Embedded
     private final BookmarkList bookmarkList = new BookmarkList();
 
+    public void addHit() {
+        this.hit = this.hit+1;
+    }
+
+    public boolean toggleBookmark(BookMark bookmark) {
+        return bookmarkList.toggleBookmark(bookmark);
+    }
 }
 
