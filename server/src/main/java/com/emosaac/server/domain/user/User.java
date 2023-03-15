@@ -1,5 +1,6 @@
 package com.emosaac.server.domain.user;
 
+import com.emosaac.server.dto.user.UserRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.validation.constraints.Size;
 
 import javax.persistence.*;
+import java.util.List;
 
 @DynamicUpdate
 @Getter
@@ -56,7 +58,7 @@ public class User extends BaseEntity {
 
     @Column(name = "GENDER")
     @Nullable
-    private boolean gender;
+    private Boolean gender; //0:남/1:여
 
     @Column(name = "AGE")
     @Nullable
@@ -95,15 +97,13 @@ public class User extends BaseEntity {
 //        return this;
 //    }
 
-//    public User update(UserUpdateRequest user){
-//        this.nickName = user.getNickName();
-//        this.imageUrl = user.getImageUrl();
-//        this.department = user.getDepartment();
-//        this.discription = user.getDiscription();
-//        //
-//
-//        return this;
-//    }
+    public User setUserInfo(UserRequest user){
+        this.nickName = user.getNickName();
+        this.gender = user.getGender();
+        this.age = user.getAge();
+        this.imageUrl = user.getImageUrl();
+        return this;
+    }
     public void updateNickName(String nickName){
         this.nickName = nickName;
     }
@@ -114,6 +114,23 @@ public class User extends BaseEntity {
 
     public void setUserProfile(String baseImg) {
         this.imageUrl = baseImg;
+    }
+
+    public void updateFavoriteNovelGenre(String str){
+//        String str = "";
+//        for(String tmp :list){
+//            str +=tmp+"^";
+//        }
+        this.favoriteNovelGenre= str;
+
+    }
+
+    public void updateFavoriteWebtoonGenre(String str){
+//        String str = "";
+//        for(String tmp :list){
+//            str +=tmp+"^";
+//        }
+        this.favoriteWebtoonGenre = str;
     }
 }
 
