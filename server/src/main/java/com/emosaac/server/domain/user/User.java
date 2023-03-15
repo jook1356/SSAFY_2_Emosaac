@@ -64,6 +64,11 @@ public class User extends BaseEntity {
 
     String providerId;
 
+    private String favoriteWebtoonGenre; //*로 구별 (선호장르 3개씩)
+
+    private String favoriteNovelGenre; //*로 구별 (선호장르 3개씩)
+
+
 //    @Column(name = "ROLE_TYPE", length = 20)
 //    @Enumerated(EnumType.STRING)
 //    @NotNull
