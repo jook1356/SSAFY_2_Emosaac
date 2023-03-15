@@ -4,6 +4,7 @@ import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.BookMark;
+import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.domain.book.Score;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.novel.NovelDayResponse;
@@ -83,8 +84,13 @@ public class NovelService {
         return book.toggleBookmark(bookMark);
     }
 
-    public Object setReadByNovel(Long bookId, Long userId) {
-        return null;
+    @Transactional
+    public Object toggleReadByNovel(Long bookId, Long userId) {
+        Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        User user = userRepository.findByMyId(userId);
+        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        ReadBook readBook = ReadBook.builder().book(book).user(user).build();
+        return book.toggleReadBook(readBook);
     }
 
     /* 평점 */

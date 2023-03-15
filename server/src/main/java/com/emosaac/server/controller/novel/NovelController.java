@@ -81,7 +81,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.setReadByNovel(novelId, userPrincipal.getId())
+                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.toggleReadByNovel(novelId, userPrincipal.getId())
         ));
     }
 

@@ -78,6 +78,9 @@ public class Book {
     private final BookmarkList bookmarkList = new BookmarkList();
 
     @Embedded
+    private final ReadBookList readBookList = new ReadBookList();
+
+    @Embedded
     private final ScoreList scoreList = new ScoreList();
 
     public void addHit() {
@@ -86,6 +89,9 @@ public class Book {
 
     public boolean toggleBookmark(BookMark bookmark) {
         return bookmarkList.toggleBookmark(bookmark);
+    }
+    public boolean toggleReadBook(ReadBook readBook) {
+        return readBookList.toggleBookmark(readBook);
     }
 
     public Double setScore(Score score){
