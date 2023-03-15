@@ -3,7 +3,6 @@ import { jsx, css } from "@emotion/react";
 import { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { throttle } from "lodash";
-import { BsFillArrowUpCircleFill } from "react-icons/bs";
 
 interface BookCardModalProps {
   modalToggler: boolean;
@@ -12,7 +11,6 @@ interface BookCardModalProps {
   bookData: any;
   parentRef: React.ForwardedRef<HTMLDivElement>;
   imgHeight: string | undefined;
-  imgMinHeight: string | undefined;
 }
 
 const BookCardModal = ({
@@ -22,12 +20,10 @@ const BookCardModal = ({
   bookData,
   parentRef,
   imgHeight,
-  imgMinHeight
 }: BookCardModalProps) => {
   const wrapperRef = useRef<HTMLInputElement>(null);
   const [contentToggler, setContentToggler] = useState<boolean>(false);
   const [isOpened, setisOpened] = useState<boolean>(false);
-  const [isClosing, setIsClosing] = useState<boolean>(false);
 
   const modalLayout = {
     widthValue: 450,
@@ -36,9 +32,10 @@ const BookCardModal = ({
 
   useEffect(() => {
     if (isMouseOn === true && modalToggler === true) {
-      setContentToggler(() => true);
-      setisOpened(() => true);
-
+      setTimeout(function () {
+        setContentToggler(() => true);
+        setisOpened(() => true);
+      }, 300);
     }
   }, []);
 
@@ -46,12 +43,12 @@ const BookCardModal = ({
     if (isMouseOn === true && contentToggler === true) {
       setTimeout(function () {
         setModalToggler(() => false);
-      }, 500);
+      }, 300);
     } else {
       setModalToggler(() => false);
     }
+
     setContentToggler(() => false);
-    setIsClosing(() => true)
   };
 
   return (
@@ -60,6 +57,7 @@ const BookCardModal = ({
       ref={wrapperRef}
       css={wrapperCSS({
         modalToggler: contentToggler,
+        isMouseOn: isMouseOn,
         parentRef: parentRef,
         wrapperRef: wrapperRef,
         widthValue: modalLayout.widthValue,
@@ -70,6 +68,7 @@ const BookCardModal = ({
         css={innerWrapperCSS({
           modalToggler: modalToggler,
           contentToggler: contentToggler,
+          isMouseOn: isMouseOn,
           isOpened: isOpened,
         })}
       >
@@ -80,25 +79,14 @@ const BookCardModal = ({
             alt={bookData && bookData.title}
             css={imageCSS({
               modalToggler: contentToggler,
-              isClosing: isClosing,
               imgHeight: imgHeight,
-              imgMinHeight: imgMinHeight,
             })}
           />
         </div>
 
         <div css={spaceDivCSS}></div>
         <div css={contentDivCSS}>
-          <div>
-            <div css={titleCSS}>{bookData.title}</div>
-            <div css={dateCSS}>{bookData.regist}</div>
-          </div>
-          
-          <div css={css`display:flex; justify-content:space-between;`}>
-            <div></div>
-            <BsFillArrowUpCircleFill css={icons} />
-          </div>
-          
+          <div css={titleCSS}>{bookData.title}</div>
         </div>
       </div>
     </div>
@@ -107,6 +95,7 @@ const BookCardModal = ({
 
 interface wrapperCSSProps {
   modalToggler: boolean;
+  isMouseOn: boolean;
   parentRef: any;
   wrapperRef: any;
   widthValue: number;
@@ -115,6 +104,7 @@ interface wrapperCSSProps {
 
 const wrapperCSS = ({
   modalToggler,
+  isMouseOn,
   parentRef,
   wrapperRef,
   widthValue,
@@ -147,24 +137,24 @@ const wrapperCSS = ({
     z-index: 999999;
     transition-property: width height;
     transition-duration: 0.3s;
-    /* transition-timing-function: ease-in; */
+    transition-timing-function: ease-in;
     overflow: hidden;
 
-    top: ${modalToggler
+    top: ${modalToggler && isMouseOn
       ? parentRef?.current?.getBoundingClientRect().top -
         (heightValue - parentRef?.current?.clientHeight) / 2
       : parentRef?.current?.getBoundingClientRect().top}px;
-    width: ${modalToggler
+    width: ${modalToggler && isMouseOn
       ? `${widthValue}px`
       : `${parentRef?.current?.clientWidth}px`};
-    height: ${modalToggler
+    height: ${modalToggler && isMouseOn
       ? `${heightValue}px`
       : `${parentRef?.current?.clientHeight}px`};
-    ${modalToggler ? activated : `left: ${parentRef?.current?.getBoundingClientRect().left}px`};
+    ${modalToggler === true && isMouseOn ? activated : `left: ${parentRef?.current?.getBoundingClientRect().left}px`};
     ${modalToggler ? `pointer-events: auto` : `pointer-events: none`};
     /* background-color: white; */
-        background-color: ${modalToggler
-      ? css`var(--back-color-2)`
+        background-color: ${modalToggler && isMouseOn
+      ? `white`
       : `rgba(0,0,0,0)`};
     border-radius: 10px;
     box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
@@ -174,19 +164,18 @@ const wrapperCSS = ({
 interface innerWrapperCSSProps {
   modalToggler: boolean;
   contentToggler: boolean;
+  isMouseOn: boolean;
   isOpened: boolean;
 }
 
 const innerWrapperCSS = ({
   modalToggler,
   contentToggler,
+  isMouseOn,
   isOpened,
 }: innerWrapperCSSProps) => {
   return css`
     opacity: ${contentToggler ? "255" : isOpened ? "255" : "0"};
-    height: 100%;
-    display: flex;
-    flex-direction: column;
   `;
 };
 
@@ -216,26 +205,23 @@ const imageWrapperCSS = css`
   position: absolute;
   display: flex;
   justify-content: center;
-  background: linear-gradient(rgba(0, 0, 0, 0), var(--back-color-2));
+  background: linear-gradient(rgba(0, 0, 0, 0), white);
   pointer-events: none;
 `;
 
 interface imageCSSProps {
   modalToggler: boolean;
-  isClosing: boolean;
   imgHeight: string | undefined;
-  imgMinHeight: string | undefined;
 }
 
-const imageCSS = ({ modalToggler, isClosing, imgHeight, imgMinHeight }: imageCSSProps) => {
+const imageCSS = ({ modalToggler, imgHeight }: imageCSSProps) => {
   return css`
-    transition-property: width height opacity transform;
+    transition-property: width height opacity;
     transition-duration: 0.3s;
-    ${modalToggler ? `transform: scale(1.0)` : (isClosing ? `transform: scale(1.0)` : `transform: scale(1.1)`)};
+    transition-delay: 0.3s;
     box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
     width: auto;
     height: ${modalToggler ? "350px" : imgHeight};
-    min-height: ${imgMinHeight};
   `;
 };
 
@@ -245,36 +231,14 @@ const spaceDivCSS = css`
 `;
 
 const contentDivCSS = css`
-  flex: 1 0 auto;
-  padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
+  padding: 12px;
 `;
 
 const titleCSS = css`
-  font-size: 20px;
-  color: var(--text-color);
+  font-size: 24px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-
-const dateCSS = css`
-  font-size: 13px;
-  margin-top: 8px;
-  color: var(--text-color-4);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const icons = css`
-  /* background-color: white; */
-  color: var(--text-color-4);
-  width: 52px;
-  height: 52px;
-`
-
 
 export default BookCardModal;

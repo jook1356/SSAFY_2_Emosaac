@@ -150,10 +150,10 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
 
   return (
     <div css={carouselWrapper}>
-      <div css={prevBtn} onClick={prevBtnClickHandler}>
+      <div css={prevBtn} onClick={prevBtnClickHandler} onMouseEnter={(event) => {event.stopPropagation();}}>
         〈
       </div>
-      <div css={nextBtn} onClick={nextBtnClickHandler}>
+      <div css={nextBtn} onClick={nextBtnClickHandler} onMouseEnter={(event) => {event.stopPropagation();}}>
         〉
       </div>
       <div
@@ -196,7 +196,7 @@ const carousel = css`
 `;
 
 const prevBtn = css`
-  z-index: 99999;
+  z-index: 999;
   position: absolute;
   left: 0;
   height: 100%;
@@ -211,6 +211,7 @@ const prevBtn = css`
   transition-property: background font-size;
   transition-duration: 0.2s;
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
@@ -223,7 +224,7 @@ const prevBtn = css`
 `;
 
 const nextBtn = css`
-  z-index: 99999;
+  z-index: 999;
   position: absolute;
   right: 0;
   height: 100%;
