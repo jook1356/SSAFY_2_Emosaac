@@ -1,5 +1,6 @@
 package com.emosaac.server.domain.book;
 
+import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.emo.EmoCommentLike;
 import lombok.Getter;
@@ -21,6 +22,27 @@ public class BookmarkList {
 
     public int size(){
         return bookmarkList.size();
+    }
+
+    public boolean toggleBookmark(BookMark bookMark){
+        if(contains(bookMark.getUser().getUserId())){
+            removeBookmark(bookMark);
+            return false;
+        }
+        bookmarkList.add(bookMark);
+        return true;
+    }
+
+    private boolean contains(Long userId){
+        return bookmarkList.parallelStream().anyMatch(l -> l.ownedBy(userId));
+    }
+
+    private void removeBookmark(BookMark bookMark){
+        Long userId = bookMark.getUser().getUserId();
+        BookMark removeTarget = bookmarkList.parallelStream()
+                .filter(l -> l.ownedBy(userId))
+                .findAny().orElseThrow(() -> new ResourceNotFoundException("이미 북마크를 해제했습니다."));
+        bookmarkList.remove(removeTarget);
     }
 
 }

@@ -26,9 +26,11 @@ public class NovelDetailResponse {
     private double score;
     private Integer hit;
     private String day;
+    private boolean bookmark;
+    private boolean read;
 
     @QueryProjection
-    public NovelDetailResponse(Book book){
+    public NovelDetailResponse(Book book, boolean bookmarkStatus, boolean readStatus){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
@@ -43,6 +45,9 @@ public class NovelDetailResponse {
         this.score = book.getScore();
         this.hit = book.getHit();
         this.day = book.getDay();
+
+        this.bookmark = bookmarkStatus;
+        this.read = readStatus;
     }
 
 }

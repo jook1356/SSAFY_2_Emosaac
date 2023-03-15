@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/novels")
@@ -47,23 +48,23 @@ public class NovelController {
 
     @ApiOperation(value = "작품 디테일", notes = "작품의 상세정보를 조회한다.")
     @GetMapping("/{bookId}")
-    public ResponseEntity<CommonResponse> findDetailByNovel(@PathVariable Long bookId) {
+    public ResponseEntity<CommonResponse> findDetailByNovel(@PathVariable Long bookId,
+                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByNovel(bookId)
+                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByNovel(bookId, userPrincipal.getId())
         ));
     }
 
     @ApiOperation(value = "북마크", notes = "작품의 북마크를 설정한다.")
     @PutMapping("/bookmark/{novelId}")
-    public ResponseEntity<CommonResponse> setBookmarkByNovel(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                               @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+    public ResponseEntity<CommonResponse> setBookmarkByNovel(@PathVariable Long novelId,
+                                                             @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "북마크 수정 성공", novelService.setBookmarkByNovel(size, criteria, id)
+                HttpStatus.CREATED, "북마크 수정 성공", novelService.toggleBookmarkByNovel(novelId, userPrincipal.getId())
         ));
     }
 
