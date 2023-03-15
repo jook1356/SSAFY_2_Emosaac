@@ -2,6 +2,7 @@ package com.emosaac.server.domain.book;
 
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.comment.CommentUpdateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,6 +63,15 @@ public class BookComment extends BaseEntity {
         this.content = content;
         this.parent = parent;
         this.depth = depth;
+    }
+
+    public void update(CommentUpdateRequest request){
+        this.content = request.getContent();
+    }
+
+    public void updateDeleteStatus() {
+        this.isDelete = true;
+        this.content = null;
     }
 
 }

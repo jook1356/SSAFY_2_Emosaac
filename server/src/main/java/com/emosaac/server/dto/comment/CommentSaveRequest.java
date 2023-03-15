@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter
@@ -15,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class commentSaveRequest {
+public class CommentSaveRequest {
     private Long parentId; //대댓글이 달릴 댓글
 
     @NotBlank(message = "내용이 없습니다.")
