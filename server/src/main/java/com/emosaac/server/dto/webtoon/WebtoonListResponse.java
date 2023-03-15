@@ -11,20 +11,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class WebtoonDayResponse {
+public class WebtoonListResponse {
     private Long bookId;
     private int platform;
     private String thumbnail;
     private String title;
     private String author;
+    private String href;
     @QueryProjection
-    public WebtoonDayResponse(Book book){
+    public WebtoonListResponse(Book book){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
         this.title = book.getTitle();
         this.author = book.getAuthor();
-
+        this.href = book.getHref();
     }
 
 }
