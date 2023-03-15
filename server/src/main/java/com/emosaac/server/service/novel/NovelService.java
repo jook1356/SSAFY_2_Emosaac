@@ -7,9 +7,9 @@ import com.emosaac.server.domain.book.BookMark;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.novel.NovelDayResponse;
 import com.emosaac.server.dto.novel.NovelDetailResponse;
-import com.emosaac.server.repository.novel.NovelBookmarkRepository;
+import com.emosaac.server.repository.bookmark.BookmarkRepository;
 import com.emosaac.server.repository.novel.NovelQueryRepository;
-import com.emosaac.server.repository.novel.NovelReadRepository;
+import com.emosaac.server.repository.readbook.ReadRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +18,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,8 +25,8 @@ import java.util.List;
 public class NovelService {
 
     private final NovelQueryRepository novelQueryRepository;
-    private final NovelBookmarkRepository novelBookmarkRepository;
-    private final NovelReadRepository novelReadRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final ReadRepository readRepository;
     private final UserRepository userRepository;
 
     // 요일별 소설 리스트
@@ -54,12 +51,12 @@ public class NovelService {
         book.addHit();
 
         Boolean bookmarkStatus = false;
-        if(novelBookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
+        if(bookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
             bookmarkStatus = true;
         }
 
         Boolean readStatus = false;
-        if(novelReadRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
+        if(readRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
             readStatus = false;
         }
         return new NovelDetailResponse(book, bookmarkStatus, readStatus);
