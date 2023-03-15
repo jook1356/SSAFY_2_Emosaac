@@ -1,12 +1,10 @@
-package com.emosaac.server.service.user;
+package com.emosaac.server.service.genre;
 
 import com.emosaac.server.common.exception.ArgumentMismatchException;
-import com.emosaac.server.common.exception.ResourceForbiddenException;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Genre;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.user.UserGenreRequest;
-import com.emosaac.server.dto.user.UserGenreResponse;
 import com.emosaac.server.dto.user.UserRequest;
 import com.emosaac.server.dto.user.UserResponse;
 import com.emosaac.server.repository.genre.GenreRepository;
@@ -14,38 +12,13 @@ import com.emosaac.server.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class GenreService {
     private final UserRepository userRepository;
     private final GenreRepository genreRepository;
-
-    public UserResponse getUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        return UserResponse.from(user);
-    }
-
-    @Transactional
-    public Long updateUserInfo(Long userId, UserRequest request) {
-
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-
-        if(nickNameCheck(request.getNickName())==true){
-            throw new ArgumentMismatchException("닉네임 중복입니다");
-        }
-        
-        user.setUserInfo(request); //이미지 링크 수정 빼야함, 따로 처리 필요
-
-        //이미지 널이면 디폴트 이미지 처리
-        //기존 이미지와 다르고 디폴트 이미지와 다르면 s3삭제
-
-        return userId;
-    }
 
     public boolean nickNameCheck(String nickName) {
         boolean flag = false;

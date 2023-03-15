@@ -12,12 +12,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
+import java.nio.DoubleBuffer;
+
 @RestController
 @RequestMapping("/api/novels")
 @Api(tags = {"소설 컨트롤러"})
 public class NovelController {
     @Autowired
     NovelService novelService;
+
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 소설 리스트를 조회한다.")
     @GetMapping("/day/{day}")
@@ -57,6 +61,8 @@ public class NovelController {
         ));
     }
 
+    /*toggle*/
+
     @ApiOperation(value = "북마크", notes = "작품의 북마크를 설정한다.")
     @PutMapping("/bookmark/{novelId}")
     public ResponseEntity<CommonResponse> setBookmarkByNovel(@PathVariable Long novelId,
@@ -70,67 +76,41 @@ public class NovelController {
 
     @ApiOperation(value = "읽음 유무", notes = "작품의 읽음 여부를 설정한다.")
     @PutMapping("/{novelId}")
-    public ResponseEntity<CommonResponse> setReadByNovel(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                           @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+    public ResponseEntity<CommonResponse> setReadByNovel(@PathVariable Long novelId,
+                                                         @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.setReadByNovel(size, criteria, id)
+                HttpStatus.CREATED, "읽음 유무 설정 성공", novelService.toggleReadByNovel(novelId, userPrincipal.getId())
         ));
     }
+
+    /* 평점 */
 
     @ApiOperation(value = "평점 조회", notes = "사용자가 설정한 평점을 조회한다.")
     @GetMapping("/score/{novelId}")
-    public ResponseEntity<CommonResponse> findScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                          @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
-                                                          @CurrentUser UserPrincipal user) {
+    public ResponseEntity<CommonResponse> findScoreByUser(@PathVariable Long novelId,
+                                                          @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "평점 조회 성공", novelService.findScoreByUser(size, criteria, id, user.getId())
-        ));
-    }
-
-    @ApiOperation(value = "평점 등록", notes = "사용자가 설정한 평점을 등록한다.")
-    @PostMapping("/score/{novelId}")
-    public ResponseEntity<CommonResponse> setScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                         @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
-                                                         @CurrentUser UserPrincipal user) {
-
-
-        return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "평점 등록 성공", novelService.setScoreByUser(size, criteria, id, user.getId())
+                HttpStatus.OK, "평점 조회 성공", novelService.findScoreByUser(novelId, userPrincipal.getId())
         ));
     }
 
     @ApiOperation(value = "평점 수정", notes = "사용자가 설정한 평점을 수정한다.")
     @PutMapping("/score/{novelId}")
-    public ResponseEntity<CommonResponse> updateScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                            @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
-                                                            @CurrentUser UserPrincipal user) {
+    public ResponseEntity<CommonResponse> updateScoreByUser(@PathVariable Long novelId,
+                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                                            @RequestParam(value = "score", defaultValue = "0")Double score) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "평점 수정 성공", novelService.updateScoreByUser(size, criteria, id, user.getId())
+                HttpStatus.CREATED, "평점 수정 성공", novelService.updateScoreByUser(novelId, userPrincipal.getId(), score)
         ));
     }
 
-    @ApiOperation(value = "평점 삭제", notes = "사용자가 설정한 평점을 삭제한다.")
-    @DeleteMapping("/score/{novelId}")
-    public ResponseEntity<CommonResponse> deleteScoreByUser(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                            @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
-                                                            @CurrentUser UserPrincipal user) {
-
-
-        return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.NO_CONTENT, "평점 삭제 성공", novelService.deleteScoreByUser(size, criteria, id, user.getId())
-        ));
-    }
+    ////////////////////
 
     @ApiOperation(value = "같은 작가 다른 작품", notes = "같은 작가 다른 작품을 조회한다.")
     @GetMapping("/author/{novelId}")

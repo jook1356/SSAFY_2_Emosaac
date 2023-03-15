@@ -1,7 +1,5 @@
 package com.emosaac.server.domain.book;
 
-import com.emosaac.server.domain.BaseEntity;
-import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +31,7 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GENRE_CD")
-    private Gerne genre;
+    private Genre genre;
 
     @Column(columnDefinition = "TEXT")
     private String story;
@@ -65,7 +63,7 @@ public class Book {
     @Column(name = "TYPE_CD")
     private Integer type; //0: 웹툰, 1: 웹소설
 
-    private double score; //우리 페이지 사용자가 체점
+    private double score; //우리 페이지 사용자가 체점 평균
 
     private Integer hit; //우리 사이트에서 조회수
 
@@ -77,12 +75,28 @@ public class Book {
     @Embedded
     private final BookmarkList bookmarkList = new BookmarkList();
 
+    @Embedded
+    private final ReadBookList readBookList = new ReadBookList();
+
+    @Embedded
+    private final ScoreList scoreList = new ScoreList();
+
     public void addHit() {
         this.hit = this.hit+1;
     }
 
     public boolean toggleBookmark(BookMark bookmark) {
         return bookmarkList.toggleBookmark(bookmark);
+    }
+    public boolean toggleReadBook(ReadBook readBook) {
+        return readBookList.toggleBookmark(readBook);
+    }
+
+    public Double setScore(Score score){
+        return scoreList.setScore(score);
+    }
+    public void setAvgScore(){
+        this.score = scoreList.getAvgScore();
     }
 }
 
