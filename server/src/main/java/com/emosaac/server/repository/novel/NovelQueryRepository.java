@@ -27,11 +27,37 @@ public class NovelQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    // 요일별 소설 리스트
     public Slice<NovelDayResponse> findBookListByDay(String day, PageRequest page, Long prevId, String criteria) {
         List<NovelDayResponse> content = jpaQueryFactory.select(new QNovelDayResponse(book))
                 .from(book)
                 .where(
                         book.day.contains(day),
+                        book.type.eq(1),
+                        //no-offset 페이징 처리
+                        ltBookId(prevId)
+                )
+//                .orderBy(findCriteria(criteria))
+                .limit(page.getPageSize()+1)
+                .orderBy(book.bookId.desc())
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() == page.getPageSize()+1) {
+            content.remove(page.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, page, hasNext);
+    }
+
+    // 장르별 소설 리스트
+    public Slice<NovelDayResponse> findBookListByGenre(Long genreCode, PageRequest page, Long prevId, String criteria) {
+        List<NovelDayResponse> content = jpaQueryFactory.select(new QNovelDayResponse(book))
+                .from(book)
+                .where(
+                        book.genre.gerneId.eq(genreCode),
+                        book.type.eq(1),
                         //no-offset 페이징 처리
                         ltBookId(prevId)
                 )

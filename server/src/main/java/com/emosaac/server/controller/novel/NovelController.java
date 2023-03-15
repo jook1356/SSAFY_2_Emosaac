@@ -36,11 +36,11 @@ public class NovelController {
     public ResponseEntity<CommonResponse> findGenreList(@PathVariable Long genreCode,
                                                         @RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                        @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+                                                        @RequestParam(value = "prevId", required = false, defaultValue = "1")Long prevId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(genreCode, size, criteria, id)
+                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(genreCode, size, criteria, prevId)
         ));
     }
 

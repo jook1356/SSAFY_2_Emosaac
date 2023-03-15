@@ -43,10 +43,20 @@ public class Book {
 
     private String views;//플랫폼에서 가져온 조회수
 
-    private double grade; // 플랫폼에서 가져온 평점
+    private String grade; // 플랫폼에서 가져온 평점
+/*
+1: kakao
+2: naver
+4: ridi
 
+3: kakao, naver
+5: kakao, ridi
+6: naver, ridi
+
+7: kakao, naver, ridi
+*/
     @Column(name = "PLAT_CD")
-    private Integer platform; //0: 카,1:네,2:리
+    private Integer platform;
 
     private String series; //현재까지 총 몇 편인지
 
