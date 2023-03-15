@@ -1,6 +1,7 @@
 package com.emosaac.server.service.novel;
 
 import com.emosaac.server.common.SlicedResponse;
+import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.novel.NovelDayResponse;
 import com.emosaac.server.dto.novel.NovelDetailResponse;
@@ -37,8 +38,10 @@ public class NovelService {
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
-    public NovelDetailResponse findDetailByNovel(int size, String criteria, Long id) {
-        return null;
+    public NovelDetailResponse findDetailByNovel(Long bookId) {
+//               Post post = postRepository.findPost(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
+        Book book = novelQueryRepository.findBookByNovel(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        return new NovelDetailResponse(book);
     }
 
     public Object setBookmarkByNovel(int size, String criteria, Long id) {

@@ -25,6 +25,7 @@ public class NovelDetailResponse {
     private String grade;
     private double score;
     private Integer hit;
+    private String day;
 
     @QueryProjection
     public NovelDetailResponse(Book book){
@@ -37,9 +38,11 @@ public class NovelDetailResponse {
         this.story = book.getStory();
         this.tag = book.getTag();
         this.genre = book.getGenre().getName();
+        this.grade = book.getGrade();
         this.regist = book.getRegist();
         this.score = book.getScore();
         this.hit = book.getHit();
+        this.day = book.getDay();
     }
 
 }

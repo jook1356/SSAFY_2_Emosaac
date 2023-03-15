@@ -17,6 +17,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QDayNovel.dayNovel;
@@ -73,6 +74,15 @@ public class NovelQueryRepository {
         }
 
         return new SliceImpl<>(content, page, hasNext);
+    }
+
+    public Optional<Book> findBookByNovel(Long bookId) {
+        return Optional.ofNullable(jpaQueryFactory.select(book)
+                .from(book)
+                .where(
+                        book.bookId.eq(bookId)
+                )
+                .fetchOne());
     }
 
     private BooleanExpression ltBookId(Long cursorId) {
