@@ -15,7 +15,7 @@ import static com.emosaac.server.domain.book.QBook.book;
 
 @RequiredArgsConstructor
 @Repository
-public class BookQueryRepository {
+public class TestBookQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
