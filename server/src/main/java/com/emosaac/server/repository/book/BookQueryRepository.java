@@ -3,7 +3,6 @@ package com.emosaac.server.repository.book;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.QBookDayResponse;
-import com.emosaac.server.dto.novel.QNovelDayResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;

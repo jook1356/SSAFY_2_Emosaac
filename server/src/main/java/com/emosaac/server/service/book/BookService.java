@@ -9,7 +9,6 @@ import com.emosaac.server.domain.book.Score;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.BookDetailResponse;
-import com.emosaac.server.dto.novel.NovelDetailResponse;
 import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.bookmark.BookmarkRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
@@ -53,6 +52,7 @@ public class BookService {
         Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
 
         book.addHit();
+        book.setAvgScore();
 
         Boolean bookmarkStatus = false;
         if(bookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
