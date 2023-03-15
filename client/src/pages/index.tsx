@@ -8,9 +8,7 @@ export default function Home() {
   return (
     <div>
       <div css={temp} />
-      <ScrollableCarousel API={recvBooks} identifier={'test1'}/>
-      {/* <div css={temp1} /> */}
-
+      <ScrollableCarousel API={recvBooks} identifier={"test1"} />
     </div>
   );
 }
@@ -18,10 +16,9 @@ export default function Home() {
 const temp = css`
   width: 50vw;
   height: 200px;
-`
+`;
 
 const temp1 = css`
   width: 50vw;
   height: 100vh;
-`
-
+`;
