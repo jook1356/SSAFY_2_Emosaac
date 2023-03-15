@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.validation.constraints.Size;
 
 import javax.persistence.*;
+
 @DynamicUpdate
 @Getter
 @Setter
@@ -44,18 +45,14 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(name = "IMAGE_URL", length = 512)
-    @NotNull
+//    @NotNull
     @Size(max = 512)
     private String imageUrl;
 
     @Column(name = "PROVIDER_TYPE", length = 20)
     @Enumerated(EnumType.STRING)
     @NotNull
-    private AuthProvider provider;
-
-    @Column(name = "DISCRIPTIOIN", length = 200)
-    @Nullable
-    private String discription;
+    private AuthProvider providerType;
 
     @Column(name = "GENDER")
     @Nullable
@@ -73,14 +70,18 @@ public class User extends BaseEntity {
 //    private Role role;
 
     @Builder
-    public User(String userName, String email, String password, String imageUrl, String providerId){
+    public User(String userName, String email, String password, String imageUrl,String providerId){
         this.userName = userName;
         this.email = email;
         this.password = "NO_PASS";
         this.imageUrl = imageUrl != null ? imageUrl : "";
+//        this.providerType = providerType;
         this.providerId = providerId;
+
 //        this.role = role;
     }
+
+
 
 //    public User update(String nickName, String imageUrl){
 //        this.nickName = nickName;

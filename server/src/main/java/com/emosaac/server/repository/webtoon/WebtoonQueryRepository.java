@@ -1,5 +1,6 @@
 package com.emosaac.server.repository.webtoon;
 
+
 import com.emosaac.server.domain.book.Gerne;
 import com.emosaac.server.dto.webtoon.QWebtoonListResponse;
 import com.emosaac.server.dto.webtoon.WebtoonListResponse;

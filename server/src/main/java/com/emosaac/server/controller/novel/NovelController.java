@@ -36,23 +36,21 @@ public class NovelController {
     public ResponseEntity<CommonResponse> findGenreList(@PathVariable Long genreCode,
                                                         @RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                        @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+                                                        @RequestParam(value = "prevId", required = false, defaultValue = "1")Long prevId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(genreCode, size, criteria, id)
+                HttpStatus.OK, "장르별 리스트 조회 성공", novelService.findGenreList(genreCode, size, criteria, prevId)
         ));
     }
 
     @ApiOperation(value = "작품 디테일", notes = "작품의 상세정보를 조회한다.")
-    @GetMapping("/{novelId}")
-    public ResponseEntity<CommonResponse> findDetailByNovel(@RequestParam(required=false, defaultValue = "date") String criteria,
-                                                              @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                              @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+    @GetMapping("/{bookId}")
+    public ResponseEntity<CommonResponse> findDetailByNovel(@PathVariable Long bookId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByNovel(size, criteria, id)
+                HttpStatus.OK, "작품 디테일 조회 성공", novelService.findDetailByNovel(bookId)
         ));
     }
 
