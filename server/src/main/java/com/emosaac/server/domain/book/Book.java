@@ -1,7 +1,5 @@
 package com.emosaac.server.domain.book;
 
-import com.emosaac.server.domain.BaseEntity;
-import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +31,7 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GENRE_CD")
-    private Gerne genre;
+    private Genre genre;
 
     @Column(columnDefinition = "TEXT")
     private String story;

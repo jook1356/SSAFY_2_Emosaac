@@ -1,7 +1,7 @@
 package com.emosaac.server.repository.webtoon;
 
 
-import com.emosaac.server.domain.book.Gerne;
+import com.emosaac.server.domain.book.Genre;
 import com.emosaac.server.dto.webtoon.QWebtoonListResponse;
 import com.emosaac.server.dto.webtoon.WebtoonListResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -36,7 +36,7 @@ public class WebtoonQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
 
-    public Slice<WebtoonListResponse> findGenreList(Gerne genre, PageRequest page, Long id) {
+    public Slice<WebtoonListResponse> findGenreList(Genre genre, PageRequest page, Long id) {
         List<WebtoonListResponse> content =  jpaQueryFactory.select(new QWebtoonListResponse(book))
                 .from(book)
                 .where(book.genre.eq(genre),ltArticleId(id),book.type.eq(0))

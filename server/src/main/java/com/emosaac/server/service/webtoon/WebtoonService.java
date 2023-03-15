@@ -2,7 +2,7 @@ package com.emosaac.server.service.webtoon;
 
 import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
-import com.emosaac.server.domain.book.Gerne;
+import com.emosaac.server.domain.book.Genre;
 import com.emosaac.server.dto.webtoon.WebtoonListResponse;
 import com.emosaac.server.repository.webtoon.WebtoonQueryRepository;
 import com.emosaac.server.repository.webtoon.GerneRepository;
@@ -26,8 +26,8 @@ public class WebtoonService {
     }
 
     public SlicedResponse<WebtoonListResponse> findGenreList(Long genreCode, int size, String criteria, Long id) {
-        Gerne gerne = gerneRepository.findByGerneId(genreCode).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreCode", genreCode));
-        Slice<WebtoonListResponse> page = webtoonQueryRepository.findGenreList(gerne,  PageRequest.ofSize(size), id);
+        Genre genre = gerneRepository.findByGerneId(genreCode).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreCode", genreCode));
+        Slice<WebtoonListResponse> page = webtoonQueryRepository.findGenreList(genre,  PageRequest.ofSize(size), id);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 

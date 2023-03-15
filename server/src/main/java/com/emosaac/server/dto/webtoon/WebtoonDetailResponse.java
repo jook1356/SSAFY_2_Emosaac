@@ -1,6 +1,6 @@
 package com.emosaac.server.dto.webtoon;
 
-import com.emosaac.server.domain.book.Gerne;
+import com.emosaac.server.domain.book.Genre;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class WebtoonDetailResponse {
     private String title;
     private String thumbnail;
     private String day;
-    private Gerne gerne;
+    private Genre genre;
     private String story;
     private String tag;
     private String grade;

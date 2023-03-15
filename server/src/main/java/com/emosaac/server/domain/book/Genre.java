@@ -1,7 +1,5 @@
 package com.emosaac.server.domain.book;
 
-import com.emosaac.server.domain.BaseEntity;
-import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-public class Gerne {
+public class Genre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
