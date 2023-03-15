@@ -9,7 +9,7 @@ interface Props {
 const Layout = (props: Props) => {
   return (
     <div>
-      {/* <NavigationBar /> */}
+      <NavigationBar />
       {props.children}
     </div>
   );
