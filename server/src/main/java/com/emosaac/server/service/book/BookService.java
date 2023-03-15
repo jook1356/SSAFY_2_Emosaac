@@ -61,7 +61,7 @@ public class BookService {
 
         Boolean readStatus = false;
         if(readRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
-            readStatus = false;
+            readStatus = true;
         }
 
         Score myScore = scoreQueryRepository.findScoreByBookIdAndUserId(bookId, userId);
