@@ -103,18 +103,18 @@ public class NovelQueryRepository {
         return book.bookId.desc();
     }
 
-/*- 로맨스: 20 로판: 21  판타지: 23 무협: 24 BL/GL: 25  현판: 27 미스터리: 28*/
+/*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
     private Predicate filterGenreCd(String criteria) {
         if(criteria.contains("로맨스")){
-            return book.genre.gerneId.eq(20L);
+            return book.genre.gerneId.eq(10L);
         } else if(criteria.contains("로판")){
-            return book.genre.gerneId.eq(21L);
+            return book.genre.gerneId.eq(11L);
         } else if(criteria.contains("판타지")){
-            return book.genre.gerneId.eq(23L);
+            return book.genre.gerneId.eq(13L);
         } else if(criteria.contains("무협")){
-            return book.genre.gerneId.eq(24L);
+            return book.genre.gerneId.eq(14L);
         } else if(criteria.contains("BL/GL")){
-            return book.genre.gerneId.eq(25L);
+            return book.genre.gerneId.eq(15L);
         } else if(criteria.contains("현판")){
             return book.genre.gerneId.eq(27L);
         } else if(criteria.contains("미스터리")){

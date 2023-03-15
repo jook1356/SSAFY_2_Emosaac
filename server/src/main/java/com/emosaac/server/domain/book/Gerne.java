@@ -21,11 +21,8 @@ public class Gerne {
     @Column(name = "GENRE_CD")
     private Long gerneId;
     /*
-    - 웹소설
-    - 로맨스: 20 로판: 21  판타지: 23 무협: 24 BL/GL: 25  현판: 27 미스터리: 28
-    - 웹툰
-    - 로맨스:  10 로판:  11 드라마: 12  판타지: 13  액션/무협: 14  BL/GL: 15 공포: 16
-*/
+    10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리
+    */
     private String name;
 
 }
