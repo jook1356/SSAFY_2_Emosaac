@@ -24,7 +24,7 @@ public class NovelController {
     @ApiOperation(value = "요일별 리스트", notes = "요일별 소설 리스트를 조회한다.")
     @GetMapping("/day/{day}")
     public ResponseEntity<CommonResponse> findDayList(@PathVariable String day,
-                                                      @RequestParam(required=false, defaultValue = "date") String criteria,
+                                                      @RequestParam(required=false, defaultValue = "") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                       @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
                                                       @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
