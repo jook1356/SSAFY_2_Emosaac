@@ -26,7 +26,7 @@ public class WebtoonService {
     }
 
     public SlicedResponse<WebtoonListResponse> findGenreList(Long genreCode, int size, String criteria, Long id) {
-        Genre genre = gerneRepository.findByGerneId(genreCode).orElseThrow(() -> new ResourceNotFoundException("Genre", "genreCode", genreCode));
+        Genre genre = gerneRepository.findByGerneId(genreCode).orElseThrow(() -> new ResourceNotFoundException("GenreResponse", "genreCode", genreCode));
         Slice<WebtoonListResponse> page = webtoonQueryRepository.findGenreList(genre,  PageRequest.ofSize(size), id);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
