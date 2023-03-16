@@ -89,8 +89,10 @@ public class UserService {
         return flag;
     }
 
+    ///<----------- 장르
+
     //나의 선호 장르 조회
-    public List<GenreResponse> getUserFavoriteGerne(Long userId, Long typeCode) {
+    public List<GenreResponse> getUserFavoriteGerne(Long userId, Integer typeCode) {
         User user = commonService.getUser(userId);
         String str = (typeCode==0) ? user.getFavoriteWebtoonGenre() : user.getFavoriteNovelGenre(); //선호 장르에 반영
 
@@ -99,7 +101,7 @@ public class UserService {
 
     //선호 장르 변경
     @Transactional
-    public List<GenreResponse> updateUserGenre(Long userId, UserGenreRequest request, Long typeCode) {
+    public List<GenreResponse> updateUserGenre(Long userId, UserGenreRequest request, Integer typeCode) {
         User user = commonService.getUser(userId);
         String str = listToString(request);
         if(typeCode==0){
@@ -115,7 +117,7 @@ public class UserService {
         String str = "";
         if (!request.getGerne().isEmpty()) {
             for (Long tmp : request.getGerne()) {
-                Genre genre = genreRepository.findById(tmp).orElseThrow(() -> new ResourceNotFoundException("GenreResponse", "genreId", tmp));
+                Genre genre = commonService.getGenre(tmp);
                 str += genre.getGerneId() + "^";
             }
         }

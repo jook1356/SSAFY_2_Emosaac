@@ -28,7 +28,7 @@ public class genreController {
     ////<---장르 조회
     @GetMapping()
     @ApiOperation(value = "장르 조회", notes = "장르를 list로 반환 / typeCode:0이면 웹툰/1:소설")
-    public ResponseEntity<CommonResponse> getBookGenre(@RequestParam(value = "typeCode") Long typeCode) {
+    public ResponseEntity<CommonResponse> getBookGenre(@RequestParam(value = "typeCode") int typeCode) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "장르 조회 성공", genreService.getBookGenre(typeCode)));
@@ -39,7 +39,7 @@ public class genreController {
     ////<----설문조사
     @GetMapping("/research")
     @ApiOperation(value = "설문조사 조회", notes = "설문조사 북 리스트를 반환 / typeCode:0이면 웹툰/1:소설")
-    public ResponseEntity<CommonResponse> getResearch(@RequestParam(value = "typeCode") Long typeCode) {
+    public ResponseEntity<CommonResponse> getResearch(@RequestParam(value = "typeCode") int typeCode) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "설문조사 조회 성공", genreService.getResearch(typeCode)));
@@ -51,7 +51,7 @@ public class genreController {
     @ApiOperation(value = "설문조사 수행", notes = "선호 장르 리스트를 반환")
     public ResponseEntity<CommonResponse> postResearch(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                        @RequestBody @Valid UserResearchRequest request,
-                                                       @RequestParam(value = "typeCode") Long typeCode) {
+                                                       @RequestParam(value = "typeCode") int typeCode) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "설문조사 성공", genreService.postResearch(userPrincipal.getId(), request, typeCode)));
@@ -84,4 +84,33 @@ public class genreController {
 
 
     ///----->
+
+    ////<---통계
+    @GetMapping("/total/amounts")
+    @ApiOperation(value = "나의 장르별 통계 조회", notes = "장르별 읽음 수치 리스트를 반환 / typeCode:0이면 웹툰/1:소설")
+    public ResponseEntity<CommonResponse> getTotalAmount(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                                         @RequestParam(value = "typeCode") int typeCode) {
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "장르별 통계 수치 조회 성공", genreService.getTotalAmount(userPrincipal.getId(), typeCode)));
+    }
+
+    @GetMapping("/total/genres")
+    @ApiOperation(value = "통계기반 선호/비선호 장르 조회", notes = "장르별 읽음 수치 리스트를 반환 / typeCode:0이면 웹툰/1:소설")
+    public ResponseEntity<CommonResponse> getTotalGenre(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                                        @RequestParam(value = "typeCode") int typeCode,
+                                                        @RequestParam(value = "isLike") int isLike) {
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "통계 기반 선호/비선호 장르 조회 성공", genreService.getTotalGenre(userPrincipal.getId(), typeCode, isLike)));
+    }
+
+//    @GetMapping("/total/my")
+//    @ApiOperation(value = "통계기반 선호/비선호 장르 조회", notes = "장르별 읽음 수치 리스트를 반환 / typeCode:0이면 웹툰/1:소설")
+//    public ResponseEntity<CommonResponse> getTotalGenre(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestParam(value = "typeCode") int typeCode) {
+//
+//        return ResponseEntity.ok().body(CommonResponse.of(
+//                HttpStatus.OK, "장르별 통계  조회 성공", genreService.getTotal(userPrincipal.getId(), typeCode)));
+//    }
+
 }

@@ -21,9 +21,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QGenre.genre;
@@ -38,14 +36,14 @@ public class GenreQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     //장르 조회
-    public List<Genre> findBookGenre(Long typeCode) {
+    public List<Genre> findBookGenre(int typeCode) {
         return jpaQueryFactory.select(genre)
                 .from(genre)
                 .where(filterGenreCd(typeCode)).
                 orderBy(genre.gerneId.asc()).fetch();
     }
 
-    public List<BookListResponse> findResearch(Long typeCode) {
+    public List<BookListResponse> findResearch(int typeCode) {
         return jpaQueryFactory.select(new QBookListResponse(book))
                 .from(research)
                 .where(research.type.eq(typeCode))
@@ -79,11 +77,48 @@ public class GenreQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
 
+    //총 읽음 카운트
+    public Long findTotalCount(Long userId, int typeCode) {
+        return jpaQueryFactory.select(readBook.book.count())
+                .from(readBook)
+                .where(readBook.book.type.eq(typeCode),
+                        readBook.user.userId.eq(userId))
+                .fetchFirst();
+    }
+
+    //장르별 읽음 카운트
+    public Long findReadSpecGenreCount(Long userId, int typeCode, Long genre) {
+        return jpaQueryFactory.select(readBook.book.count())
+                .from(readBook)
+                .where(readBook.book.type.eq(typeCode),
+                        readBook.user.userId.eq(userId),
+                        readBook.book.genre.gerneId.eq(genre)
+                        )
+                .fetchFirst();
+    }
+    //선호 장르
+    public List<Genre> findBookGenreisLike(int typeCode, Long[] likeList) {
+        return jpaQueryFactory.select(genre)
+                .from(genre)
+                .where(filterGenreCd(typeCode),
+                        genre.gerneId.in(likeList)
+                ).
+                orderBy(genre.gerneId.asc())
+                .fetch();
+    }
+
+    //선호 장르별 책
+
+
+
+    /////////////<-----조건
+
+
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (book.score.eq(cursorScore).and(book.bookId.lt(cursorId))).or(book.score.lt(cursorScore));
     }
 
-    private BooleanExpression filterGenreCd(Long typeCode) {
+    private BooleanExpression filterGenreCd(int typeCode) {
         if(typeCode == 1){
             return Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1).eq("2").
                     or(genre.gerneId.ne(12L).
@@ -91,8 +126,10 @@ public class GenreQueryRepository {
         } else if(typeCode == 0){ //웹툰
             return Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1).eq("1");
         }
-
         return null; // 장르 코드로 사용할 때
+
     }
+
+
 
 }

@@ -26,6 +26,15 @@ public class BookRequest {
 
     private Long genreCode;
 
+//    private int isLike;
+
+//    public BookRequest(int typeCd, int isLike) {
+//        this.typeCd = typeCd;
+//        this.isLike = isLike;
+//    }
+
+
+
     public BookRequest(int typeCd, String criteria, int size, Long prevId, Double prevScore) {
         this.typeCd = typeCd;
         this.criteria = criteria;

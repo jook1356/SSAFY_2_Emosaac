@@ -12,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -78,7 +77,7 @@ public class userController {
     @GetMapping("/{userId}/genres")
     @ApiOperation(value = "유저별 선호 장르 보여주기", notes = "웹툰 선호 리스트반환")
     public ResponseEntity<CommonResponse> getUserFavoriteGerne(@PathVariable Long userId,
-                                                               @RequestParam(value = "typeCode") Long typeCode){
+                                                               @RequestParam(value = "typeCode") int typeCode){
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "유저별 선호 장르 조회 성공", userService.getUserFavoriteGerne(userId, typeCode)));
     }
@@ -88,7 +87,7 @@ public class userController {
     @ApiOperation(value = "나의 웹툰/소설 선호 장르 수정", notes = "나의 선호 장르 수정하고 선호 리스트 반환")
     public ResponseEntity<CommonResponse> updateUserGenre(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                           @RequestBody @Valid UserGenreRequest request,
-                                                          @RequestParam(value = "typeCode") Long typeCode) {
+                                                          @RequestParam(value = "typeCode") int typeCode) {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "나의 웹툰 선호 장르 수정 성공", userService.updateUserGenre(userPrincipal.getId(), request, typeCode)));
     }
