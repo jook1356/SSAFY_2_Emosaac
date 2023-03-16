@@ -28,6 +28,7 @@ public class UserRequest {
     private String imageUrl;
 
     public static UserRequest from(UserRequestFile request, String imgUrl) {
-        return new UserRequest(request.getNickName(), request.getGender(), request.getAge(),imgUrl );
+        String tmpImg = imgUrl.replace("https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/","");
+        return new UserRequest(request.getNickName(), request.getGender(), request.getAge(), tmpImg);
     }
 }

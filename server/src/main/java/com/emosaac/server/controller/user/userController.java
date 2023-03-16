@@ -73,6 +73,8 @@ public class userController {
     }
 
 
+    //--------------->
+
     @GetMapping("/{userId}/webtoon/genres")
     @ApiOperation(value = "나의 웹툰 선호 장르 보여주기", notes = "웹툰 선호 리스트반환")
     public ResponseEntity<CommonResponse> getUserWebtoonGerne(@PathVariable Long userId){
@@ -101,6 +103,7 @@ public class userController {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "나의 소설 선호 장르 수정 성공", userService.updateUserNovelGenre(userPrincipal.getId(), request)));
     }
+
 
 
 

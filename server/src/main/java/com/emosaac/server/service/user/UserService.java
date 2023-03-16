@@ -51,17 +51,15 @@ public class UserService {
         String newImg = null;
 
         if(request.getImageUrl()!=null || !request.getImageUrl().equals("")){
-            newImg = request.getImageUrl().replace("https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/","");
+            newImg = request.getImageUrl();
         }
         System.out.println("newImg "+newImg);
 
         //이미지 널이면 디폴트 이미지 처리
         if(newImg==null || newImg.equals("")){
-            System.out.println("hey1111");
             originUser.updateImageUrl(baseImg);
             deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
         }else{
-            System.out.println("hey2222");
             originUser.updateImageUrl(newImg);
             if(!newImg.equals(originImg)){
                 deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
@@ -94,13 +92,13 @@ public class UserService {
     //나의 선호 웹툰 장르
     public List<GenreResponse> getUserWebtoonGerne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        return stringToList(user.getFavoriteWebtoonGenre()).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+        return stringToGenreList(user.getFavoriteWebtoonGenre()).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
 
     //나의 선호 소설 장르
     public List<GenreResponse> getUserNovelGerne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        return stringToList(user.getFavoriteNovelGenre()).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+        return stringToGenreList(user.getFavoriteNovelGenre()).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
 
     //웹툰 선호 장르 변경
@@ -123,15 +121,15 @@ public class UserService {
     public String listToString(UserGenreRequest request) {
         String str = "";
         if (!request.getGerne().isEmpty()) {
-            for (String tmp : request.getGerne()) {
-                Genre genre = genreRepository.findById(Long.parseLong(tmp)).orElseThrow(() -> new ResourceNotFoundException("GenreResponse", "genreId", tmp));
+            for (Long tmp : request.getGerne()) {
+                Genre genre = genreRepository.findById(tmp).orElseThrow(() -> new ResourceNotFoundException("GenreResponse", "genreId", tmp));
                 str += genre.getGerneId() + "^";
             }
         }
         return str;
     }
 
-    public List<Genre> stringToList(String request) {
+    public List<Genre> stringToGenreList(String request) {
         List<Genre> tmpList = new ArrayList<>();
         if (request != null) {
             String[] list = request.split("\\^");
