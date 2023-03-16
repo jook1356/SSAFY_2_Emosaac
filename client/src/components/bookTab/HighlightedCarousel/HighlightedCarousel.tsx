@@ -101,7 +101,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
       <div css={highlightedDecoratorCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, unit: cardLayout.unit, highlightedRef: dummyHighlightedRef, carouselWrapperRef: carouselWrapperRef})}/>
 
       
-      <div>
+      <div >
         {/* <button onClick={prevBtnHandler}>prev</button>
         <button
           onClick={() => {
@@ -121,25 +121,36 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
         
         <div
           ref={carouselWrapperRef}
+          className={"carousel-inner-wrapper"}
           css={carouselInnerWrapperCSS({
             widthValue: cardLayout.widthValue,
             unit: cardLayout.unit,
             highlightedWidthValue: cardLayout.highlightedWidthValue,
+            minWidthValue: cardLayout.minWidthValue,
+            minHighlightedWidthValue: cardLayout.minHighlightedWidthValue,
             spaceValue: cardLayout.spaceValue,
+            minSpaceValue: cardLayout.minSpaceValue,
+            normalRef: dummyNormalRef,
+            carouselWrapperRef: carouselWrapperRef
           })}
         >
           {renderBooks}
         </div>
 
-        <div
-          ref={dummyNormalRef}
-          css={dummyNormalCSS({
-            widthValue: cardLayout.widthValue,
-            heightValue: cardLayout.heightValue,
-            unit: cardLayout.unit,
-          })}
-        />
-        <div ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} />
+        <div css={dummyWrapper}>
+          <div
+            className={"dummy-normal"}
+            ref={dummyNormalRef}
+            css={dummyNormalCSS({
+              widthValue: cardLayout.widthValue,
+              heightValue: cardLayout.heightValue,
+              unit: cardLayout.unit,
+            })}
+          />
+          <div className={"dummy-highlighted"} ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} />
+          <div className={"dummy-min-highlighted"} css={dummyMinHighlightedCSS({minHighlightedHeightValue: cardLayout.minHighlightedHeightValue})} />
+        </div>
+        
       </div>
     </div>
   );
@@ -300,7 +311,12 @@ interface carouselInnerWrapperCSSProps {
   widthValue: number;
   unit: string;
   highlightedWidthValue: number;
+  minWidthValue: number,
+  minHighlightedWidthValue: number,
   spaceValue: number;
+  minSpaceValue: number;
+  normalRef: any;
+  carouselWrapperRef: any;
 }
 
 const carouselInnerWrapperCSS = ({
@@ -308,9 +324,22 @@ const carouselInnerWrapperCSS = ({
   unit,
   highlightedWidthValue,
   spaceValue,
+  minSpaceValue,
+  minWidthValue,
+  minHighlightedWidthValue,
+  normalRef,
+  carouselWrapperRef
 }: carouselInnerWrapperCSSProps) => {
+
+  const calcWidth =
+    normalRef?.current?.clientWidth < minWidthValue
+      ? ((minWidthValue + minSpaceValue) * 4 + minHighlightedWidthValue) + "px"
+      : ((widthValue + spaceValue) * 4 + highlightedWidthValue) + unit;
+
+  const calcLeft = carouselWrapperRef?.current?.clientWidth > document.body.offsetWidth ? -(carouselWrapperRef?.current?.clientWidth - document.body.offsetWidth) / 2 + 'px' : '0px'
   return css`
-    width: ${(widthValue + spaceValue) * 4 + highlightedWidthValue + unit};
+    width: ${calcWidth};
+    left: ${calcLeft};
     position: relative;
     display: flex;
   `;
@@ -330,7 +359,6 @@ const dummyNormalCSS = ({
   return css`
     width: ${widthValue + unit};
     height: ${heightValue + unit};
-    position: absolute;
     pointer-events: none;
     /* display: none; */
   `;
@@ -425,3 +453,20 @@ const highlightedDecoratorCSS = ({highlightedHeightValue, minHighlightedHeightVa
 
   `
 }
+
+
+interface dummyMinHighlightedCSSProps {
+  minHighlightedHeightValue: number;
+}
+const dummyMinHighlightedCSS = ({minHighlightedHeightValue}: dummyMinHighlightedCSSProps) => {
+  return css`
+    width: 1px;
+    height: ${minHighlightedHeightValue}px;
+    pointer-events: none;
+  `
+}
+
+const dummyWrapper = css`
+  display: flex;
+  justify-content: center;
+`
