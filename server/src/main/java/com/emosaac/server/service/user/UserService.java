@@ -51,7 +51,7 @@ public class UserService {
         String newImg = null;
 
         if(request.getImageUrl()!=null || !request.getImageUrl().equals("")){
-            newImg = request.getImageUrl().replace("https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/","");
+            newImg = request.getImageUrl();
         }
         System.out.println("newImg "+newImg);
 
