@@ -11,13 +11,15 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   const [bookDataList, setBookDataList] = useState<any[]>([...bookData]);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const dummyNormalRef = useRef<HTMLInputElement>(null);
-  const wrapperRef = useRef<any>([]);
-  // const dummyHighlightedRef = useRef<HTMLInputElement>(null);
+  // const wrapperRef = useRef<any>([]);
+  const carouselWrapperRef = useRef<HTMLInputElement>(null);
+  
+  const dummyHighlightedRef = useRef<HTMLInputElement>(null);
 
   const cardLayout = {
     widthValue: 13,
     heightValue: 19,
-    highlightedWidthValue: 20,
+    highlightedWidthValue: 17,
     highlightedHeightValue: 25,
     spaceValue: 5,
     unit: "vw",
@@ -31,11 +33,13 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   };
 
   useEffect(() => {
-    const temp = bookDataList.concat(bookDataList.slice(0, 5));
-
-    setBookDataList(() => temp);
-    console.log(bookDataList);
-    console.log(temp);
+    if (bookDataList[0].title !== bookDataList[bookDataList.length -6].title) {
+      const temp = bookDataList.concat(bookDataList.slice(0, 5));
+      setBookDataList(() => temp);
+    }
+    
+    // console.log(bookDataList);
+    // console.log(temp);
   }, []);
 
   const prevBtnHandler = () => {
@@ -59,7 +63,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
     .map((el, idx) => {
       return (
         <div
-          ref={(ele) => (wrapperRef.current[idx] = ele)}
+          // ref={(ele) => (wrapperRef.current[idx] = ele)}
           key={el.title}
           css={imgWrapperCSS({
             idx,
@@ -93,8 +97,12 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   return (
     // <div css={carouselOuterWrapperCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, highlightedRef: dummyHighlightedRef})}></div>
     <div css={carouselOuterWrapperCSS}>
+
+      <div css={highlightedDecoratorCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, unit: cardLayout.unit, highlightedRef: dummyHighlightedRef, carouselWrapperRef: carouselWrapperRef})}/>
+
+      
       <div>
-        <button onClick={prevBtnHandler}>prev</button>
+        {/* <button onClick={prevBtnHandler}>prev</button>
         <button
           onClick={() => {
             console.log(bookDataList);
@@ -102,8 +110,17 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
         >
           show
         </button>
-        <button onClick={nextBtnHandler}>next</button>
+        <button onClick={nextBtnHandler}>next</button> */}
+
+        <div css={prevBtnCSS} onClick={prevBtnHandler}>
+          〈
+        </div>
+        <div css={nextBtnCSS} onClick={nextBtnHandler}>
+          〉
+        </div>
+        
         <div
+          ref={carouselWrapperRef}
           css={carouselInnerWrapperCSS({
             widthValue: cardLayout.widthValue,
             unit: cardLayout.unit,
@@ -122,7 +139,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
             unit: cardLayout.unit,
           })}
         />
-        {/* <div ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} /> */}
+        <div ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} />
       </div>
     </div>
   );
@@ -155,6 +172,7 @@ const carouselOuterWrapperCSS = css`
         justify-content: center; */
   display: grid;
   place-items: center;
+  position: relative;
 `;
 
 interface imgWrapperCSSProps {
@@ -209,9 +227,9 @@ const imgWrapperCSS = ({
           : idx * (widthValue + spaceValue)) + unit;
   const calcTop =
     normalRef?.current?.clientWidth < minWidthValue
-      ? (idx === 2 ? -(minHighlightedHeightValue - minHeightValue) / 2 : 0) +
+      ? (idx !== 2 ? (minHighlightedHeightValue - minHeightValue) / 2 : 0) +
         "px"
-      : (idx === 2 ? -(highlightedHeightValue - heightValue) / 2 : 0) + unit;
+      : (idx !== 2 ? (highlightedHeightValue - heightValue) / 2 : 0) + unit;
   return css`
     transition-property: left top width height;
     transition-duration: 0.3s;
@@ -312,6 +330,8 @@ const dummyNormalCSS = ({
   return css`
     width: ${widthValue + unit};
     height: ${heightValue + unit};
+    position: absolute;
+    pointer-events: none;
     /* display: none; */
   `;
 };
@@ -330,6 +350,78 @@ const dummyHighlightedCSS = ({
   return css`
     width: ${highlightedWidthValue + unit};
     height: ${highlightedHeightValue + unit};
+    pointer-events: none;
     /* display: none; */
   `;
 };
+
+
+
+const prevBtnCSS = css`
+  z-index: 999;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 48px;
+  font-weight: 700;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: var(--text-color);
+  transition-property: font-size;
+  transition-duration: 0.2s;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    font-size: 54px;
+  }
+`;
+
+const nextBtnCSS = css`
+  z-index: 999;
+  position: absolute;
+  right: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 48px;
+  font-weight: 700;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: var(--text-color);
+  transition-property: font-size;
+  transition-duration: 0.2s;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    font-size: 54px;
+  }
+`;
+
+
+interface highlightedDecoratorCSS {
+  unit: string;
+  highlightedHeightValue: number;
+  minHighlightedHeightValue: number;
+  highlightedRef: any;
+  carouselWrapperRef: any;
+}
+
+const highlightedDecoratorCSS = ({highlightedHeightValue, minHighlightedHeightValue, unit, highlightedRef}: highlightedDecoratorCSS) => {
+  const calcHeight =
+    highlightedRef?.current?.clientHeight < minHighlightedHeightValue
+      ? minHighlightedHeightValue + 48 + "px"
+      : highlightedHeightValue + 5 + unit;
+
+  return css`
+    width: ${calcHeight};
+    height: ${calcHeight};
+    background-color: var(--border-color-2);
+    border-radius: 10000px;
+    position: absolute;
+
+  `
+}
