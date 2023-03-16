@@ -2,7 +2,9 @@ package com.emosaac.server.repository.book;
 
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.book.BookDayResponse;
+import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.dto.book.QBookDayResponse;
+import com.emosaac.server.dto.book.QBookListResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -25,8 +27,8 @@ public class BookQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     // 요일별 소설 리스트
-    public Slice<BookDayResponse> findBookListByDay(int typeCd, String day, PageRequest page, Long prevId, Double prevScore, String criteria) {
-        List<BookDayResponse> content = jpaQueryFactory.select(new QBookDayResponse(book))
+    public Slice<BookListResponse> findBookListByDay(int typeCd, String day, PageRequest page, Long prevId, Double prevScore, String criteria) {
+        List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
                         book.type.eq(typeCd),
@@ -51,8 +53,8 @@ public class BookQueryRepository {
     }
 
     // 장르별 소설 리스트
-    public Slice<BookDayResponse> findBookListByGenre(int typeCd, Long genreCode, PageRequest page, Long prevId, String criteria) {
-        List<BookDayResponse> content = jpaQueryFactory.select(new QBookDayResponse(book))
+    public Slice<BookListResponse> findBookListByGenre(int typeCd, Long genreCode, PageRequest page, Long prevId, String criteria) {
+        List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
                         book.type.eq(typeCd),
@@ -82,6 +84,24 @@ public class BookQueryRepository {
                         book.bookId.eq(bookId)
                 )
                 .fetchOne());
+    }
+
+    // 같은 작가 다른 작품 조회
+    /*
+    * 고려사항 1: 같은 작가의 작품이 생각보다 많지 않다. 웹툰/소설을 통일해야할까??
+    * 고려사항 2: 작가 이름이 배열(여러명)일 경우, '/'로 split()해서 여러번 sql을 호출해야겠지?
+    * 고려사항 3: 같은 작가의 작품은 막 몇십개씩 되지 않으니까, 페이지네이션 안 해도 되겠지?
+    */
+    public List<BookListResponse> findBookByAuthor(int typeCd, Long bookId, String[] author){
+
+        return jpaQueryFactory.select(new QBookListResponse(book))
+                .from(book)
+                .where(
+                        book.author.in(author),
+                        book.bookId.ne(bookId)
+                )
+                .orderBy(book.score.desc(), book.bookId.desc())
+                .fetch();
     }
 
     private BooleanExpression ltBookId(Long cursorId) {
@@ -119,6 +139,8 @@ public class BookQueryRepository {
             return book.genre.gerneId.eq(27L);
         } else if(criteria.contains("미스터리")){
             return book.genre.gerneId.eq(28L);
+        } else if(criteria.contains("")){
+            return null;
         }
 
         return book.genre.gerneId.eq(Long.valueOf(criteria)); // 장르 코드로 사용할 때
