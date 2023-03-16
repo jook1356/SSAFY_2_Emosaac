@@ -1,9 +1,8 @@
 package com.emosaac.server.controller.genre;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.dto.genre.BookRequest;
+import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.UserResearchRequest;
-import com.emosaac.server.dto.user.UserGenreRequest;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.genre.GenreService;

@@ -10,6 +10,7 @@ import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.BookDetailResponse;
 import com.emosaac.server.dto.book.BookListResponse;
+import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.bookmark.BookmarkRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
@@ -39,9 +40,9 @@ public class BookService {
     private final CommonService commonService;
 
     // 요일별 작품 리스트
-    public SlicedResponse<BookListResponse> findDayList(String day, int size, String criteria, Long prevId, Double prevScore, int typeCd) {
+    public SlicedResponse<BookListResponse> findDayList(String day, BookRequest request) {
 
-        Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(typeCd, day, PageRequest.ofSize(size), prevId, prevScore, criteria);
+        Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(day, request);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
