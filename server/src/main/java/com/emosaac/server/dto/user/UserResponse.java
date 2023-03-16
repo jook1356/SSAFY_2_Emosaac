@@ -35,8 +35,7 @@ public class UserResponse {
 //    private List<String> novelGerne;
 
     public static UserResponse from(User user) {
-        String imgUrl = user.getImageUrl();
-        //        String imgUrl = "https://utilbucket.s3.ap-northeast-2.amazonaws.com/static/user/" + user.getImageUrl();
+        String imgUrl = "https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/" + user.getImageUrl();
         List<String> tmpWebtoon = new ArrayList<>();
         List<String> tmpNovel = new ArrayList<>();
 

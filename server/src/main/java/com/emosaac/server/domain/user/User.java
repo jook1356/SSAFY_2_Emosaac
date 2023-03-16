@@ -1,6 +1,7 @@
 package com.emosaac.server.domain.user;
 
 import com.emosaac.server.dto.user.UserRequest;
+import com.emosaac.server.dto.user.UserRequestFile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
@@ -10,7 +11,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.validation.constraints.Size;
 
 import javax.persistence.*;
-import java.util.List;
 
 @DynamicUpdate
 @Getter
@@ -101,7 +101,6 @@ public class User extends BaseEntity {
         this.nickName = user.getNickName();
         this.gender = user.getGender();
         this.age = user.getAge();
-        this.imageUrl = user.getImageUrl();
         return this;
     }
     public void updateNickName(String nickName){
@@ -109,7 +108,7 @@ public class User extends BaseEntity {
     }
 
     public void updateImageUrl(String profileImageUrl){
-        this.imageUrl = imageUrl;
+        this.imageUrl = profileImageUrl;
     }
 
     public void setUserProfile(String baseImg) {
