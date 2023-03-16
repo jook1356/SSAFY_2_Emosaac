@@ -113,7 +113,7 @@ public class WebtoonController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "같은 작가 다른 작품 조회 성공", bookService.findListByAuthor(bookId)
+                HttpStatus.OK, "같은 작가 다른 작품 조회 성공", bookService.findListByAuthor(bookId, 1)
         ));
     }
 

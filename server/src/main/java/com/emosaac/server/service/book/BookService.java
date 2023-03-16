@@ -9,6 +9,7 @@ import com.emosaac.server.domain.book.Score;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.BookDetailResponse;
+import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.bookmark.BookmarkRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
@@ -16,10 +17,13 @@ import com.emosaac.server.repository.score.ScoreQueryRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,16 +37,16 @@ public class BookService {
     private final UserRepository userRepository;
 
     // 요일별 작품 리스트
-    public SlicedResponse<BookDayResponse> findDayList(String day, int size, String criteria, Long prevId, Double prevScore, int typeCd) {
+    public SlicedResponse<BookListResponse> findDayList(String day, int size, String criteria, Long prevId, Double prevScore, int typeCd) {
 
-        Slice<BookDayResponse> page = bookQueryRepository.findBookListByDay(typeCd, day, PageRequest.ofSize(size), prevId, prevScore, criteria);
+        Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(typeCd, day, PageRequest.ofSize(size), prevId, prevScore, criteria);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 장르벌 작품 리스트
-    public SlicedResponse<BookDayResponse> findGenreList(Long genreCode, int size, String criteria, Long prevId, int typeCd) {
+    public SlicedResponse<BookListResponse> findGenreList(Long genreCode, int size, String criteria, Long prevId, int typeCd) {
 
-        Slice<BookDayResponse> page = bookQueryRepository.findBookListByGenre(typeCd, genreCode, PageRequest.ofSize(size), prevId, criteria);
+        Slice<BookListResponse> page = bookQueryRepository.findBookListByGenre(typeCd, genreCode, PageRequest.ofSize(size), prevId, criteria);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
@@ -120,10 +124,13 @@ public class BookService {
         return result;
     }
 
-    /**/
-    public Object findListByAuthor(Long bookId) {
+    /* 같은 작가 다른 작품 찾기 */
+    public List<BookListResponse> findListByAuthor(Long bookId, int typeCd) {
+
         Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        return null;
+        String[] author = book.getAuthor().split("/");
+
+        return bookQueryRepository.findBookByAuthor(typeCd, bookId, author);
     }
 
     /* 추천 알고리즘 적용 */

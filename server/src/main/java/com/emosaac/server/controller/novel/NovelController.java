@@ -12,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.Valid;
-import java.nio.DoubleBuffer;
-
 @RestController
 @RequestMapping("/api/novels")
 @Api(tags = {"소설 컨트롤러"})
@@ -119,7 +116,7 @@ public class NovelController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "같은 작가 다른 작품 조회 성공", bookService.findListByAuthor(novelId)
+                HttpStatus.OK, "같은 작가 다른 작품 조회 성공", bookService.findListByAuthor(novelId, 1)
         ));
     }
 
