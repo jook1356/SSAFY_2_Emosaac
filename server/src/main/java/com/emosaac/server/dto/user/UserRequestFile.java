@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class UserRequest {
+public class UserRequestFile {
 
     //닉네임
     @NotBlank(message = "빈문자열을 허용하지 않습니다.")
@@ -25,9 +26,7 @@ public class UserRequest {
     //나이
     private Integer age;
     //프로필 이미지
-    private String imageUrl;
+//    private String imageUrl;
 
-    public static UserRequest from(UserRequestFile request, String imgUrl) {
-        return new UserRequest(request.getNickName(), request.getGender(), request.getAge(),imgUrl );
-    }
+    private MultipartFile file;
 }
