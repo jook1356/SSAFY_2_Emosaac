@@ -21,7 +21,7 @@ public class BookCommentQueryRepository {
         return jpaQueryFactory.select(new QCommentResponse(bookComment))
                 .distinct().from(bookComment)
                 .where(bookComment.book.bookId.eq(bookId),
-                        bookComment.depth.eq(0))
+                        bookComment.depth.eq(state))
                 .orderBy(bookComment.createdDate.desc())
                 .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
                 .fetch();

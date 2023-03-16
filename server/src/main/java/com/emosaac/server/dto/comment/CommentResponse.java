@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -30,9 +31,9 @@ public class CommentResponse {
     private String modifiedDate;
 
     private Boolean isDelete;
-    private Boolean isChild;
+    private Boolean isChild = false; // 자식 가지고 있는지
 
-    private List<CommentResponse> children = new ArrayList<>();
+//    private List<CommentResponse> children = new ArrayList<>();
     @QueryProjection
     public CommentResponse(BookComment comment) { //전체 조회
 
@@ -50,6 +51,10 @@ public class CommentResponse {
             this.parentWriterNickName = comment.getParent().getUser().getUserName();
         }
         this.isDelete = comment.getIsDelete();
+        if(comment.getChildren().size() != 0){
+            isChild = true;
+        }
+//        this.children = comment.getChildren().stream().map((c)-> new CommentResponse(c)).collect(Collectors.toList());;
     }
     public CommentResponse(BookComment comment, String content) { //삭제 처리된 댓글 결과
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -68,6 +73,7 @@ public class CommentResponse {
 
 
     }
+
     public static CommentResponse from(BookComment comment) {
         return comment.getIsDelete() ?
                 new CommentResponse(comment, "삭제된 댓글입니다") : new CommentResponse(comment);
