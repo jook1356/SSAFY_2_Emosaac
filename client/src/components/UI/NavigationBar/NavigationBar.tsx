@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import emosaac_logo from "@/assets/emosaac_logo.svg";
 import emosaac_logo_mobile from "@/assets/emosaac_logo_mobile.png";
@@ -8,36 +8,36 @@ import emosaac_logo_mobile from "@/assets/emosaac_logo_mobile.png";
 import { SearchBar } from "./SearchBar";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { BasicButton } from "./BasicButton";
-import { useIsClient } from "@/components/Responsive/useIsClient";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 import { useMediaQuery } from "react-responsive";
 import { BsPersonFill } from "react-icons/bs";
 
 export const NavigationBar = () => {
-  const isClient = useIsClient();
-
   // DeskTop Nav content의 최소 너비
   const isNavLimit = !useMediaQuery({
     query: "(min-width: 1124px) or (max-width: 1023px)",
   });
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
+  useEffect(() => {
+    console.log(
+      `isDeskTop:${isDeskTop}, isTablet:${isTablet}, isMobile:${isMobile}`
+    );
+  }, [isDeskTop, isTablet, isMobile]);
   return (
     <nav>
       <div css={navBackCSS}>
         <div css={navWrapCSS({ isNavLimit, isDeskTop, isTablet, isMobile })}>
           <h1 css={logoWrapCSS}>
-            <Image
-              alt="logo"
-              src={isMobile ? emosaac_logo_mobile : emosaac_logo}
-            />
+            {isMobile && <Image alt="logo" src={emosaac_logo_mobile} />}
+            {!isMobile && <Image alt="logo" src={emosaac_logo} />}
           </h1>
-          {isClient && isDeskTop && (
+          {isDeskTop && (
             <div css={menuWrapCSS(isDeskTop)}>
               <a href="#">웹툰</a>
               <a href="#">웹소설</a>
             </div>
           )}
-          {isClient && !isMobile && (
+          {!isMobile && (
             <SearchBar
               isDeskTop={isDeskTop}
               isTablet={isTablet}
@@ -61,7 +61,7 @@ export const NavigationBar = () => {
           ) : null}
         </div>
       </div>
-      {isClient && !isDeskTop && (
+      {!isDeskTop && (
         <div css={menuWrapCSS(isDeskTop)}>
           <a href="#">웹툰</a>
           <a href="#">웹소설</a>
