@@ -31,54 +31,41 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GenreService {
-    private final UserRepository userRepository;
     private final GenreQueryRepository genreQueryRepository;
-    private final GenreRepository genreRepository;
-    private final BookRepository bookRepository;
     private final UserService userService;
     private final CommonService commonService;
 
 
-    public List<GenreResponse> getWebtoonGenre() {
-        return genreRepository.findWebtoon().stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+    public List<GenreResponse> getBookGenre(Long typeCode) {
+        return genreQueryRepository.findBookGenre(typeCode).stream().map(
+                (genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
 
-    public List<GenreResponse> getNovelGenre() {
-        return genreQueryRepository.findNovel().stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
 
-    }
-    
     //설문조사 리스트
-    public List<BookListResponse> getWebtoonResearch() {
-        return genreQueryRepository.findWebtoonResearch();
+    public List<BookListResponse> getResearch(Long typeCode) {
+        return genreQueryRepository.findResearch(typeCode);
     }
 
-    public List<BookListResponse> getNovelGenreRearch() {
-        return genreQueryRepository.findNovelResearch();
-    }
     @Transactional
-    public List<GenreResponse> postWebtoonResearch(Long userId, UserResearchRequest request) { //나의 선호 장르에 반영해야함
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-        
+    public List<GenreResponse> postResearch(Long userId, UserResearchRequest request, Long typeCode ) { //나의 선호 장르에 반영해야함
+
+        User user = commonService.getUser(userId);
         String str = BookListToString(request);
-        user.setFavoriteWebtoonGenre(str); //선호 장르에 반영
+        if(typeCode==0){
+            user.setFavoriteWebtoonGenre(str); //선호 장르에 반영
+        } else if (typeCode==1) {
+            user.setFavoriteNovelGenre(str); //선호 장르에 반영
+
+        }
         return userService.stringToGenreList(str).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
 
-    }
-    @Transactional
-    public List<GenreResponse> postNovelGenreResearch(Long userId, UserResearchRequest request) {
-
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-
-        String str = BookListToString(request);
-        user.setFavoriteNovelGenre(str); //선호 장르에 반영
-        return userService.stringToGenreList(str).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
 
     public String BookListToString(UserResearchRequest request){
         Set<Long> set = new HashSet<>();
         for (Long tmp : request.getBookId()){
-            Book book = bookRepository.findByBookId(tmp).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", tmp));
+            Book book = commonService.getBook(tmp);
             set.add(book.getGenre().getGerneId());
         }
         String str = "";
@@ -90,17 +77,9 @@ public class GenreService {
 
     public SlicedResponse<BookListResponse> getBookByGenre(Long userId, BookRequest request) {
         User user = commonService.getUser(userId);
-        Slice<BookListResponse> page = genreQueryRepository.findBookListByGenre(request, PageRequest.ofSize(request.getSize()));
+        Slice<BookListResponse> page = genreQueryRepository.findBookListByGenre(user, request, PageRequest.ofSize(request.getSize()));
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
 
     }
 
-    /////////<--------
-//    public List<BookListResponse> getWebtoonByGenre(Long userId, Long genre) {
-//        Slice<BookListResponse> page = genreRepository.findBookListByGenre(typeCd, genreCode, PageRequest.ofSize(size), prevId, criteria);
-//        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
-//    }
-
-
-    ///----->
 }
