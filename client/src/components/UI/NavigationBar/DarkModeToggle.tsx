@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const DarkModeToggle = (props: Props) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   useEffect(() => {
     document.documentElement.setAttribute(
       "data-theme",
