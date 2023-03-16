@@ -87,12 +87,7 @@ public class BookQueryRepository {
     }
 
     // 같은 작가 다른 작품 조회
-    /*
-    * 고려사항 1: 같은 작가의 작품이 생각보다 많지 않다. 웹툰/소설을 통일해야할까??
-    * 고려사항 2: 작가 이름이 배열(여러명)일 경우, '/'로 split()해서 여러번 sql을 호출해야겠지?
-    * 고려사항 3: 같은 작가의 작품은 막 몇십개씩 되지 않으니까, 페이지네이션 안 해도 되겠지?
-    */
-    public List<BookListResponse> findBookByAuthor(int typeCd, Long bookId, String[] author){
+    public List<BookListResponse> findBookByAuthor(Long bookId, String[] author){
 
         return jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
