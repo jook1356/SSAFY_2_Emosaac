@@ -15,11 +15,12 @@ export default function Home() {
     content: [
       <Image src={banner1} alt={""} css={bannerImage} />,
       <Image src={banner2} alt={""} css={bannerImage} />,
+      <Image src={banner2} alt={""} css={bannerImage} />,
     ],
   };
 
   return (
-    <div>
+    <div css={indexWrapper}>
       <div css={temp1} ref={parentRef}>
         <SwipeableGallery parentRef={parentRef} content={postData} />
       </div>
@@ -27,9 +28,20 @@ export default function Home() {
       <div css={temp} />
       <ScrollableCarousel API={recvBooks} identifier={"test1"} />
       <div css={temp} />
+      <div css={temp} />
+      <div css={temp} />
+      <div css={temp} />
+      <div css={temp} />
+      <div css={temp} />
+      <div css={temp} />
+      <div css={temp} />
     </div>
   );
 }
+
+const indexWrapper = css`
+  overflow: hidden;
+`
 
 const bannerImage = css`
   width: 100%;

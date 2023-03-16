@@ -10,7 +10,7 @@ interface BookCardModalProps {
   isMouseOn: boolean;
   setModalToggler: Function;
   bookData: any;
-  parentRef: React.ForwardedRef<HTMLDivElement>;
+  parentRef: any;
   imgHeight: string | undefined;
   imgMinHeight: string | undefined;
 }
@@ -45,7 +45,16 @@ const BookCardModal = ({
   const modalHandler = () => {
     if (isMouseOn === true && contentToggler === true) {
       setTimeout(function () {
+        if (wrapperRef.current !== null) {
+          wrapperRef.current.style.opacity = '0'
+        }
+        
+      }, 100);
+      
+      setTimeout(function () {
         setModalToggler(() => false);
+        
+        
       }, 500);
     } else {
       setModalToggler(() => false);
@@ -54,9 +63,24 @@ const BookCardModal = ({
     setIsClosing(() => true)
   };
 
+  const onWheelHandler = () => {
+    if (wrapperRef.current !== null) {
+      wrapperRef.current.style.width = parentRef.current.clientWidth + 'px'
+      wrapperRef.current.style.height = parentRef.current.clientHeight + 'px'
+      wrapperRef.current.style.left = parentRef.current.getBoundingClientRect().left + 'px'
+      setTimeout(function() { 
+        if (wrapperRef.current !== null) {
+          wrapperRef.current.style.top = parentRef.current.getBoundingClientRect().top + 'px' 
+          wrapperRef.current.style.opacity = '0'
+        }
+      }, 200);
+    }
+  }
+
   return (
     <div
       onMouseLeave={modalHandler}
+      onWheel={onWheelHandler}
       ref={wrapperRef}
       css={wrapperCSS({
         modalToggler: contentToggler,
