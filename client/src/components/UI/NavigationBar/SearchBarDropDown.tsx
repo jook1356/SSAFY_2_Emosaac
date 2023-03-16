@@ -35,8 +35,8 @@ const dropDownWrapCSS = css`
   height: 100%;
 `;
 const dropDownBoxCSS = css`
-  /* display: none; */
-  position: absolute;
+  display: none;
+  /* position: absolute; */
   top: 0;
   left: -14px;
   width: 120px;
