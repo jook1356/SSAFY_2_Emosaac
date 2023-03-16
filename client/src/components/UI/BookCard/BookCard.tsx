@@ -34,29 +34,60 @@ const BookCard = ({
   minHeight,
 }: Props) => {
 
+  const isMobile = () => {
+    var user = navigator.userAgent;
+    var is_mobile = false;
+    if( user.indexOf("iPhone") > -1 
+        || user.indexOf("Android") > -1 
+        || user.indexOf("iPad") > -1
+        || user.indexOf("iPod") > -1
+    ) {
+    
+        is_mobile = true;
+        
+    }
+    return is_mobile;
+  }
+
   const wrapperRef = useRef<HTMLInputElement>(null);
   const [modalToggler, setModalToggler] = useState<boolean>(false)
+  const [isMouseOn, setIsMouseOn] = useState<boolean>(false)
 
   const platformBar = (
     <div css={platformBarCSS}></div>
   )
 
-  const modalHandler = () => {
-    setModalToggler(() => true)
-    console.log(wrapperRef)
-    console.log(wrapperRef.current && wrapperRef.current.getBoundingClientRect().top)
+  const showModal = () => {
+    setTimeout(function () {
+        setModalToggler(() => true)
+    }, 500);
+    setIsMouseOn(() => true)
+  }
+
+  const hideModal = () => {
+    setIsMouseOn(() => false)
+    setTimeout(function() { 
+      setModalToggler(() => false)
+    }, 500);
+  }
+
+  const instantlyRedirect = () => {
+    if (isMobile() === true) {
+      // 모바일에서 Detail 페이지로 바로 이동
+    } 
+    
   }
   
 
   const modal = (
     <Portal selector=".overlay-root">
-      <BookCardModal modalToggler={modalToggler} setModalToggler={setModalToggler} bookData={bookData} parentRef={wrapperRef} />
+      <BookCardModal modalToggler={modalToggler} isMouseOn={isMouseOn} setModalToggler={setModalToggler} bookData={bookData} parentRef={wrapperRef} imgHeight={height} imgMinHeight={minHeight} />
     </Portal>
   )
 
   return (
-    <div css={cardOuterWrapper} ref={wrapperRef} onMouseEnter={modalHandler} >
-      {modalToggler && modal}
+    <div css={cardOuterWrapper} ref={wrapperRef} onClick={instantlyRedirect} onMouseOver={(event) => {event.stopPropagation(); showModal();}} onMouseLeave={hideModal} >
+      {isMobile() === false && (modalToggler && modal)}
       
       <div  css={cardInnerWrapperCSS({ width, height, minWidth, minHeight })}>
         <div
@@ -64,7 +95,7 @@ const BookCard = ({
             state: bookData !== "LOADING" ? true : false,
           })}
         />
-        <img src={bookData && bookData.img} alt={bookData && bookData.title} css={imageCSS} />
+        <img className={"img"} src={bookData && bookData.img} alt={bookData && bookData.title} css={imageCSS} />
         {showPlatform && bookData !== "LOADING" && platformBar}
       </div>
     </div>
@@ -73,7 +104,6 @@ const BookCard = ({
 
 const cardOuterWrapper = css`
   position: relative;
-  
 `
 
 
@@ -101,6 +131,7 @@ const cardInnerWrapperCSS = ({
     display: flex;
     justify-content: center;
     align-items: center;
+    
 
   `;
 };
@@ -112,11 +143,16 @@ const platformBarCSS = css`
   background-color: rgba(0,0,0,0.2);
   position: absolute;
   bottom: 0;
+  pointer-events: none;
 `;
 
 const imageCSS = css`
   width: auto;
   height: 100%;
+  transition: transform 0.3s;
+  &:hover {
+      transform: scale(1.1)
+  }
 `
 
 interface skeletonLoadingTagCSSProps {
@@ -133,6 +169,7 @@ const skeletonLoadingTagCSS = ({ state }: skeletonLoadingTagCSSProps) => {
     background-color: rgb(200, 200, 200);
     position: absolute;
     opacity: ${state ? "0" : "255"};
+    pointer-events: none;
   `;
 };
 
