@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import profile from "../../assets/profileexample.jpg";
 import thumbnail from "../../assets/thumbnail.png";
 import Image from "next/image";
-import MiddleWideButton from "../UI/Button/MiddleWidebutton";
+import MiddleWideButton from "../UI/Button/MiddleWideButton";
 import { useState } from "react";
 import Chart from "./Chart";
 // import Image from "next/image";
