@@ -88,7 +88,7 @@ public class BookCommentService {
         }
         return commentId;
     }
-
+    
     // state 0 : 부모, 1 : 자식
     public List<CommentResponse> findBookCommentList(Long bookId, int state, int offset, int size) {
         return bookCommentQueryRepository.findCommentByBookId(bookId, state, PageRequest.of(offset - 1, size));

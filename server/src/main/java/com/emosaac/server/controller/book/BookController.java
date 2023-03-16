@@ -1,10 +1,9 @@
-package com.emosaac.server.controller.webtoon;
+package com.emosaac.server.controller.book;
 
 import com.emosaac.server.common.CommonResponse;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.book.BookService;
-import com.emosaac.server.service.webtoon.WebtoonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,36 +13,39 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-@RequestMapping("/api/webtoons")
-@Api(tags = {"웹툰 컨트롤러"})
-public class WebtoonController {
+@RequestMapping("/api/books")
+@Api(tags = {"북 컨트롤러"})
+public class BookController {
+
     @Autowired
     BookService bookService;
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 웹툰 리스트를 조회한다.")
     @GetMapping("/day/{day}")
     public ResponseEntity<CommonResponse> findDayList(@PathVariable String day,
-                                                      @RequestParam(required=false, defaultValue = "date") String criteria,
+                                                      @RequestParam (value = "typeCode") int typeCd,
+                                                      @RequestParam(required=false, defaultValue = "") String criteria,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                       @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
                                                       @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
 //
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", bookService.findDayList(day, size, criteria, prevId, prevScore, 0)
+                HttpStatus.OK, "요일별 리스트 조회 성공", bookService.findDayList(day, size, criteria, prevId, prevScore, typeCd)
         ));
     }
 
     @ApiOperation(value = "장르별 리스트", notes = "장르별 웹툰 리스트를 조회한다.")
     @GetMapping("/genre/{genreCode}")
     public ResponseEntity<CommonResponse> findGenreList(@PathVariable Long genreCode,
+                                                        @RequestParam (value = "typeCode") int typeCd,
                                                         @RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                         @RequestParam(value = "prevId", required = false, defaultValue = "1")Long prevId) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 리스트 조회 성공", bookService.findGenreList(genreCode, size, criteria, prevId, 0)
+                HttpStatus.OK, "장르별 리스트 조회 성공", bookService.findGenreList(genreCode, size, criteria, prevId, typeCd)
         ));
     }
 
@@ -54,7 +56,7 @@ public class WebtoonController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByBook(bookId, userPrincipal.getId(), 0)
+                HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByBook(bookId, userPrincipal.getId())
         ));
     }
 
@@ -126,5 +128,4 @@ public class WebtoonController {
                 HttpStatus.OK, "유사한 작품 조회 성공", bookService.findListByItem(bookId)
         ));
     }
-
 }

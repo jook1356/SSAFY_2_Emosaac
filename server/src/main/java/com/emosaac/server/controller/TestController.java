@@ -15,8 +15,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/books")
-@Api(tags = {"북 컨트롤러"})
-public class BookController {
+@Api(tags = {"테스트 컨트롤러"})
+public class TestController {
 
     @Autowired
     TestBookService bookService;
