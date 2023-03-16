@@ -1,8 +1,11 @@
 package com.emosaac.server.service.emopick;
 
 import com.emosaac.server.common.exception.ResourceNotFoundException;
+import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.emo.Emopick;
 import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.book.BookDetailResponse;
+import com.emosaac.server.dto.emopick.BookReveiwResponse;
 import com.emosaac.server.dto.emopick.EmopickDetailResponse;
 import com.emosaac.server.dto.emopick.EmopickSaveRequest;
 import com.emosaac.server.repository.book.BookQueryRepository;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,11 +39,32 @@ public class EmopickService {
         Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
 
         EmopickDetailResponse result = new EmopickDetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent());
-        System.out.println(emopick.getEmopickList());
 
-        return null;
+        String[] bookId = emopick.getBookSeq().split("_");
+
+        LinkedHashMap<Long, BookReveiwResponse> map = new LinkedHashMap<>();
+
+        for(int i=0; i<bookId.length; i++){
+            Book book = commonService.getBook(Long.valueOf(bookId[i]));
+
+            BookReveiwResponse bookReveiwResponse = new BookReveiwResponse(book, emopick.getEmopickList().get(book.getBookId()));
+
+            if(book.getType() == 0) { // 웹툰
+//                result.addWebtoon(book.getBookId(), bookReveiwResponse);
+                map.put(book.getBookId(), bookReveiwResponse);
+            }else{
+                result.addNovel(book.getBookId(), bookReveiwResponse);
+            }
+        }
+
+        for(Entry<Long, BookReveiwResponse> temp : map.entrySet()){
+            System.out.println(temp.getKey() + " " + temp.getValue());
+        }
+
+        result.addWebtoon(map);
+
+        return result;
     }
-
 
     // 이모픽 등록
     @Transactional
@@ -47,16 +72,16 @@ public class EmopickService {
         User user = commonService.getUser(userId);
         Emopick emopick = emopickRepository.save(request.of(user));
 
-        String order = "";
+        String bookIdStr = "";
 
         if(!request.getEmopickList().isEmpty()){
             for(Entry<Long, String> emo : request.getEmopickList().entrySet()){
                 emopick.addEmopick(emo.getKey(), emo.getValue());
-                order += emo.getKey().toString();
+                bookIdStr += emo.getKey().toString() + "_";
             }
         }
 
-//        emopick.setOrder(order);
+        emopick.setBookSeq(bookIdStr);
 
         return emopick.getEmopickId();
     }
