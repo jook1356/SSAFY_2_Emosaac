@@ -33,10 +33,9 @@ public class EmopickController {
 
     @ApiOperation(value = "이모픽 상세 조회", notes = "이모픽을 상세 조회한다.")
     @GetMapping("/{emopickId}")
-    public ResponseEntity<CommonResponse> findEmopickDetail(@PathVariable Long emopickId,
-                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<CommonResponse> findEmopickDetail(@PathVariable Long emopickId) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "이모픽 조회 완료", null
+                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickDetail(emopickId)
         ));
     }
 

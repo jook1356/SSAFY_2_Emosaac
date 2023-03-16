@@ -1,10 +1,7 @@
-package com.emosaac.server.dto.genre;
+package com.emosaac.server.dto.book;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter

@@ -4,9 +4,8 @@ import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.dto.BookResponse;
 import com.emosaac.server.dto.book.BookListResponse;
-import com.emosaac.server.dto.genre.BookRequest;
+import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.GenreResponse;
 import com.emosaac.server.dto.genre.UserResearchRequest;
 import com.emosaac.server.repository.book.BookRepository;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
