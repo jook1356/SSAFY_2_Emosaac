@@ -1,13 +1,14 @@
 package com.emosaac.server.service.search;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.dto.novel.NovelDayResponse;
+import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.repository.search.TagNovelRepository;
 import com.emosaac.server.repository.search.TagQueryRepository;
 import com.emosaac.server.repository.search.TagToonRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class SearchService {
     private final TagToonRepository tagToonRepository;
     private final TagQueryRepository tagQueryRepository;
 
-    public List<NovelDayResponse> findBookListByTagName(String tagName) {
-        return tagQueryRepository.findBookListByTagName(tagName).stream().map((b)-> new NovelDayResponse(b)).collect(Collectors.toList());
+    public List<BookDayResponse> findBookListByTagName(String tagName, int size, Long prevId, Double prevScore) {
+        return tagQueryRepository.findBookListByTagName(tagName,  PageRequest.ofSize(size), prevId, prevScore).stream().map((b)-> new BookDayResponse(b)).collect(Collectors.toList());
     }
 
 

@@ -7,10 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/search")
@@ -21,9 +18,12 @@ public class SearchController {
 
     @ApiOperation(value = "전체 태그 이름별 리스트 조회", notes = "태그 이름별로,정렬 기준(view/date/like)으로 게시물 목록을 조회한다.")
     @GetMapping("tag/{tagName}")
-    public ResponseEntity<CommonResponse> findByTagNamePostList(@PathVariable String tagName){
+    public ResponseEntity<CommonResponse> findByTagNamePostList(@PathVariable String tagName,
+                                                                @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                                @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
+                                                                @RequestParam(value = "prevScore", required = false, defaultValue = "0")Double prevScore){
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "태그 이름별 게시물 목록 조회 성공", searchService.findBookListByTagName(tagName))
+                HttpStatus.OK, "태그 이름별 게시물 목록 조회 성공", searchService.findBookListByTagName(tagName, size, prevId, prevScore))
         );
     }
 //    @ApiOperation(value = "전체 제목/작가 리스트 조회", notes = "제목/작가 이름별로,정렬 기준(view/date/like)으로 게시물 목록을 조회한다.")
