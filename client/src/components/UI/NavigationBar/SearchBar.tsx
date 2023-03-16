@@ -4,7 +4,13 @@ import { useState } from "react";
 import { SearchBarDropDown } from "./SearchBarDropDown";
 import { FiSearch } from "react-icons/fi";
 
-export const SearchBar = () => {
+interface Props {
+  isDeskTop: boolean;
+  isTablet: boolean;
+  isMobile: boolean;
+}
+
+export const SearchBar = (props: Props) => {
   return (
     <div css={searchBarWrapCSS}>
       <div css={searchIconCSS}>
@@ -15,8 +21,12 @@ export const SearchBar = () => {
         placeholder="제목, 작가를 입력하세요."
         css={inputWrapCSS}
       />
-      <div>in</div>
-      <SearchBarDropDown />
+      {props.isMobile ? null : (
+        <>
+          <div>in</div>
+          <SearchBarDropDown isDeskTop={props.isDeskTop} />
+        </>
+      )}
     </div>
   );
 };
