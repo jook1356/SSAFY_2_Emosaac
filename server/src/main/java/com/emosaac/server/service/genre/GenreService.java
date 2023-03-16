@@ -1,16 +1,8 @@
 package com.emosaac.server.service.genre;
 
-import com.emosaac.server.common.exception.ArgumentMismatchException;
-import com.emosaac.server.common.exception.ResourceNotFoundException;
-import com.emosaac.server.domain.book.Genre;
-import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.genre.GenreResponse;
-import com.emosaac.server.dto.user.UserGenreRequest;
-import com.emosaac.server.dto.user.UserRequest;
-import com.emosaac.server.dto.user.UserResponse;
 import com.emosaac.server.repository.genre.GenreQueryRepository;
 import com.emosaac.server.repository.genre.GenreRepository;
-import com.emosaac.server.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

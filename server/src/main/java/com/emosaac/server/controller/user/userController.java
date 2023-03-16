@@ -1,7 +1,9 @@
 package com.emosaac.server.controller.user;
 
 import com.emosaac.server.common.CommonResponse;
+import com.emosaac.server.config.s3.S3Uploader;
 import com.emosaac.server.dto.user.UserGenreRequest;
+import com.emosaac.server.dto.user.UserRequestFile;
 import com.emosaac.server.dto.user.UserRequest;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
@@ -10,11 +12,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,6 +27,7 @@ import javax.validation.Valid;
 public class userController {
 
     private final UserService userService;
+    private final S3Uploader s3Uploader;
     @GetMapping("/me")
     @ApiOperation(value = "로그인 유저 조회", notes = "현재 로그인한 유저 정보를 반환한다.")
     public ResponseEntity<CommonResponse> getCurrentUser(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
@@ -32,13 +37,23 @@ public class userController {
                 HttpStatus.OK, "유저 정보 조회 성공", userService.getUser(userPrincipal.getId())));
     }
 
-    @PutMapping
+    @PutMapping(value= "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "유저 정보 업데이트", notes = "유저 정보를 등록/수정 하고 유저 아이디 반환")
-    public ResponseEntity<CommonResponse> updateUserInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestBody @Valid UserRequest request) {
+    public ResponseEntity<CommonResponse> updateUserInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,@Valid UserRequestFile request) throws IOException {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "유저 정보 수정 성공", userService.updateUserInfo(userPrincipal.getId(), request)));
+                HttpStatus.CREATED, "유저 정보 수정 성공", userService.updateUserInfo(userPrincipal.getId(), filetoString(request))));
+    }
+
+    private UserRequest filetoString(UserRequestFile request) throws IOException {
+        String imgUrl= "";
+        System.out.println("request.getFile() "+ request.getFile().getOriginalFilename());
+        if (request.getFile().getOriginalFilename().length()!=0 || !request.getFile().isEmpty()) {
+            imgUrl = s3Uploader.upload(request.getFile(), "static/user");
+        }
+        UserRequest userRequest = UserRequest.from(request, imgUrl);
+        return userRequest;
     }
 
     @GetMapping("/nickname/{nickName}")

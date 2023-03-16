@@ -1,21 +1,13 @@
 package com.emosaac.server.controller.genre;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.dto.user.UserGenreRequest;
-import com.emosaac.server.dto.user.UserRequest;
-import com.emosaac.server.security.CurrentUser;
-import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.genre.GenreService;
-import com.emosaac.server.service.user.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/genres")

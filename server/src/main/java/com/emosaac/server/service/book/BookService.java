@@ -51,9 +51,9 @@ public class BookService {
     }
 
     // 작품 상세 조회
-    public BookDetailResponse findDetailByBook(Long bookId, Long userId, int typeCd) {
+    public BookDetailResponse findDetailByBook(Long bookId, Long userId) {
 
-        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+        Book book = getBook(bookId);
 
         book.addHit(); // 이부분은 다시,,
         book.setAvgScore();
@@ -77,27 +77,26 @@ public class BookService {
 
     @Transactional
     public Boolean toggleBookmarkByBook(Long bookId, Long userId) {
-        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        User user = userRepository.findByMyId(userId);
-        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        Book book = getBook(bookId);
+        User user = getUser(userId);
+
         BookMark bookMark = BookMark.builder().book(book).user(user).build();
         return book.toggleBookmark(bookMark);
     }
 
     @Transactional
     public Object toggleReadByBook(Long bookId, Long userId) {
-        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        User user = userRepository.findByMyId(userId);
-        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        Book book = getBook(bookId);
+        User user = getUser(userId);
+
         ReadBook readBook = ReadBook.builder().book(book).user(user).build();
         return book.toggleReadBook(readBook);
     }
 
     /* 평점 */
     public Double findScoreByUser(Long bookId, Long userId) {
-        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        User user = userRepository.findByMyId(userId);
-        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        Book book = getBook(bookId);
+        User user = getUser(userId);
 
         Score curScore = scoreQueryRepository.findScoreByBookIdAndUserId(bookId, userId);
         if(curScore ==  null) return 0.0;
@@ -106,9 +105,8 @@ public class BookService {
 
     @Transactional
     public Double updateScoreByUser(Long bookId, Long userId, Double score) {
-        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        User user = userRepository.findByMyId(userId);
-        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        Book book = getBook(bookId);
+        User user = getUser(userId);
 
         Score curScore = scoreQueryRepository.findScoreByBookIdAndUserId(bookId, userId);
 
@@ -125,16 +123,31 @@ public class BookService {
     }
 
     /* 같은 작가 다른 작품 찾기 */
-    public List<BookListResponse> findListByAuthor(Long bookId, int typeCd) {
+    public List<BookListResponse> findListByAuthor(Long bookId) {
+        Book book = getBook(bookId);
 
-        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
         String[] author = book.getAuthor().split("/");
 
-        return bookQueryRepository.findBookByAuthor(typeCd, bookId, author);
+        return bookQueryRepository.findBookByAuthor(bookId, author);
     }
 
     /* 추천 알고리즘 적용 */
     public Object findListByItem(Long novelId) {
         return null;
+    }
+
+    //////////////////////////////
+
+    private Book getBook(Long bookId){
+        Book book = bookQueryRepository.findBookByBook(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
+
+        return book;
+    }
+
+    private User getUser(Long userId){
+        User user = userRepository.findByMyId(userId);
+        //        User user = userRepository.findByMyId(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+
+        return user;
     }
 }
