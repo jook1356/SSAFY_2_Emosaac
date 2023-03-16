@@ -1,4 +1,4 @@
-package com.emosaac.server.dto.novel;
+package com.emosaac.server.dto.book;
 
 import com.emosaac.server.domain.book.Book;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class NovelDetailResponse {
+public class BookDetailResponse {
     private Long bookId;
     private int platform;
     private String thumbnail;
@@ -31,7 +31,7 @@ public class NovelDetailResponse {
     private double myScore;
 
     @QueryProjection
-    public NovelDetailResponse(Book book, boolean bookmarkStatus, boolean readStatus, double myScore){
+    public BookDetailResponse(Book book, boolean bookmarkStatus, boolean readStatus, double myScore){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
