@@ -38,4 +38,15 @@ public class TagQueryRepository {
                 .or(book.score.lt(cursorScore));
     }
 
+    public List<Book> findBookListByTitle(String content, PageRequest page, Long prevId, Double prevScore) {
+        return jpaQueryFactory.select(book)
+                .from(book)
+                .where(
+                        book.title.contains(content).or(book.author.contains(content)),
+                        cursorIdAndCursorScore(prevId, prevScore)
+                )
+                .limit(page.getPageSize()+1)
+                .orderBy(book.score.desc())  // 평점 추가
+                .fetch();
+    }
 }

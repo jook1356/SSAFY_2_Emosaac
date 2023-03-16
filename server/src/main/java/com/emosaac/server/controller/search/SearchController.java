@@ -26,11 +26,14 @@ public class SearchController {
                 HttpStatus.OK, "태그 이름별 게시물 목록 조회 성공", searchService.findBookListByTagName(tagName, size, prevId, prevScore))
         );
     }
-//    @ApiOperation(value = "전체 제목/작가 리스트 조회", notes = "제목/작가 이름별로,정렬 기준(view/date/like)으로 게시물 목록을 조회한다.")
-//    @GetMapping("tag/{content}")
-//    public ResponseEntity<CommonResponse> findByTitlePostList(@PathVariable String content){
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, "제목작가별 게시물 목록 조회 성공", searchService.findBookListByTitle(content))
-//        );
-//    }
+    @ApiOperation(value = "전체 제목/작가 리스트 조회", notes = "제목/작가 이름별로,정렬 기준(view/date/like)으로 게시물 목록을 조회한다.")
+    @GetMapping("tag/{content}")
+    public ResponseEntity<CommonResponse> findByTitlePostList(@PathVariable String content,
+                                                              @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                              @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
+                                                              @RequestParam(value = "prevScore", required = false, defaultValue = "0")Double prevScore){
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "제목작가별 게시물 목록 조회 성공", searchService.findBookListByTitle(content, size, prevId, prevScore))
+        );
+    }
 }

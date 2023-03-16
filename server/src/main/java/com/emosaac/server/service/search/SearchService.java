@@ -36,4 +36,7 @@ public class SearchService {
     }
 
 
+    public List<BookDayResponse> findBookListByTitle(String content, int size, Long prevId, Double prevScore) {
+        return tagQueryRepository.findBookListByTitle(content,  PageRequest.ofSize(size), prevId, prevScore).stream().map((b)-> new BookDayResponse(b)).collect(Collectors.toList());
+    }
 }
