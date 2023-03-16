@@ -47,15 +47,17 @@ public class EmopickService {
         User user = commonService.getUser(userId);
         Emopick emopick = emopickRepository.save(request.of(user));
 
+        String order = "";
+
         if(!request.getEmopickList().isEmpty()){
-            int idx = 0;
-            for(Entry<Integer, String> emo : request.getEmopickList().entrySet()){
-                Map<Integer, String> item = new HashMap<>();
-                item.put(emo.getKey(), emo.getValue());
-                emopick.addEmopick(idx, item);
-                idx++;
+            for(Entry<Long, String> emo : request.getEmopickList().entrySet()){
+                emopick.addEmopick(emo.getKey(), emo.getValue());
+                order += emo.getKey().toString();
             }
         }
+
+//        emopick.setOrder(order);
+
         return emopick.getEmopickId();
     }
 
