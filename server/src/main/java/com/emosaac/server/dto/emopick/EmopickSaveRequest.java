@@ -22,7 +22,7 @@ public class EmopickSaveRequest {
 
     private String content;
 
-    private Map<Integer, String> emopickList;
+    private Map<Long, String> emopickList;
 
     public Emopick of(User user) {
         return Emopick.builder().user(user).title(title).content(content).build();

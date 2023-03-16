@@ -31,7 +31,7 @@ public class EmopickDetailResponse {
         this.title = title;
         this.content = content;
     }
-    public void addEmopick(Book book, String review){
+    public void addEmopickDetail(Book book, String review){
         emoList.put(book, review);
     }
 }
