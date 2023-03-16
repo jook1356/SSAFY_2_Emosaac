@@ -23,7 +23,8 @@ public class BookCommentController {
 
     @Autowired
     private BookCommentService bookCommentService;
-    @ApiOperation(value = "해당 북의 댓글 리스트 조회", notes = "게시물 bookId를 입력받은 후 댓글을 조회한다. (최신 날짜순)")
+
+    @ApiOperation(value = "해당 북의 댓글 리스트 조회", notes = "게시물 bookId를 입력받은 후 댓글을 조회한다. (최신 날짜순) / state 0:부모댓글 조회, 1:자식댓글 조회")
     @GetMapping("/{bookId}/{state}")
     public ResponseEntity<CommonResponse> findBookCommentList(@PathVariable Long bookId,
                                                               @PathVariable int state,
@@ -57,6 +58,14 @@ public class BookCommentController {
     public ResponseEntity<CommonResponse> deleteBookComment(@ApiIgnore @CurrentUser UserPrincipal user, @PathVariable Long commentId) {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.NO_CONTENT, "삭제 성공", bookCommentService.deleteBookComment(user.getId(), commentId)));
+    }
+
+    @ApiOperation(value = "북 댓글 좋아요", notes = "북 댓글에 좋아요 누른다")
+    @PutMapping("/like/{bookCommentId}")
+    public ResponseEntity<CommonResponse> toggleBookCommentLike(@ApiIgnore @CurrentUser UserPrincipal user,
+                                                                @PathVariable Long bookCommentId) throws Exception {
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.CREATED, "수정 성공", bookCommentService.toggleBookCommentLike(user.getId(), bookCommentId)));
     }
 
 }

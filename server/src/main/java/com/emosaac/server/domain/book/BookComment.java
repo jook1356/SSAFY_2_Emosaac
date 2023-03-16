@@ -52,6 +52,9 @@ public class BookComment extends BaseEntity {
     @ColumnDefault("false")
     private Boolean isDelete; //삭제여부
 
+    @Embedded
+    private final BookCommentLikeList bookCommentLikeList = new BookCommentLikeList();
+
     public void setChild(BookComment bookComment) {
         this.children.add(bookComment);
     }
@@ -72,6 +75,10 @@ public class BookComment extends BaseEntity {
     public void updateDeleteStatus() {
         this.isDelete = true;
         this.content = null;
+    }
+
+    public boolean toggleBookCommentLike(BookCommentLike bookCommentLike) {
+        return bookCommentLikeList.toggleBookCommentLike(bookCommentLike);
     }
 
 }
