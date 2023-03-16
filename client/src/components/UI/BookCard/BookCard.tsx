@@ -86,10 +86,10 @@ const BookCard = ({
   )
 
   return (
-    <div css={cardOuterWrapper} ref={wrapperRef} onClick={instantlyRedirect} onMouseOver={(event) => {event.stopPropagation(); showModal();}} onMouseLeave={hideModal} >
+    <div className={"bookcard-outer-wrapper"} css={cardOuterWrapper({ width, height, minWidth, minHeight })} ref={wrapperRef} onClick={instantlyRedirect} onMouseOver={(event) => {event.stopPropagation(); showModal();}} onMouseLeave={hideModal} >
       {isMobile() === false && (modalToggler && modal)}
       
-      <div  css={cardInnerWrapperCSS({ width, height, minWidth, minHeight })}>
+      <div className={"bookcard-inner-wrapper"} css={cardInnerWrapperCSS({ width, height, minWidth, minHeight })}>
         <div
           css={skeletonLoadingTagCSS({
             state: bookData !== "LOADING" ? true : false,
@@ -102,9 +102,24 @@ const BookCard = ({
   );
 };
 
-const cardOuterWrapper = css`
-  position: relative;
-`
+interface cardOuterWrapperProps {
+  width: string | undefined;
+  height: string | undefined;
+  minWidth: string | undefined;
+  minHeight: string | undefined;
+}
+
+const cardOuterWrapper = ({width, height, minWidth, minHeight}: cardOuterWrapperProps) => {
+  return css`
+    position: relative;
+    width: ${width !== undefined ? width : "auto"};
+    height: ${height !== undefined ? height : "100%"};
+    ${minWidth && `min-width: ${minWidth}`};
+    ${minHeight && `min-height: ${minHeight}`};
+  `
+
+}
+
 
 
 interface CardInnerWrapperProps {
@@ -121,8 +136,8 @@ const cardInnerWrapperCSS = ({
   minHeight,
 }: CardInnerWrapperProps) => {
   return css`
-    width: ${width !== null ? width : "100px"};
-    height: ${height !== null ? height : "200px"};
+    width: ${width !== undefined ? width : "auto"};
+    height: ${height !== undefined ? height : "100%"};
     ${minWidth && `min-width: ${minWidth}`};
     ${minHeight && `min-height: ${minHeight}`};
     position: relative;

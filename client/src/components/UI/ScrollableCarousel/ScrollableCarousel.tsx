@@ -136,7 +136,7 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
     generateLoadingData();
   }, [bookListData]);
 
-  const renderCards = bookListResult.map((el, idx) => {
+  const renderCards = useMemo(() => bookListResult.map((el, idx) => {
     return (
       <div
         key={`${identifier}-${idx}`}
@@ -153,7 +153,7 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
         />
       </div>
     );
-  });
+  }), [bookListResult]);
 
   return (
     <div css={carouselWrapper}>

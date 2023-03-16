@@ -170,6 +170,7 @@ const wrapperCSS = ({
     position: absolute;
     z-index: 999999;
     transition-property: width height;
+    will-change: width height left top opacity transform;
     transition-duration: 0.3s;
     /* transition-timing-function: ease-in; */
     overflow: hidden;
@@ -253,6 +254,7 @@ interface imageCSSProps {
 
 const imageCSS = ({ modalToggler, isClosing, imgHeight, imgMinHeight }: imageCSSProps) => {
   return css`
+    will-change: width height transform;
     transition-property: width height opacity transform;
     transition-duration: 0.3s;
     ${modalToggler ? `transform: scale(1.0)` : (isClosing ? `transform: scale(1.0)` : `transform: scale(1.1)`)};
