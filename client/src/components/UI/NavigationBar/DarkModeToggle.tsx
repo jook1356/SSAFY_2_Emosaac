@@ -5,7 +5,13 @@ import Image from "next/image";
 import darkmode_dark from "@/assets/darkmode_dark.png";
 import darkmode_light from "@/assets/darkmode_light.png";
 
-export const DarkModeToggle = () => {
+interface Props {
+  isDeskTop: boolean;
+  isTablet: boolean;
+  isMobile: boolean;
+}
+
+export const DarkModeToggle = (props: Props) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   useEffect(() => {
     document.documentElement.setAttribute(

@@ -12,6 +12,7 @@
   --back-color-3: #d8dbe7;
   --back-color-4: #bcc0cf;
   --alert-color: #ff1e1e;
+  --hover-color: contrast(30%);
 }
 
 [data-theme="dark"] {
@@ -28,6 +29,7 @@
   --back-color-3: #1b1d25;
   --back-color-4: #2e313d;
   --alert-color: #ff1e1e;
+  --hover-color: contrast(50%);
 }
 
 html,
