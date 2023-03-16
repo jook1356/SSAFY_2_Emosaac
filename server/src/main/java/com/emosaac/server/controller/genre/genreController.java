@@ -1,6 +1,10 @@
 package com.emosaac.server.controller.genre;
 
 import com.emosaac.server.common.CommonResponse;
+import com.emosaac.server.dto.genre.UserResearchRequest;
+import com.emosaac.server.dto.user.UserGenreRequest;
+import com.emosaac.server.security.CurrentUser;
+import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.genre.GenreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/genres")
@@ -34,7 +41,37 @@ public class genreController {
                 HttpStatus.OK, "소설 장르 조회 성공", genreService.getNovelGenre()));
     }
 
+    @GetMapping("/research/webtoon")
+    @ApiOperation(value = "웹툰 설문조사 조회", notes = "설문조사 북 리스트를 반환")
+    public ResponseEntity<CommonResponse> getWebtoonResearch() {
 
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "웹툰 설문조사 조회 성공", genreService.getWebtoonResearch()));
+    }
+
+    @GetMapping("/research/novel")
+    @ApiOperation(value = "소설 설문조사 조회", notes = "설문조사 북 리스트를 반환")
+    public ResponseEntity<CommonResponse> getNovelResearch() {
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "소설 설문조사 조회 성공", genreService.getNovelGenreRearch()));
+    }
+
+    @PostMapping("/research/webtoon")
+    @ApiOperation(value = "웹툰 설문조사 수행", notes = "선호 장르 리스트를 반환")
+    public ResponseEntity<CommonResponse> postWebtoonResearch(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestBody @Valid UserResearchRequest request) {
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.CREATED, "웹툰 설문조사 성공", genreService.postWebtoonResearch(userPrincipal.getId(), request)));
+    }
+
+    @PostMapping("/research/novel")
+    @ApiOperation(value = "소설 설문조사 조회", notes = "선호 장르 리스트를 반환")
+    public ResponseEntity<CommonResponse> postNovelResearch(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,@RequestBody @Valid UserResearchRequest request) {
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.CREATED, "소설 설문조사 성공", genreService.postNovelGenreResearch(userPrincipal.getId(), request)));
+    }
 
 
 
