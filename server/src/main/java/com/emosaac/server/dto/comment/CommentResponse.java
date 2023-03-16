@@ -1,6 +1,7 @@
 package com.emosaac.server.dto.comment;
 
 import com.emosaac.server.domain.book.BookComment;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 
 @Builder
 @Getter
@@ -28,9 +30,10 @@ public class CommentResponse {
     private String modifiedDate;
 
     private Boolean isDelete;
-
+    private Boolean isChild;
 
     private List<CommentResponse> children = new ArrayList<>();
+    @QueryProjection
     public CommentResponse(BookComment comment) { //전체 조회
 
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -69,4 +72,5 @@ public class CommentResponse {
         return comment.getIsDelete() ?
                 new CommentResponse(comment, "삭제된 댓글입니다") : new CommentResponse(comment);
     }
+
 }

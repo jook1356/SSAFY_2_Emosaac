@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -87,35 +88,24 @@ public class BookCommentService {
         }
         return commentId;
     }
-
-
-    public Object findBookCommentList(Long bookId, int offset, int size) {
-//        List<BookComment> l1 = bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, 10));
-//        List<BookComment> l2 = bookCommentRepository.findCommentByBookId(bookId);
-//        System.out.println("l1");
-//        for(BookComment bc : l1){
-//            System.out.println(bc.getCommentId());
-//        }
-//        System.out.println("l2");
-//        for(BookComment bc : l2){
-//            System.out.println(bc.getCommentId());
-//        }
-//        return null;
-        return convertNestedStructure(bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, size)));
+    
+    // state 0 : 부모, 1 : 자식
+    public List<CommentResponse> findBookCommentList(Long bookId, int state, int offset, int size) {
+        return bookCommentQueryRepository.findCommentByBookId(bookId, state, PageRequest.of(offset - 1, size));
 //        return convertNestedStructure(bookCommentRepository.findCommentByBookId(bookId));
     }
 
-    private List<CommentResponse> convertNestedStructure(List<BookComment> comments) {
-        List<CommentResponse> result = new ArrayList<>();
-        Map<Long, CommentResponse> map = new HashMap<>();
-        comments.stream().forEach(c -> {
-            CommentResponse dto = CommentResponse.from(c);
-            map.put(dto.getCommentId(), dto);
-            if(c.getParent() != null) {
-                map.get(c.getParent().getCommentId()).getChildren().add(dto);
-            }
-            else result.add(dto);
-        });
-        return result;
-    }
+//    private List<CommentResponse> convertNestedStructure(List<BookComment> comments) {
+//        List<CommentResponse> result = new ArrayList<>();
+//        Map<Long, CommentResponse> map = new HashMap<>();
+//        comments.stream().forEach(c -> {
+//            CommentResponse dto = CommentResponse.from(c);
+//            map.put(dto.getCommentId(), dto);
+//            if(c.getParent() != null) {
+//                map.get(c.getParent().getCommentId()).getChildren().add(dto);
+//            }
+//            else result.add(dto);
+//        });
+//        return result;
+//    }
 }
