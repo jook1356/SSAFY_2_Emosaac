@@ -1,7 +1,5 @@
 package com.emosaac.server.dto.emopick;
 
-import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.domain.emo.Emopick;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.comment.WriterInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +21,8 @@ public class EmopickDetailResponse {
     private WriterInfo writerInfo;
     private String title;
     private String content;
-    private Map<Book, String> emoList = new LinkedHashMap<>();
+    private LinkedHashMap<Long, BookReveiwResponse> webtoons = new LinkedHashMap<>();
+    private Map<Long, BookReveiwResponse> novels = new LinkedHashMap<>();
 
     @QueryProjection
     public EmopickDetailResponse(User user, String title, String content){
@@ -31,7 +30,13 @@ public class EmopickDetailResponse {
         this.title = title;
         this.content = content;
     }
-    public void addEmopickDetail(Book book, String review){
-        emoList.put(book, review);
+    public void addWebtoon(LinkedHashMap<Long, BookReveiwResponse> map){
+        this.webtoons = map;
+    }
+//    public void addWebtoon(Long bookId, BookReveiwResponse bookReveiwResponse){
+//        webtoons.put(bookId, bookReveiwResponse);
+//    }
+    public void addNovel(Long bookId, BookReveiwResponse bookReveiwResponse){
+        novels.put(bookId, bookReveiwResponse);
     }
 }
