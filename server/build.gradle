@@ -105,13 +105,23 @@ configurations {
 
 task copyPrivate(type: Copy) {
 	copy {
-		from '../../SsaMuSoConfig/main'
+		from '../../emosaac'
 		include "*.yml"
 		into 'src/main/resources'
 	}
 	copy {
-		from '../../SsaMuSoConfig/test'
+		from '../../emosaac'
 		include "*.yml"
+		into 'src/test/resources'
+	}
+	copy {
+		from '../../emosaac'
+		include "*.properties"
+		into 'src/main/resources'
+	}
+	copy {
+		from '../../emosaac'
+		include "*.properties"
 		into 'src/test/resources'
 	}
 }
