@@ -6,6 +6,7 @@ import com.emosaac.server.domain.emo.Emopick;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDetailResponse;
 import com.emosaac.server.dto.emopick.BookReveiwResponse;
+import com.emosaac.server.dto.emopick.DetailResponse;
 import com.emosaac.server.dto.emopick.EmopickDetailResponse;
 import com.emosaac.server.dto.emopick.EmopickSaveRequest;
 import com.emosaac.server.repository.book.BookQueryRepository;
@@ -16,11 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,33 +34,23 @@ public class EmopickService {
     // 이모픽 리스트 조회
 
     // 이모픽 상세 조회
-    public EmopickDetailResponse findEmopickDetail(Long emopickId){
+    public DetailResponse<BookReveiwResponse> findEmopickDetail(Long emopickId) {
         Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
 
-        EmopickDetailResponse result = new EmopickDetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent());
+        List<BookReveiwResponse> webtoon = new ArrayList<>();
+        List<BookReveiwResponse> novel = new ArrayList<>();
 
-        String[] bookId = emopick.getBookSeq().split("_");
-
-        LinkedHashMap<Long, BookReveiwResponse> map = new LinkedHashMap<>();
-
-        for(int i=0; i<bookId.length; i++){
-            Book book = commonService.getBook(Long.valueOf(bookId[i]));
-
-            BookReveiwResponse bookReveiwResponse = new BookReveiwResponse(book, emopick.getEmopickList().get(book.getBookId()));
-
-            if(book.getType() == 0) { // 웹툰
-//                result.addWebtoon(book.getBookId(), bookReveiwResponse);
-                map.put(book.getBookId(), bookReveiwResponse);
-            }else{
-                result.addNovel(book.getBookId(), bookReveiwResponse);
-            }
+        if (emopick.getWebtoonSeq() != "") {
+            String[] webtoonId = emopick.getWebtoonSeq().split("_");
+            webtoon = getList(emopick, webtoonId);
         }
 
-        for(Entry<Long, BookReveiwResponse> temp : map.entrySet()){
-            System.out.println(temp.getKey() + " " + temp.getValue());
+        if (emopick.getWebtoonSeq() != "") {
+            String[] novelId = emopick.getNovelSeq().split("_");
+            novel = getList(emopick, novelId);
         }
 
-        result.addWebtoon(map);
+        DetailResponse result = new DetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel);
 
         return result;
     }
@@ -72,23 +61,51 @@ public class EmopickService {
         User user = commonService.getUser(userId);
         Emopick emopick = emopickRepository.save(request.of(user));
 
-        String bookIdStr = "";
+        String webtoonIdStr = "";
+        String novelIdStr = "";
 
-        if(!request.getEmopickList().isEmpty()){
-            for(Entry<Long, String> emo : request.getEmopickList().entrySet()){
-                emopick.addEmopick(emo.getKey(), emo.getValue());
-                bookIdStr += emo.getKey().toString() + "_";
-            }
-        }
+        // 웹툰 리스트
+        if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
+            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
 
-        emopick.setBookSeq(bookIdStr);
+        // 노블 리스트
+        if (request.getNovelList() != null || !request.getNovelList().isEmpty())
+            novelIdStr = setIdStr(emopick, request.getNovelList());
+
+        emopick.setSeq(webtoonIdStr, novelIdStr);
 
         return emopick.getEmopickId();
+    }
+
+    private String setIdStr(Emopick emopick, Map<Long, String> bookList){
+        String result = "";
+
+        for (Entry<Long, String> emo : bookList.entrySet()) {
+            emopick.addEmopick(emo.getKey(), emo.getValue());
+            result += emo.getKey().toString() + "_";
+        }
+
+        return result;
     }
 
     // 이모픽 수정
 
     // 이모픽 삭제
 
+    ///////////////////////
+    private List<BookReveiwResponse> getList(Emopick emopick, String[] bookId) {
+        List<BookReveiwResponse> result = new ArrayList<>();
+
+        for (String id : bookId) {
+            if (id.equals("")) break;
+            Book book = commonService.getBook(Long.valueOf(id));
+
+            BookReveiwResponse bookReveiwResponse = new BookReveiwResponse(book, emopick.getEmopickList().get(book.getBookId()));
+
+            result.add(bookReveiwResponse);
+        }
+
+        return result;
+    }
 
 }

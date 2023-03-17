@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class EmopickSaveRequest {
     @NotBlank(message = "목표 내용이 없습니다.")
     @Length(max = 50, message = "50자 이하여야 합니다.")
@@ -22,7 +22,9 @@ public class EmopickSaveRequest {
 
     private String content;
 
-    private Map<Long, String> emopickList;
+    private Map<Long, String> webtoonList;
+
+    private Map<Long, String> novelList;
 
     public Emopick of(User user) {
         return Emopick.builder().user(user).title(title).content(content).build();
