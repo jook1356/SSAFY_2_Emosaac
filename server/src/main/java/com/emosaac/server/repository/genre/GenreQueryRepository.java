@@ -1,15 +1,10 @@
 package com.emosaac.server.repository.genre;
 
-import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.Genre;
-import com.emosaac.server.domain.book.QGenre;
-import com.emosaac.server.domain.book.QReadBook;
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.dto.BookResponse;
-import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.dto.book.QBookListResponse;
-import com.emosaac.server.dto.genre.BookRequest;
+import com.emosaac.server.dto.book.BookRequest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -21,7 +16,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.List;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QGenre.genre;

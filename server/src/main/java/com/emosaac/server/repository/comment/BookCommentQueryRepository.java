@@ -1,6 +1,8 @@
 package com.emosaac.server.repository.comment;
 
 import com.emosaac.server.domain.book.BookComment;
+import com.emosaac.server.dto.comment.CommentResponse;
+import com.emosaac.server.dto.comment.QCommentResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -15,12 +17,15 @@ import static com.emosaac.server.domain.book.QBookComment.bookComment;
 @Repository
 public class BookCommentQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
-    public List<BookComment> findCommentByBookId(Long bookId, PageRequest pageRequest){
-        return jpaQueryFactory.select(bookComment).distinct().from(bookComment)
-                .where(bookComment.book.bookId.eq(bookId))
-//                .orderBy(bookComment.createdDate.desc())
+    public List<CommentResponse> findCommentByBookId(Long bookId ,int state, PageRequest pageRequest){
+        return jpaQueryFactory.select(new QCommentResponse(bookComment))
+                .distinct().from(bookComment)
+                .where(bookComment.book.bookId.eq(bookId),
+                        bookComment.depth.eq(state))
+                .orderBy(bookComment.createdDate.desc())
                 .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
                 .fetch();
 
     }
+
 }

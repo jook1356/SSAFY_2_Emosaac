@@ -44,14 +44,13 @@ public class Emopick extends BaseEntity implements Serializable{
 
     @Type(type = "json")
     @Column(name = "CONTENTS_LIST", columnDefinition = "json")
-    private Map<Integer, Map<Integer, String>> emopickList = new LinkedHashMap<>();
-//    bookId, review
+    private Map<Long, String> emopickList = new LinkedHashMap<>();
 
-    // 웹툰, 웹소설 등록은 한번에, 조회할 때는 맵으로 나눠서
+    @Column(name = "WEBTOON_SEQ")
+    private String webtoonSeq;
 
-    /*
-    * map 웹툰: 웹툰리스트, 소설: 소설리스트
-    *  */
+    @Column(name = "NOVEL_SEQ")
+    private String novelSeq;
 
     @Embedded
     private final EmopickCommentList commentList = new EmopickCommentList();
@@ -63,7 +62,12 @@ public class Emopick extends BaseEntity implements Serializable{
         this.content = content;
     }
 
-    public void addEmopick(int idx, Map<Integer, String> emo){
-        emopickList.put(idx, emo);
+    public void addEmopick(Long bookId, String review){
+        emopickList.put(bookId, review);
+    }
+
+    public void setSeq(String webtoonSeq, String novelSeq){
+        this.webtoonSeq = webtoonSeq;
+        this.novelSeq = novelSeq;
     }
 }

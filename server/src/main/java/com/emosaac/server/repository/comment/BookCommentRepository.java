@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface BookCommentRepository extends JpaRepository<BookComment, Long> {
     @Query("select c from BookComment c where c.commentId = :commentId")
     Optional<BookComment> findComment(@Param("commentId") Long commnetId);
+    @Query("select c from BookComment c where c.commentId = :commentId")
+    BookComment findByBookCommentId(@Param("commentId") Long commnetId);
 
     @Transactional
     @Modifying

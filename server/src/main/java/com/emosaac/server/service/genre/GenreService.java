@@ -5,9 +5,8 @@ import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.Genre;
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.dto.BookResponse;
 import com.emosaac.server.dto.book.BookListResponse;
-import com.emosaac.server.dto.genre.BookRequest;
+import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.GenreResponse;
 import com.emosaac.server.dto.genre.TotalResponse;
 import com.emosaac.server.dto.genre.UserResearchRequest;
@@ -23,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.*;
 import java.util.stream.Collectors;

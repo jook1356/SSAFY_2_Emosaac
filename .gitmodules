@@ -1,0 +1,6 @@
+[submodule "emosaac"]
+	path = emosaac
+	url = https://lab.ssafy.com/shine7065/emosaac.git
+[submodule "emosaac2"]
+	path = emosaac2
+	url = https://lab.ssafy.com/shine7065/emosaac2.git
