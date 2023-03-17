@@ -204,7 +204,7 @@ const carouselWrapper = css`
 const carousel = css`
   display: flex;
   width: 100vw;
-  padding-left: 48px;
+  /* padding-left: 48px; */
   box-sizing: border-box;
   overflow-x: scroll;
 
@@ -225,14 +225,14 @@ const prevBtn = css`
   color: white;
   padding-left: 8px;
   padding-right: 8px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
   transition-property: background font-size;
   transition-duration: 0.2s;
   cursor: pointer;
   user-select: none;
 
   &:hover {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
     font-size: 54px;
   }
 
@@ -253,13 +253,13 @@ const nextBtn = css`
   color: white;
   padding-left: 8px;
   padding-right: 8px;
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
   transition-property: background font-size;
   transition-duration: 0.2s;
   cursor: pointer;
 
   &:hover {
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
     font-size: 54px;
   }
 
