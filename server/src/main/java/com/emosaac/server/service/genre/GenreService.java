@@ -58,7 +58,6 @@ public class GenreService {
             user.setFavoriteWebtoonGenre(str); //선호 장르에 반영
         } else if (typeCode == 1) {
             user.setFavoriteNovelGenre(str); //선호 장르에 반영
-
         }
         return userService.stringToGenreList(str).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
 
@@ -71,14 +70,14 @@ public class GenreService {
 
         for (Long tmp : request.getBookId()) {
             Book book = commonService.getBook(tmp);
-            Long bookId = book.getGenre().getGerneId();
-            map.put(bookId, map.getOrDefault(bookId, 1) + 1);
+            Long genreId = book.getGenre().getGerneId();
+            map.put(genreId, map.getOrDefault(genreId, 1) + 1);
         }
 
         for (Map.Entry<Long, Integer> entry : map.entrySet()) {
             list.add(entry.getValue());
         }
-        Collections.sort(list);
+        Collections.sort(list, Collections.reverseOrder());
 
         for (Integer num : list) {
             for (Map.Entry<Long, Integer> entry : map.entrySet()) {
@@ -101,6 +100,7 @@ public class GenreService {
         return str;
     }
 
+    //장르 코드 주면 안읽은 것중에 조회
     public SlicedResponse<BookListResponse> getBookByGenre(Long userId, BookRequest request) {
         User user = commonService.getUser(userId);
         Slice<BookListResponse> page = genreQueryRepository.findBookListByGenre(user, request, PageRequest.ofSize(request.getSize()));
@@ -115,18 +115,17 @@ public class GenreService {
         Long[] GenreList;
 
         GenreList = (typeCode == 0) ? webtoonGenreList : novelGenreList;
-
         if (count > 0) {
             for (int i = 0; i < GenreList.length; i++) {
                 Genre genre = commonService.getGenre(GenreList[i]);
-                list.add(new TotalResponse(GenreList[i], genre.getName(), (
-                        genreQueryRepository.findReadSpecGenreCount(userId, typeCode, GenreList[i]) / count) * 100)
-                );
+                list.add(new TotalResponse(GenreList[i], genre.getName(), ((double)
+                        genreQueryRepository.findReadSpecGenreCount(userId, typeCode, GenreList[i]) / count * 100)
+                ));
             }
         } else {
             for (int i = 0; i < GenreList.length; i++) {
                 Genre genre = commonService.getGenre(GenreList[i]);
-                list.add(new TotalResponse(GenreList[i], genre.getName(), 0L, "책 읽음 정보를 넣어주세요"));
+                list.add(new TotalResponse(GenreList[i], genre.getName(), 0.0, "책 읽음 정보를 넣어주세요"));
             }
 
         }
@@ -136,28 +135,28 @@ public class GenreService {
 
     private List<Long> calcMinOrMax(List<TotalResponse> list) { //2
 
-        Map<Long, Long> map = new HashMap<>();
-        LinkedHashMap<Long, Long> sortedMap = new LinkedHashMap<>();
-        ArrayList<Long> tmpList = new ArrayList<>();
+        Map<Long, Double> map = new HashMap<>();
+        LinkedHashMap<Long, Double> sortedMap = new LinkedHashMap<>();
+        ArrayList<Double> tmpList = new ArrayList<>();
         ArrayList<Long> likeList = new ArrayList<>();
 
         for (TotalResponse totalResponse : list) {
             map.put(totalResponse.getGenreId(), totalResponse.getAmount());
         }
 
-        for (Map.Entry<Long, Long> entry : map.entrySet()) {
+        for (Map.Entry<Long, Double> entry : map.entrySet()) {
             tmpList.add(entry.getValue());
         }
-        Collections.sort(tmpList);
+        Collections.sort(tmpList, Collections.reverseOrder());
 
-        for (Long num : tmpList) {
-            for (Map.Entry<Long, Long> entry : map.entrySet()) {
+        for (Double num : tmpList) {
+            for (Map.Entry<Long, Double> entry : map.entrySet()) {
                 if (entry.getValue().equals(num)) {
                     sortedMap.put(entry.getKey(), num);
                 }
             }
         }
-        for (Map.Entry<Long, Long> entry : sortedMap.entrySet()) {
+        for (Map.Entry<Long, Double> entry : sortedMap.entrySet()) {
             likeList.add(entry.getKey());
         }
 
@@ -190,19 +189,21 @@ public class GenreService {
 
         for (int i = 0; i < GenreList.length; i++) {
             Genre genre = commonService.getGenre(GenreList[i]);
-            list.add(new TotalResponse(GenreList[i], genre.getName(), (
+            list.add(new TotalResponse(GenreList[i], genre.getName(), (double) (
                     genreQueryRepository.findReadSpecGenreCount(userId, typeCode, GenreList[i]))
             ));
+            System.out.println((double) (
+                    genreQueryRepository.findReadSpecGenreCount(userId, typeCode, GenreList[i])));
         }
 
         return list;
     }
 
+    //통계기반 선호/비선호 장르 조회
     @Transactional
     public List<GenreResponse> getTotalGenre(Long userId, int typeCode, int isLike) { //api에서 사용
 
         List<TotalResponse> list = getTotalGenreCount(userId, typeCode, isLike); //2
-//        List<TotalResponse> list = getTotalAmount(userId, typeCode);
 
         Long[] likeList = new Long[7];
         List<Long> tmpList = calcMinOrMax(list); //2
@@ -235,6 +236,7 @@ public class GenreService {
 
         int idx = 0;
         for (int i = tmpList.size() - 1; i > 3; i--) {
+            System.out.println(tmpList.get(i));
             likeList[idx++] = tmpList.get(i);
         }
 
@@ -243,11 +245,10 @@ public class GenreService {
 
     }
 
-    //선호만 계산 , 선호는 컬럼을 기준으로 하자
+    //비선호만 계산 , 선호는 컬럼을 기준으로 하자
     public SlicedResponse<BookListResponse> getTotalLikeGenreBook(Long userId, BookRequest request) {
         User user = commonService.getUser(userId);
         String str = (request.getTypeCd() == 0) ? user.getFavoriteWebtoonGenre() : user.getFavoriteNovelGenre(); //선호 장르에 반영
-        System.out.println("str " + str);
         List<Long> likeList = new ArrayList<>();
         userService.stringToGenreList(str).stream().forEach((genre) -> likeList.add(genre.getGerneId()));
 

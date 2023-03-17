@@ -15,5 +15,5 @@ import java.util.List;
 public class UserResearchRequest {
 
     @Size(min=5, max=5)
-    private List<Long> bookId;
+    private Long[] bookId;
 }
