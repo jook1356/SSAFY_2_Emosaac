@@ -12,15 +12,24 @@ interface Props {
 }
 
 export const DarkModeToggle = (props: Props) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   useEffect(() => {
+    const darkMode = localStorage.getItem("data-theme");
+    if (darkMode === "dark") {
+      setIsDarkMode(true);
+    }
     document.documentElement.setAttribute(
       "data-theme",
-      isDarkMode ? "dark" : "light"
+      darkMode === "dark" ? "dark" : "light"
     );
-  }, [isDarkMode]);
+  }, []);
   function onChangeDarkMode() {
-    setIsDarkMode(!isDarkMode);
+    const darkMode = localStorage.getItem("data-theme");
+    document.documentElement.setAttribute(
+      "data-theme",
+      darkMode === "dark" ? "light" : "dark"
+    );
+    localStorage.setItem("data-theme", darkMode === "dark" ? "light" : "dark");
   }
 
   return (
@@ -40,7 +49,7 @@ const darkModeToggleCSS = css`
   position: relative;
   cursor: pointer;
   margin: auto 0;
-  height: 40px;
+  height: 30px;
   border-radius: 20px;
   display: flex;
   justify-content: space-between;
@@ -48,8 +57,8 @@ const darkModeToggleCSS = css`
   padding: 0 6px;
   background-color: var(--back-color-2);
   & > img {
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     /* filter: brightness(100) grayscale(100%); */
   }
 `;
@@ -57,11 +66,11 @@ const darkModeToggleCSS = css`
 const circleCSS = (isDarkMode: boolean) => {
   return css`
     position: absolute;
-    top: 6px;
-    left: 6px;
-    transform: ${isDarkMode ? "translateX(40px)" : "translateX(0)"};
-    width: 28px;
-    height: 28px;
+    top: 4px;
+    left: 5px;
+    transform: ${isDarkMode ? "translateX(29px)" : "translateX(0)"};
+    width: 22px;
+    height: 22px;
     border-radius: 20px;
     background-color: var(--text-color-4);
     transition: all 0.3s;

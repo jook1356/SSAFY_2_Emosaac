@@ -12,7 +12,7 @@ export const BasicButton = () => {
 
 const ButtonWrapCSS = css`
   cursor: pointer;
-  height: 45px;
+  height: 36px;
   border: 1px solid var(--border-color-2);
   border-radius: 5px;
   background-color: var(--back-color);

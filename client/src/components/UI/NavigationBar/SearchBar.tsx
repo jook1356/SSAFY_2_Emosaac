@@ -35,7 +35,7 @@ const searchBarWrapCSS = css`
   display: grid;
   grid-template-columns: 20px 1fr 20px 100px;
   column-gap: 20px;
-  height: 48px;
+  height: 45px;
   background-color: var(--back-color-2);
   border-radius: 5px;
   font-weight: bold;
