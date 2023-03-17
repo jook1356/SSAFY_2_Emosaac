@@ -40,12 +40,15 @@ export default function Home() {
       </div>
 
       <div css={whiteSpace1CSS} />
-      <RowTitle
-        beforeLabel="희MD"
-        highlightedLabel=" EMOSAAC!"
-        noLine={true}
-        marginBottom={"45px"}
-      />
+      <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
+        <RowTitle
+          beforeLabel="희MD"
+          highlightedLabel=" EMOSAAC!"
+          noLine={true}
+          marginBottom={"45px"}
+        />
+      </div>
+      
       <div css={highlightedCarouselWrapper}>
         {bookData.length !== 0 && <HighlightedCarousel bookData={bookData} />}
       </div>
@@ -114,7 +117,7 @@ const highlightedCarouselWrapper = css`
 
 const bookCarouselWrapperCSS = css`
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   border-radius: 10px; ;
 `;
 
