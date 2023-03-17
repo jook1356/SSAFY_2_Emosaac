@@ -30,6 +30,6 @@ public class Research {
 
     private Long gerneId;
 
-    private Long type;
+    private int type;
 
 }
