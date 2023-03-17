@@ -107,8 +107,31 @@ public class GenreQueryRepository {
                 .fetch();
     }
 
-    //선호 장르별 책
+    //비선호 장르별 책
+   public Slice<BookListResponse> findBookLikeGenre(Long userId, BookRequest request, PageRequest page, Long unlikeGenre) {
+        List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
+                .from(book)
+                .where(book.type.eq(request.getTypeCd()),
+                        book.genre.gerneId.eq(unlikeGenre),
+                        cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
+                        book.notIn(
+                                JPAExpressions
+                                        .select(readBook.book).from(readBook)
+                                        .where(readBook.user.userId.eq(userId))
+                        )
+                )
+                .limit(page.getPageSize() + 1)
+                .orderBy(book.score.desc(), book.bookId.desc())
+                .fetch();
 
+        boolean hasNext = false;
+        if (content.size() == page.getPageSize() + 1) {
+            content.remove(page.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, page, hasNext);
+    }
 
 
     /////////////<-----조건

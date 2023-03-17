@@ -34,7 +34,6 @@ public class GenreService {
     private final GenreQueryRepository genreQueryRepository;
     private final UserService userService;
     private final CommonService commonService;
-    private Long max = 0L, min = Long.MAX_VALUE, candidate, res;
     private final Long[] webtoonGenreList = {10L, 11L, 12L, 13L, 14L, 15L, 16L};
     private final Long[] novelGenreList = {10L, 11L, 13L, 14L, 15L, 27L, 28L};
 
@@ -125,7 +124,11 @@ public class GenreService {
                 );
             }
         } else {
-            list.add(new TotalResponse("책 읽음 정보를 넣어주세요"));
+            for (int i = 0; i < GenreList.length; i++) {
+                Genre genre = commonService.getGenre(GenreList[i]);
+                list.add(new TotalResponse(GenreList[i], genre.getName(), 0L, "책 읽음 정보를 넣어주세요"));
+            }
+
         }
         return list;
 
@@ -163,7 +166,7 @@ public class GenreService {
 
 //    public void getTotalGenre(Long userId, int typeCode) { //스케줄러 처리 필요 1
 //
-//        List<TotalResponse> list = getTotalAmount(userId, typeCode);
+//        List<TotalResponse> list = getTotalGenreCount(userId, typeCode);
 //        Long genreId;
 //        Long[] likeList = new Long[7];
 //        List<Long> tmpList = calcMinOrMax(list); //2
@@ -177,9 +180,30 @@ public class GenreService {
 //
 //    }
 
+
+    public List<TotalResponse> getTotalGenreCount(Long userId, int typeCode, int isLike) { //카운트 세서 리스트에 담기
+
+        List<TotalResponse> list = new ArrayList<>();
+        Long[] GenreList;
+
+        GenreList = (typeCode == 0) ? webtoonGenreList : novelGenreList;
+
+        for (int i = 0; i < GenreList.length; i++) {
+            Genre genre = commonService.getGenre(GenreList[i]);
+            list.add(new TotalResponse(GenreList[i], genre.getName(), (
+                    genreQueryRepository.findReadSpecGenreCount(userId, typeCode, GenreList[i]))
+            ));
+        }
+
+        return list;
+    }
+
+    @Transactional
     public List<GenreResponse> getTotalGenre(Long userId, int typeCode, int isLike) { //api에서 사용
 
-        List<TotalResponse> list = getTotalAmount(userId, typeCode);
+        List<TotalResponse> list = getTotalGenreCount(userId, typeCode, isLike); //2
+//        List<TotalResponse> list = getTotalAmount(userId, typeCode);
+
         Long[] likeList = new Long[7];
         List<Long> tmpList = calcMinOrMax(list); //2
 
@@ -188,9 +212,6 @@ public class GenreService {
             for (int i = 0; i < 3; i++) {
                 likeList[idx++] = tmpList.get(i);
             }
-
-            setFavoriteGenre(tmpList, typeCode, userId); //유저에 반영, 스케줄러 처리 하면 지워도 될것 같음
-
         } else {
             int idx = 0;
             for (int i = tmpList.size() - 1; i > 3; i--) {
@@ -198,8 +219,40 @@ public class GenreService {
             }
         }
 
+        setFavoriteGenre(tmpList, typeCode, userId); //유저에 반영, 스케줄러 처리 하면 지워도 될것 같음
+
+
         return genreQueryRepository.findBookGenreisLike(typeCode, likeList).stream().map(
                 (genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+
+    }
+
+    //비선호만 계산
+    public SlicedResponse<BookListResponse> getTotalUnlikeGenreBook(Long userId, BookRequest request) {
+        List<TotalResponse> list = getTotalGenreCount(userId, request.getTypeCd(), request.getIsLike());
+        Long[] likeList = new Long[7];
+        List<Long> tmpList = calcMinOrMax(list); //2
+
+        int idx = 0;
+        for (int i = tmpList.size() - 1; i > 3; i--) {
+            likeList[idx++] = tmpList.get(i);
+        }
+
+        Slice<BookListResponse> page = genreQueryRepository.findBookLikeGenre(userId, request, PageRequest.ofSize(request.getSize()), likeList[request.getOrder() - 1]);
+        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+
+    }
+
+    //선호만 계산 , 선호는 컬럼을 기준으로 하자
+    public SlicedResponse<BookListResponse> getTotalLikeGenreBook(Long userId, BookRequest request) {
+        User user = commonService.getUser(userId);
+        String str = (request.getTypeCd() == 0) ? user.getFavoriteWebtoonGenre() : user.getFavoriteNovelGenre(); //선호 장르에 반영
+        System.out.println("str " + str);
+        List<Long> likeList = new ArrayList<>();
+        userService.stringToGenreList(str).stream().forEach((genre) -> likeList.add(genre.getGerneId()));
+
+        Slice<BookListResponse> page = genreQueryRepository.findBookLikeGenre(userId, request, PageRequest.ofSize(request.getSize()), likeList.get(request.getOrder() - 1));
+        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
 
@@ -209,17 +262,17 @@ public class GenreService {
 
         String str = listToString(likeList); //3
         if (typeCode == 0) {
-            user.setFavoriteWebtoonGenre(str);
+            user.updateFavoriteWebtoonGenre(str);
         } else if (typeCode == 1) {
-            user.setFavoriteNovelGenre(str);
+            user.updateFavoriteNovelGenre(str);
         }
     }
 
     public String listToString(List<Long> likeList) { //3
         String str = "";
         if (likeList != null && !likeList.isEmpty()) {
-            for (Long tmp : likeList) {
-                Genre genre = commonService.getGenre(tmp);
+            for (int i = 0; i < 3; i++) {
+                Genre genre = commonService.getGenre(likeList.get(i));
                 str += genre.getGerneId() + "^";
             }
         }

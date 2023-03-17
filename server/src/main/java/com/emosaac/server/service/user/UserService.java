@@ -128,6 +128,7 @@ public class UserService {
         List<Genre> tmpList = new ArrayList<>();
         if (request != null) {
             String[] list = request.split("\\^");
+            System.out.println(list[0]);
             for (int i = 0; i < list.length; i++) {
                 String tmp = list[i];
                 Genre genre = commonService.getGenre(Long.parseLong(tmp));
