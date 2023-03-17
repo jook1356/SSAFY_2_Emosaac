@@ -53,7 +53,7 @@ public class GenreService {
     public List<GenreResponse> postResearch(Long userId, UserResearchRequest request, int typeCode) { //나의 선호 장르에 반영해야함
 
         User user = commonService.getUser(userId);
-        String str = BookListToString(request, typeCode);
+        String str = BookListToString(request);
         if (typeCode == 0) {
             user.setFavoriteWebtoonGenre(str); //선호 장르에 반영
         } else if (typeCode == 1) {
@@ -63,33 +63,20 @@ public class GenreService {
 
     }
 
-    public String BookListToString(UserResearchRequest request, int typeCode) {
-        Map<Long, Integer> map = new HashMap<>();
-        LinkedHashMap<Long, Integer> sortedMap = new LinkedHashMap<>();
-        ArrayList<Integer> list = new ArrayList<>();
+    public String BookListToString(UserResearchRequest request) {
+        Map<Long, Double> map = new HashMap<>();
 
         for (Long tmp : request.getBookId()) {
             Book book = commonService.getBook(tmp);
             Long genreId = book.getGenre().getGerneId();
-            map.put(genreId, map.getOrDefault(genreId, 1) + 1);
+            map.put(genreId, map.getOrDefault(genreId, 1.0) + 1);
         }
 
-        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-            list.add(entry.getValue());
-        }
-        Collections.sort(list, Collections.reverseOrder());
-
-        for (Integer num : list) {
-            for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-                if (entry.getValue().equals(num)) {
-                    sortedMap.put(entry.getKey(), num);
-                }
-            }
-        }
+        LinkedHashMap<Long, Double> sortedMap = MapToSortedMap(map);
 
         String str = "";
         int idx = 0;
-        for (Map.Entry<Long, Integer> entry : sortedMap.entrySet()) {
+        for (Map.Entry<Long, Double> entry : sortedMap.entrySet()) {
             if (idx == 3) {
                 break;
             }
@@ -133,16 +120,9 @@ public class GenreService {
 
     }
 
-    private List<Long> calcMinOrMax(List<TotalResponse> list) { //2
-
-        Map<Long, Double> map = new HashMap<>();
-        LinkedHashMap<Long, Double> sortedMap = new LinkedHashMap<>();
+    private LinkedHashMap<Long, Double> MapToSortedMap(Map<Long, Double> map) {
         ArrayList<Double> tmpList = new ArrayList<>();
-        ArrayList<Long> likeList = new ArrayList<>();
-
-        for (TotalResponse totalResponse : list) {
-            map.put(totalResponse.getGenreId(), totalResponse.getAmount());
-        }
+        LinkedHashMap<Long, Double> sortedMap = new LinkedHashMap<>();
 
         for (Map.Entry<Long, Double> entry : map.entrySet()) {
             tmpList.add(entry.getValue());
@@ -156,6 +136,21 @@ public class GenreService {
                 }
             }
         }
+
+        return sortedMap;
+    }
+
+    private List<Long> calcMinOrMax(List<TotalResponse> list) { //2
+        ArrayList<Long> likeList = new ArrayList<>();
+        Map<Long, Double> map = new HashMap<>();
+
+        for (TotalResponse totalResponse : list) {
+            map.put(totalResponse.getGenreId(), totalResponse.getAmount());
+        }
+
+        LinkedHashMap<Long, Double> sortedMap = MapToSortedMap(map);
+
+
         for (Map.Entry<Long, Double> entry : sortedMap.entrySet()) {
             likeList.add(entry.getKey());
         }
