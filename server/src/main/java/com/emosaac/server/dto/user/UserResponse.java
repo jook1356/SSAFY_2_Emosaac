@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-//@AllArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
 
     private Long userId;
@@ -30,18 +30,15 @@ public class UserResponse {
     //나이
     private Integer age;
 
-//    private List<String> webtoonGerne;
+    private String webtoonGerne;
 
-//    private List<String> novelGerne;
+    private String novelGerne;
 
     public static UserResponse from(User user) {
         String imgUrl = "https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/" + user.getImageUrl();
-        List<String> tmpWebtoon = new ArrayList<>();
-        List<String> tmpNovel = new ArrayList<>();
-
 //        tmpWebtoon = setWebtoonGerne(user.getFavoriteWebtoonGenre());
 //        tmpNovel = setNovelGerne(user.getFavoriteNovelGenre());
-        return new UserResponse(user.getUserId(), user.getNickName(), user.getEmail(), user.getUserName(), imgUrl, user.getGender(), user.getAge());
+        return new UserResponse(user.getUserId(), user.getNickName(), user.getEmail(), user.getUserName(), imgUrl, user.getGender(), user.getAge(), user.getFavoriteWebtoonGenre(), user.getFavoriteNovelGenre());
     }
 
     public UserResponse(Long userId, String nickname, String email, String userName, String imageUrl, Boolean gender, Integer age) {

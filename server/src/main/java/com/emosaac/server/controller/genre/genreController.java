@@ -37,7 +37,7 @@ public class genreController {
 
     ////<----설문조사
     @GetMapping("/research")
-    @ApiOperation(value = "설문조사 조회", notes = "설문조사 북 리스트를 반환 / typeCode:0이면 웹툰/1:소설")
+    @ApiOperation(value = "설문조사 질문 조회", notes = "설문조사 북 리스트를 반환 / typeCode:0이면 웹툰/1:소설")
     public ResponseEntity<CommonResponse> getResearch(@RequestParam(value = "typeCode") int typeCode) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
@@ -46,8 +46,8 @@ public class genreController {
 
     ///////
 
-    @PostMapping("/research/webtoon")
-    @ApiOperation(value = "설문조사 수행", notes = "선호 장르 리스트를 반환")
+    @PostMapping("/research")
+    @ApiOperation(value = "설문조사 수행", notes = "선호 장르 리스트를 반환, 0: 웹툰/1:소설, 수행 결과는 /users/me api로 컬럼 갱신됐는지 확인")
     public ResponseEntity<CommonResponse> postResearch(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                        @RequestBody @Valid UserResearchRequest request,
                                                        @RequestParam(value = "typeCode") int typeCode) {
@@ -62,7 +62,7 @@ public class genreController {
     //<-----장르별 추천
 
     @GetMapping("/books")
-    @ApiOperation(value = "장르별 책 추천", notes = "장르별 북 리스트를 반환")
+    @ApiOperation(value = "장르코드 주면 장르별 책 추천", notes = "장르별 북 리스트를 반환")
     public ResponseEntity<CommonResponse> getBookByGenre(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                          @RequestParam(value = "genreId")
                                                          Long genreId,
@@ -86,7 +86,7 @@ public class genreController {
 
     ////<---통계
     @GetMapping("/total/amounts")
-    @ApiOperation(value = "나의 장르별 통계 조회", notes = "장르별 읽음 수치 리스트를 반환 / typeCode: 0 : 웹툰/1:소설")
+    @ApiOperation(value = "나의 장르별 읽음 통계 조회", notes = "장르별 읽음 수치 리스트를 반환 / typeCode: 0 : 웹툰/1:소설")
     public ResponseEntity<CommonResponse> getTotalAmount(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                          @RequestParam(value = "typeCode") int typeCode) {
 
