@@ -9,10 +9,8 @@ import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.CommentSaveRequest;
 import com.emosaac.server.dto.comment.CommentUpdateRequest;
-import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.comment.BookCommentQueryRepository;
 import com.emosaac.server.repository.comment.BookCommentRepository;
-import com.emosaac.server.repository.user.UserRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Slf4j
@@ -30,8 +27,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class BookCommentService {
     private final CommonService commonService;
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
     private final BookCommentRepository bookCommentRepository;
     private final BookCommentQueryRepository bookCommentQueryRepository;
     @Transactional
@@ -92,12 +87,11 @@ public class BookCommentService {
         return bookCommentQueryRepository.findCommentByBookId(bookId, state, PageRequest.of(offset - 1, size));
     }
 
-
+    @Transactional
     public Boolean toggleBookCommentLike(Long userId, Long bookCommentId) {
         BookComment bookComment = bookCommentRepository.findByBookCommentId(bookCommentId);
         User user = commonService.getUser(userId);
         BookCommentLike bookCommentLike = BookCommentLike.builder().bookComment(bookComment).user(user).build();
-        System.out.println(bookComment.getBookCommentLikeList().size());
         return bookComment.toggleBookCommentLike(bookCommentLike);
     }
 }
