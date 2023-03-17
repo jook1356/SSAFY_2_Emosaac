@@ -8,11 +8,15 @@ interface Props {
 
 const Layout = (props: Props) => {
   return (
-    <div>
+    <div css={backCSS}>
       <NavigationBar />
       {props.children}
     </div>
   );
 };
+
+const backCSS = css`
+  background-color: var(--back-color);
+`;
 
 export default Layout;

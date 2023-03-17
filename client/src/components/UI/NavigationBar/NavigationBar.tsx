@@ -9,40 +9,54 @@ import { SearchBar } from "./SearchBar";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { BasicButton } from "./BasicButton";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
+import { useIsClient } from "@/components/Responsive/useIsClient";
 import { useMediaQuery } from "react-responsive";
 import { BsPersonFill } from "react-icons/bs";
 
 export const NavigationBar = () => {
   // DeskTop Nav content의 최소 너비
   const isNavLimit = !useMediaQuery({
-    query: "(min-width: 1124px) or (max-width: 1023px)",
+    query: "(min-width: 1185px) or (max-width: 1023px)",
   });
+  const isClient = useIsClient();
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
+  const [isDarkMode, setIsDarkMode] = useState(false);
   useEffect(() => {
     console.log(
       `isDeskTop:${isDeskTop}, isTablet:${isTablet}, isMobile:${isMobile}`
     );
   }, [isDeskTop, isTablet, isMobile]);
   return (
-    <nav>
+    <nav css={navAllCSS}>
       <div css={navBackCSS}>
-        <div css={navWrapCSS({ isNavLimit, isDeskTop, isTablet, isMobile })}>
+        <div
+          css={navWrapCSS({
+            isClient,
+            isNavLimit,
+            isDeskTop,
+            isTablet,
+            isMobile,
+          })}
+        >
           <h1 css={logoWrapCSS}>
             {isMobile && <Image alt="logo" src={emosaac_logo_mobile} />}
             {!isMobile && <Image alt="logo" src={emosaac_logo} />}
           </h1>
           {isDeskTop && (
-            <div css={menuWrapCSS(isDeskTop)}>
+            <div css={menuWrapCSS(isDeskTop, isTablet)}>
               <a href="#">웹툰</a>
               <a href="#">웹소설</a>
+              <a href="#">EMOPICK</a>
             </div>
           )}
           {!isMobile && (
-            <SearchBar
-              isDeskTop={isDeskTop}
-              isTablet={isTablet}
-              isMobile={isMobile}
-            />
+            <>
+              <SearchBar
+                isDeskTop={isDeskTop}
+                isTablet={isTablet}
+                isMobile={isMobile}
+              />
+            </>
           )}
           <DarkModeToggle
             isDeskTop={isDeskTop}
@@ -62,27 +76,34 @@ export const NavigationBar = () => {
         </div>
       </div>
       {!isDeskTop && (
-        <div css={menuWrapCSS(isDeskTop)}>
+        <div css={menuWrapCSS(isDeskTop, isTablet)}>
+          <a href="#">홈</a>
           <a href="#">웹툰</a>
           <a href="#">웹소설</a>
+          <a href="#">EMOPICK</a>
         </div>
       )}
     </nav>
   );
 };
 interface IsResponsive {
+  isClient: boolean;
   isNavLimit: boolean;
   isDeskTop: boolean;
   isTablet: boolean;
   isMobile: boolean;
 }
+const navAllCSS = css`
+  border-bottom: 1px solid var(--border-color-2);
+`;
 
 const navBackCSS = css`
   background-color: var(--back-color);
-  border-bottom: 1px solid var(--border-color);
+  /* box-shadow: var(--shadow-color); */
 `;
 
 const navWrapCSS = ({
+  isClient,
   isNavLimit,
   isDeskTop,
   isTablet,
@@ -91,15 +112,17 @@ const navWrapCSS = ({
   return css`
     position: relative;
     z-index: 10;
-    display: grid;
-    grid-template-columns: ${isDeskTop
-      ? "154px 110px 1fr 80px 80px"
+    display: none;
+    ${isClient && "display : grid;"}
+    ${isClient && "grid-template-columns: "}
+    ${isDeskTop
+      ? "130px 180px 1fr 60px 80px;"
       : isTablet
-      ? "154px 1fr 80px 56px"
+      ? "130px 1fr 60px 56px;"
       : isMobile
-      ? "40px 80px"
-      : "none"};
-    column-gap: 24px;
+      ? "40px 60px;"
+      : "none;"}
+      ${isClient && "column-gap: 24px;"}
     margin: ${isDeskTop
       ? isNavLimit
         ? "0 auto"
@@ -118,6 +141,8 @@ const navWrapCSS = ({
 };
 
 const logoWrapCSS = css`
+  display: flex;
+  align-items: center;
   & > img {
     width: 100%;
     height: 100%;
@@ -129,13 +154,17 @@ const logoWrapCSS = css`
   }
 `;
 
-const menuWrapCSS = (isDeskTop: boolean) => {
+const menuWrapCSS = (isDeskTop: boolean, isTablet: boolean) => {
   return css`
     display: flex;
-
-    justify-content: space-between;
+    font-size: 14px;
+    font-weight: bold;
+    padding: ${isDeskTop ? "0" : isTablet ? "0 50px" : "0 20px"};
+    justify-content: ${isDeskTop ? "space-between" : "flex-start"};
+    ${isDeskTop ? null : "background-color: var(--back-color);"}
     & > a {
-      line-height: 70px;
+      line-height: ${isDeskTop ? "50px" : "40px"};
+      ${isDeskTop ? null : "padding: 0 10px;"}
     }
   `;
 };
