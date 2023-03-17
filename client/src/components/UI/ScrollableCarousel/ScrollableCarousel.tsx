@@ -3,7 +3,7 @@ import { jsx, css } from "@emotion/react";
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { throttle } from "lodash";
 
-import Test from "./Test";
+// import Test from "./Test";
 import BookCard from "../BookCard/BookCard";
 
 const ScrollableCarousel = ({ API, identifier }: any) => {

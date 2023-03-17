@@ -9,10 +9,13 @@ import banner2 from "../../assets/temp_banner_2.png";
 import Image from "next/image";
 import HighlightedCarousel from "@/components/bookTab/HighlightedCarousel/HighlightedCarousel";
 import RowTitle from "@/components/bookTab/RowTitle/RowTitle";
+import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 
 
 export default function Home() {
   const parentRef = useRef<HTMLInputElement>(null);
+
+  const [isDeskTop, isTablet, isMobile] = useIsResponsive();
 
   // ________________________________________________________________________________________________
   // 임시 데이터
@@ -48,7 +51,7 @@ export default function Home() {
       </div>
       <div css={whiteSpace2CSS} />
 
-      <div css={innerLayoutWrapperCSS}>
+      <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
         <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
           <ScrollableCarousel API={recvBooks} identifier={"test1"} />
@@ -115,7 +118,16 @@ const bookCarouselWrapperCSS = css`
   border-radius: 10px; ;
 `;
 
-const innerLayoutWrapperCSS = css`
-  width: calc(100% - 210px);
-  /* margin: 0px 105px; */
-`
+
+interface innerLayoutWrapperCSSProps {
+  isDeskTop: boolean;
+  isTablet: boolean;
+  isMobile: boolean;
+}
+const innerLayoutWrapperCSS = ({isDeskTop, isTablet, isMobile}: innerLayoutWrapperCSSProps) => {
+  const whiteSpace = (isDeskTop && 210) || (isTablet && 100) || (isMobile && 0)
+  return css`
+    width: calc(100% - ${whiteSpace}px);
+    /* margin: 0px 105px; */
+  `
+}
