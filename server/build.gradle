@@ -102,3 +102,16 @@ configurations {
 	}
 	querydsl.extendsFrom compileClasspath
 }
+
+task copyPrivate(type: Copy) {
+	copy {
+		from '../../SsaMuSoConfig/main'
+		include "*.yml"
+		into 'src/main/resources'
+	}
+	copy {
+		from '../../SsaMuSoConfig/test'
+		include "*.yml"
+		into 'src/test/resources'
+	}
+}

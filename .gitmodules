@@ -1,0 +1,3 @@
+[submodule "emosaac"]
+	path = emosaac
+	url = https://lab.ssafy.com/shine7065/emosaac.git
