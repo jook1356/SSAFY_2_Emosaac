@@ -2,6 +2,7 @@
 import { jsx, css } from "@emotion/react";
 import { useState, useEffect, useRef } from "react";
 import BookCard from "@/components/UI/BookCard/BookCard";
+import Swipe from "react-easy-swipe";
 
 interface HighlightedCarousel {
   bookData: object[];
@@ -33,7 +34,8 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   };
 
   useEffect(() => {
-    if (bookDataList[0].title !== bookDataList[bookDataList.length -6].title) {
+    
+    if (bookDataList[0].title !== bookDataList[bookDataList.length - 5].title) {
       const temp = bookDataList.concat(bookDataList.slice(0, 5));
       setBookDataList(() => temp);
     }
@@ -94,66 +96,94 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
       );
     });
 
+  const [positionx, setPositionx] = useState<number>(0);
+
+  const onSwipeMove = (position = { x: 0 }) => {
+    setPositionx(() => position.x)
+  };
+
+  const onSwipeEnd = () => {
+    console.log(positionx)
+    if (positionx > 40) {
+      prevBtnHandler()
+    }
+    if (positionx < -40) {
+      nextBtnHandler()
+    }
+    setPositionx(() => 0)
+  }
+
   return (
     // <div css={carouselOuterWrapperCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, highlightedRef: dummyHighlightedRef})}></div>
-    <div css={carouselOuterWrapperCSS}>
+    
+    
+      <div className={"carousel-outer-wrapper"} css={carouselOuterWrapperCSS}>
 
-      <div css={highlightedDecoratorCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, unit: cardLayout.unit, highlightedRef: dummyHighlightedRef, carouselWrapperRef: carouselWrapperRef})}/>
-
-      
-      <div >
-        {/* <button onClick={prevBtnHandler}>prev</button>
-        <button
-          onClick={() => {
-            console.log(bookDataList);
-          }}
-        >
-          show
-        </button>
-        <button onClick={nextBtnHandler}>next</button> */}
-
-        <div css={prevBtnCSS} onClick={prevBtnHandler}>
-          〈
-        </div>
-        <div css={nextBtnCSS} onClick={nextBtnHandler}>
-          〉
-        </div>
+        <div css={highlightedDecoratorCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, unit: cardLayout.unit, highlightedRef: dummyHighlightedRef, carouselWrapperRef: carouselWrapperRef})}/>
+        <Swipe
+        onSwipeStart={(event: any) => {
+          event.stopPropagation();
+        }}
+        // onSwipeEnd={onSwipeEnd}
+        onSwipeMove={onSwipeMove}
+        onSwipeEnd={onSwipeEnd}
+      >
         
-        <div
-          ref={carouselWrapperRef}
-          className={"carousel-inner-wrapper"}
-          css={carouselInnerWrapperCSS({
-            widthValue: cardLayout.widthValue,
-            unit: cardLayout.unit,
-            highlightedWidthValue: cardLayout.highlightedWidthValue,
-            minWidthValue: cardLayout.minWidthValue,
-            minHighlightedWidthValue: cardLayout.minHighlightedWidthValue,
-            spaceValue: cardLayout.spaceValue,
-            minSpaceValue: cardLayout.minSpaceValue,
-            normalRef: dummyNormalRef,
-            carouselWrapperRef: carouselWrapperRef
-          })}
-        >
-          {renderBooks}
-        </div>
+        <div >
+          {/* <button onClick={prevBtnHandler}>prev</button>
+          <button
+            onClick={() => {
+              console.log(bookDataList);
+            }}
+          >
+            show
+          </button>
+          <button onClick={nextBtnHandler}>next</button> */}
 
-        <div css={dummyWrapper}>
+          <div css={prevBtnCSS} onClick={prevBtnHandler}>
+            〈
+          </div>
+          <div css={nextBtnCSS} onClick={nextBtnHandler}>
+            〉
+          </div>
+          
           <div
-            className={"dummy-normal"}
-            ref={dummyNormalRef}
-            css={dummyNormalCSS({
+            ref={carouselWrapperRef}
+            className={"carousel-inner-wrapper"}
+            css={carouselInnerWrapperCSS({
               widthValue: cardLayout.widthValue,
-              heightValue: cardLayout.heightValue,
               unit: cardLayout.unit,
+              highlightedWidthValue: cardLayout.highlightedWidthValue,
+              minWidthValue: cardLayout.minWidthValue,
+              minHighlightedWidthValue: cardLayout.minHighlightedWidthValue,
+              spaceValue: cardLayout.spaceValue,
+              minSpaceValue: cardLayout.minSpaceValue,
+              normalRef: dummyNormalRef,
+              carouselWrapperRef: carouselWrapperRef
             })}
-          />
-          <div className={"dummy-highlighted"} ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} />
-          <div className={"dummy-min-highlighted"} css={dummyMinHighlightedCSS({minHighlightedHeightValue: cardLayout.minHighlightedHeightValue})} />
+          >
+            {renderBooks}
+          </div>
+
+          <div css={dummyWrapper}>
+            <div
+              className={"dummy-normal"}
+              ref={dummyNormalRef}
+              css={dummyNormalCSS({
+                widthValue: cardLayout.widthValue,
+                heightValue: cardLayout.heightValue,
+                unit: cardLayout.unit,
+              })}
+            />
+            <div className={"dummy-highlighted"} ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} />
+            <div className={"dummy-min-highlighted"} css={dummyMinHighlightedCSS({minHighlightedHeightValue: cardLayout.minHighlightedHeightValue})} />
+          </div>
+          
         </div>
-        
+        </Swipe>
       </div>
-    </div>
-  );
+    
+  )
 };
 
 export default HighlightedCarousel;

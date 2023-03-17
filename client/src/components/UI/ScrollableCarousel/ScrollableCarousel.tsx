@@ -204,7 +204,7 @@ const carouselWrapper = css`
 const carousel = css`
   display: flex;
   width: 100vw;
-  padding-left: 48px;
+  /* padding-left: 48px; */
   box-sizing: border-box;
   overflow-x: scroll;
 
