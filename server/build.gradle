@@ -111,17 +111,7 @@ task copyPrivate(type: Copy) {
 	}
 	copy {
 		from '../../emosaac'
-		include "*.yml"
-		into 'src/test/resources'
-	}
-	copy {
-		from '../../emosaac'
 		include "*.properties"
 		into 'src/main/resources'
-	}
-	copy {
-		from '../../emosaac'
-		include "*.properties"
-		into 'src/test/resources'
 	}
 }
