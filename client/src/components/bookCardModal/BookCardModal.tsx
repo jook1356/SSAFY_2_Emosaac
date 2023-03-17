@@ -40,7 +40,17 @@ const BookCardModal = ({
       setisOpened(() => true);
 
     }
+
+    
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("wheel", onWheelHandler);
+
+    return () => {
+      window.removeEventListener("wheel", onWheelHandler);
+    }
+  }, [])
 
   const modalHandler = () => {
     if (isMouseOn === true && contentToggler === true) {
@@ -80,7 +90,8 @@ const BookCardModal = ({
   return (
     <div
       onMouseLeave={modalHandler}
-      onWheel={onWheelHandler}
+      // onWheelCapture={onWheelHandler}
+      
       ref={wrapperRef}
       css={wrapperCSS({
         modalToggler: contentToggler,
