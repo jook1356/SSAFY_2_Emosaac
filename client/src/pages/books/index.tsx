@@ -114,7 +114,7 @@ const highlightedCarouselWrapper = css`
 
 const bookCarouselWrapperCSS = css`
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   border-radius: 10px; ;
 `;
 

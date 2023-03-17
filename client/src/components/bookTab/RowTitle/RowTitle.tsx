@@ -36,7 +36,7 @@ const rowTitleWrapperCSS = ({marginBottom}: rowTitleWrapperCSSProps) => {
         position: relative;
         display: flex;
         align-items: center;
-        margin-bottom: ${marginBottom !== undefined ? marginBottom : `30px`};
+        margin-bottom: ${marginBottom !== undefined ? marginBottom : `24px`};
     `
 }
 

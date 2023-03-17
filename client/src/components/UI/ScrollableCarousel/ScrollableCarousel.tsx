@@ -2,6 +2,7 @@
 import { jsx, css } from "@emotion/react";
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { throttle } from "lodash";
+import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 
 // import Test from "./Test";
 import BookCard from "../BookCard/BookCard";
@@ -19,6 +20,7 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
   const [loadingTag, setLoadingTag] = useState<string[]>(
     Array(9).fill("LOADING")
   );
+  const [isDeskTop, isTablet, isMobile] = useIsResponsive();
 
   const cardLayout = {
     width: "10vw",
@@ -158,7 +160,7 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
   return (
     <div css={carouselWrapper}>
       <div
-        css={prevBtn}
+        css={[indicatorBtn, prevBtn({isDeskTop, isTablet, isMobile})]}
         onClick={prevBtnClickHandler}
         onMouseEnter={(event) => {
           event.stopPropagation();
@@ -167,7 +169,7 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
         〈
       </div>
       <div
-        css={nextBtn}
+        css={[indicatorBtn, nextBtn({isDeskTop, isTablet, isMobile})]}
         onClick={nextBtnClickHandler}
         onMouseEnter={(event) => {
           event.stopPropagation();
@@ -203,67 +205,72 @@ const carouselWrapper = css`
 
 const carousel = css`
   display: flex;
-  width: 100vw;
+  width: 100%;
   /* padding-left: 48px; */
   box-sizing: border-box;
   overflow-x: scroll;
+  border-radius: 10px;
 
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 
-const prevBtn = css`
+
+const indicatorBtn = css`
   z-index: 999;
   position: absolute;
-  left: 0;
+  
   height: 100%;
   display: flex;
   align-items: center;
   font-size: 48px;
   font-weight: 700;
-  color: white;
+  color: var(--text-color);
   padding-left: 8px;
   padding-right: 8px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+  
   transition-property: background font-size;
   transition-duration: 0.2s;
   cursor: pointer;
   user-select: none;
+  
 
-  &:hover {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
-    font-size: 54px;
-  }
+  
 
   @media (max-width: 480px) {
     display: none;
   }
-`;
+`
 
-const nextBtn = css`
-  z-index: 999;
-  position: absolute;
-  right: 0;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  font-size: 48px;
-  font-weight: 700;
-  color: white;
-  padding-left: 8px;
-  padding-right: 8px;
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
-  transition-property: background font-size;
-  transition-duration: 0.2s;
-  cursor: pointer;
+interface nextPrevBtnProps {
+  isDeskTop: boolean;
+  isTablet: boolean;
+  isMobile: boolean;
+}
 
-  &:hover {
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
-    font-size: 54px;
-  }
+const prevBtn = ({isDeskTop, isTablet, isMobile}: nextPrevBtnProps) => {
+  return css`
+    left: 0;
+    /* background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); */
+    transform: ${(isDeskTop === true && `translate(-105px, 0px)`) || (isTablet === true && `translate(-50px, 0px)`)};
+    &:hover {
+        /* background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
+        font-size: 54px;
+      }
+    
+  `;
+} 
 
-  @media (max-width: 480px) {
-    display: none;
-  }
-`;
+const nextBtn = ({isDeskTop, isTablet, isMobile}: nextPrevBtnProps) => {
+  return css`
+    
+    right: 0;
+    /* background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); */
+    transform: ${(isDeskTop === true && `translate(105px, 0px)`) || (isTablet === true && `translate(50px, 0px)`)};
+    &:hover {
+        /* background: linear-gradient(to left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
+        font-size: 54px;
+    }
+  `;
+}
