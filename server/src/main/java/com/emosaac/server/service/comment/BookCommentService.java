@@ -3,25 +3,22 @@ package com.emosaac.server.service.comment;
 import com.emosaac.server.common.exception.ResourceForbiddenException;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.BookComment;
+import com.emosaac.server.domain.book.BookCommentLike;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.CommentSaveRequest;
 import com.emosaac.server.dto.comment.CommentUpdateRequest;
-import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.comment.BookCommentQueryRepository;
 import com.emosaac.server.repository.comment.BookCommentRepository;
-import com.emosaac.server.repository.user.UserRepository;
+import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -29,14 +26,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookCommentService {
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
+    private final CommonService commonService;
     private final BookCommentRepository bookCommentRepository;
     private final BookCommentQueryRepository bookCommentQueryRepository;
     @Transactional
     public Long createBookComment(Long userId, Long bookId, CommentSaveRequest request) {
-        Book book = bookRepository.findByBookId(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "bookId", bookId));
-        User user = userRepository.findByMyId(userId);
+        Book book = commonService.getBook(bookId);
+        User user = commonService.getUser(userId);
 
         BookComment bookComment = null;
         if(request.getParentId() != null){
@@ -78,44 +74,24 @@ public class BookCommentService {
                 .orElseThrow(() -> new ResourceNotFoundException("BookComment", "commentId", commentId));
         validBookCommentUser(userId, bookComment.getUser().getUserId());
 
-        if(bookComment.getDepth()==0 && !bookComment.getChildren().isEmpty()){ //원댓글이 사라지면 숨김 처리
-            bookComment.updateDeleteStatus();
-        }else if(!bookComment.getChildren().isEmpty()){
+        if(!bookComment.getChildren().isEmpty()){ // 자식 댓글이 있는 경우
             bookComment.updateDeleteStatus();
         }else{
             bookCommentRepository.deleteByCommentId(commentId);
         }
         return commentId;
     }
-
-
-    public Object findBookCommentList(Long bookId, int offset, int size) {
-//        List<BookComment> l1 = bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, 10));
-//        List<BookComment> l2 = bookCommentRepository.findCommentByBookId(bookId);
-//        System.out.println("l1");
-//        for(BookComment bc : l1){
-//            System.out.println(bc.getCommentId());
-//        }
-//        System.out.println("l2");
-//        for(BookComment bc : l2){
-//            System.out.println(bc.getCommentId());
-//        }
-//        return null;
-        return convertNestedStructure(bookCommentQueryRepository.findCommentByBookId(bookId, PageRequest.of(offset - 1, size)));
-//        return convertNestedStructure(bookCommentRepository.findCommentByBookId(bookId));
+    
+    // state 0 : 부모, 1 : 자식
+    public List<CommentResponse> findBookCommentList(Long bookId, int state, int offset, int size) {
+        return bookCommentQueryRepository.findCommentByBookId(bookId, state, PageRequest.of(offset - 1, size));
     }
 
-    private List<CommentResponse> convertNestedStructure(List<BookComment> comments) {
-        List<CommentResponse> result = new ArrayList<>();
-        Map<Long, CommentResponse> map = new HashMap<>();
-        comments.stream().forEach(c -> {
-            CommentResponse dto = CommentResponse.from(c);
-            map.put(dto.getCommentId(), dto);
-            if(c.getParent() != null) {
-                map.get(c.getParent().getCommentId()).getChildren().add(dto);
-            }
-            else result.add(dto);
-        });
-        return result;
+    @Transactional
+    public Boolean toggleBookCommentLike(Long userId, Long bookCommentId) {
+        BookComment bookComment = bookCommentRepository.findByBookCommentId(bookCommentId);
+        User user = commonService.getUser(userId);
+        BookCommentLike bookCommentLike = BookCommentLike.builder().bookComment(bookComment).user(user).build();
+        return bookComment.toggleBookCommentLike(bookCommentLike);
     }
 }

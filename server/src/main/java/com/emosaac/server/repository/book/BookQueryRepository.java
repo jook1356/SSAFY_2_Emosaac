@@ -1,10 +1,7 @@
 package com.emosaac.server.repository.book;
 
 import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.dto.book.BookDayResponse;
-import com.emosaac.server.dto.book.BookListResponse;
-import com.emosaac.server.dto.book.QBookDayResponse;
-import com.emosaac.server.dto.book.QBookListResponse;
+import com.emosaac.server.dto.book.*;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -27,29 +24,29 @@ public class BookQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     // 요일별 소설 리스트
-    public Slice<BookListResponse> findBookListByDay(int typeCd, String day, PageRequest page, Long prevId, Double prevScore, String criteria) {
+    public Slice<BookListResponse> findBookListByDay(String day, BookRequest request) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
-                        book.type.eq(typeCd),
+                        book.type.eq(request.getTypeCd()),
                         book.day.contains(day),
                         //no-offset 페이징 처리
 //                        ltBookId(prevId),
-                        cursorIdAndCursorScore(prevId, prevScore),
-                        filterGenreCd(criteria)
+                        cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
+                        filterGenreCd(request.getCriteria())
                 )
 //                .orderBy(findCriteria(criteria))
-                .limit(page.getPageSize()+1)
+                .limit(request.getSize()+1)
                 .orderBy(book.score.desc(),book.bookId.desc())  // 평점 추가
                 .fetch();
 
         boolean hasNext = false;
-        if (content.size() == page.getPageSize()+1) {
-            content.remove(page.getPageSize());
+        if (content.size() == request.getSize()+1) {
+            content.remove(request.getSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(content, page, hasNext);
+        return new SliceImpl<>(content, PageRequest.ofSize(request.getSize()), hasNext);
     }
 
     // 장르별 소설 리스트

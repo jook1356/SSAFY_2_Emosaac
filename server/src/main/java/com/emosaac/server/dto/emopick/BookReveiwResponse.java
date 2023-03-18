@@ -1,4 +1,4 @@
-package com.emosaac.server.dto.book;
+package com.emosaac.server.dto.emopick;
 
 import com.emosaac.server.domain.book.Book;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,30 +11,34 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BookListResponse {
+public class BookReveiwResponse {
     private Long bookId;
     private int platform;
     private String thumbnail;
     private String title;
     private String author;
     private String href;
-    private double score;
-    private Long genreId;
-    private String genreName;
+    private String genre;
+    private String regist;
+    private String grade;
+    private double avgScore;
+
+    private String reveiw;
 
     @QueryProjection
-    public BookListResponse(Book book){
+    public BookReveiwResponse(Book book, String review){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.href = book.getHref();
-        this.score = book.getScore();
-        this.genreId = book.getGenre().getGerneId();
-        this.genreName = book.getGenre().getName();
+        this.genre = book.getGenre().getName();
+        this.grade = book.getGrade();
+        this.regist = book.getRegist();
+
+        this.avgScore = book.getScore();
+
+        this.reveiw = review;
     }
-
-
-
 }

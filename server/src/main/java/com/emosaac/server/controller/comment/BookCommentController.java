@@ -23,15 +23,17 @@ public class BookCommentController {
 
     @Autowired
     private BookCommentService bookCommentService;
-    @ApiOperation(value = "해당 북의 댓글 리스트 조회", notes = "게시물 postId를 입력받은 후 게시물 목록을 조회한다. (최신 날짜순)")
-    @GetMapping("/{bookId}")
-    public ResponseEntity<CommonResponse> finBookCommentList(@PathVariable Long bookId,
+
+    @ApiOperation(value = "해당 북의 댓글 리스트 조회", notes = "게시물 bookId를 입력받은 후 댓글을 조회한다. (최신 날짜순) / state 0:부모댓글 조회, 1:자식댓글 조회")
+    @GetMapping("/{bookId}/{state}")
+    public ResponseEntity<CommonResponse> findBookCommentList(@PathVariable Long bookId,
+                                                              @PathVariable int state,
                                                               @RequestParam(required=false, defaultValue = "1") int offset,
                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size){
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "해당 게시물의 댓글 목록 조회 성공", bookCommentService.findBookCommentList(bookId, offset, size)));
+                HttpStatus.OK, "해당 게시물의 댓글 목록 조회 성공", bookCommentService.findBookCommentList(bookId, state, offset, size)));
     }
 
     @ApiOperation(value = "북 댓글 등록", notes = "북 댓글을 등록한다")
@@ -56,6 +58,14 @@ public class BookCommentController {
     public ResponseEntity<CommonResponse> deleteBookComment(@ApiIgnore @CurrentUser UserPrincipal user, @PathVariable Long commentId) {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.NO_CONTENT, "삭제 성공", bookCommentService.deleteBookComment(user.getId(), commentId)));
+    }
+
+    @ApiOperation(value = "북 댓글 좋아요", notes = "북 댓글에 좋아요 누른다")
+    @PutMapping("/like/{bookCommentId}")
+    public ResponseEntity<CommonResponse> toggleBookCommentLike(@ApiIgnore @CurrentUser UserPrincipal user,
+                                                                @PathVariable Long bookCommentId) throws Exception {
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.CREATED, "수정 성공", bookCommentService.toggleBookCommentLike(user.getId(), bookCommentId)));
     }
 
 }
