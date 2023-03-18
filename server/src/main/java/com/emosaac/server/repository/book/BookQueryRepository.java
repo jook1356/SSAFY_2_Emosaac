@@ -24,44 +24,45 @@ public class BookQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     // 요일별 소설 리스트
-    public Slice<BookListResponse> findBookListByDay(String day, BookRequest request) {
+    public Slice<BookListResponse> findBookListByDay(String day, int typeCd, Long genreCode, PageRequest page, Long prevId, Double prevScore) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
-                        book.type.eq(request.getTypeCd()),
+                        book.type.eq(typeCd),
                         book.day.contains(day),
                         //no-offset 페이징 처리
 //                        ltBookId(prevId),
-                        cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
-                        filterGenreCd(request.getCriteria())
+                        cursorIdAndCursorScore(prevId, prevScore),
+                        filterGenreCd(genreCode)
                 )
 //                .orderBy(findCriteria(criteria))
-                .limit(request.getSize()+1)
+                .limit(page.getPageSize()+1)
                 .orderBy(book.score.desc(),book.bookId.desc())  // 평점 추가
                 .fetch();
 
         boolean hasNext = false;
-        if (content.size() == request.getSize()+1) {
-            content.remove(request.getSize());
+        if (content.size() == page.getPageSize()+1) {
+            content.remove(page.getPageSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(content, PageRequest.ofSize(request.getSize()), hasNext);
+        return new SliceImpl<>(content, page, hasNext);
     }
 
     // 장르별 소설 리스트
-    public Slice<BookListResponse> findBookListByGenre(int typeCd, Long genreCode, PageRequest page, Long prevId, String criteria) {
+    public Slice<BookListResponse> findBookListByGenre(Long genreCode, int typeCd, PageRequest page, Long prevId, Double prevScore) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
                         book.type.eq(typeCd),
                         book.genre.gerneId.eq(genreCode),
                         //no-offset 페이징 처리
-                        ltBookId(prevId)
+//                        ltBookId(request.getPrevId())
+                        cursorIdAndCursorScore(prevId, prevScore)
                 )
 //                .orderBy(findCriteria(criteria))
                 .limit(page.getPageSize()+1)
-                .orderBy(book.bookId.desc())
+                .orderBy(book.score.desc(),book.bookId.desc())
                 .fetch();
 
         boolean hasNext = false;
@@ -99,6 +100,7 @@ public class BookQueryRepository {
     private BooleanExpression ltBookId(Long cursorId) {
         return cursorId == null ? null : book.bookId.lt(cursorId);
     }
+
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (book.score.eq(cursorScore)
                 .and(book.bookId.lt(cursorId)))
@@ -116,25 +118,27 @@ public class BookQueryRepository {
     }
 
     /*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
-    private Predicate filterGenreCd(String criteria) {
-        if(criteria.contains("로맨스")){
-            return book.genre.gerneId.eq(10L);
-        } else if(criteria.contains("로판")){
-            return book.genre.gerneId.eq(11L);
-        } else if(criteria.contains("판타지")){
-            return book.genre.gerneId.eq(13L);
-        } else if(criteria.contains("무협")){
-            return book.genre.gerneId.eq(14L);
-        } else if(criteria.contains("BL/GL")){
-            return book.genre.gerneId.eq(15L);
-        } else if(criteria.contains("현판")){
-            return book.genre.gerneId.eq(27L);
-        } else if(criteria.contains("미스터리")){
-            return book.genre.gerneId.eq(28L);
-        } else if(criteria.contains("")){
-            return null;
-        }
+    private Predicate filterGenreCd(Long genreCode) {
+//        if(criteria.contains("로맨스")){
+//            return book.genre.gerneId.eq(10L);
+//        } else if(criteria.contains("로판")){
+//            return book.genre.gerneId.eq(11L);
+//        } else if(criteria.contains("판타지")){
+//            return book.genre.gerneId.eq(13L);
+//        } else if(criteria.contains("무협")){
+//            return book.genre.gerneId.eq(14L);
+//        } else if(criteria.contains("BL/GL")){
+//            return book.genre.gerneId.eq(15L);
+//        } else if(criteria.contains("현판")){
+//            return book.genre.gerneId.eq(27L);
+//        } else if(criteria.contains("미스터리")){
+//            return book.genre.gerneId.eq(28L);
+//        } else if(criteria == null || criteria.contains("")){
+//            return null;
+//        }
 
-        return book.genre.gerneId.eq(Long.valueOf(criteria)); // 장르 코드로 사용할 때
+        if(genreCode == 0 || genreCode == null) return null;
+
+        return book.genre.gerneId.eq(genreCode); // 장르 코드로 사용할 때
     }
 }

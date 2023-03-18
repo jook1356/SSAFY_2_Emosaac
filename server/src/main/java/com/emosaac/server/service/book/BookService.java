@@ -1,26 +1,19 @@
 package com.emosaac.server.service.book;
 
 import com.emosaac.server.common.SlicedResponse;
-import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.BookMark;
 import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.domain.book.Score;
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.dto.book.BookDayResponse;
-import com.emosaac.server.dto.book.BookDetailResponse;
-import com.emosaac.server.dto.book.BookListResponse;
-import com.emosaac.server.dto.book.BookRequest;
+import com.emosaac.server.dto.book.*;
 import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.bookmark.BookmarkRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
 import com.emosaac.server.repository.score.ScoreQueryRepository;
-import com.emosaac.server.repository.user.UserRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -40,16 +33,16 @@ public class BookService {
     private final CommonService commonService;
 
     // 요일별 작품 리스트
-    public SlicedResponse<BookListResponse> findDayList(String day, BookRequest request) {
+    public SlicedResponse<BookListResponse> findDayList(String day, int typeCd, Long genreCode, int size, Long prevId, Double prevScore) {
 
-        Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(day, request);
+        Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(day, typeCd, genreCode, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 장르벌 작품 리스트
-    public SlicedResponse<BookListResponse> findGenreList(Long genreCode, int size, String criteria, Long prevId, int typeCd) {
+    public SlicedResponse<BookListResponse> findGenreList(Long genreCode, int typeCd, int size, Long prevId, Double prevScore) {
 
-        Slice<BookListResponse> page = bookQueryRepository.findBookListByGenre(typeCd, genreCode, PageRequest.ofSize(size), prevId, criteria);
+        Slice<BookListResponse> page = bookQueryRepository.findBookListByGenre(genreCode, typeCd, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 

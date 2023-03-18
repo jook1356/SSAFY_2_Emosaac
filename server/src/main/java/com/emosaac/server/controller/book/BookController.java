@@ -1,7 +1,7 @@
 package com.emosaac.server.controller.book;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.dto.book.BookRequest;
+import com.emosaac.server.dto.book.BookPageRequest;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.book.BookService;
@@ -23,11 +23,16 @@ public class BookController {
 
     @ApiOperation(value = "요일별 리스트", notes = "요일별 웹툰 리스트를 조회한다.")
     @GetMapping("/day/{day}")
-    public ResponseEntity<CommonResponse> findDayList(@PathVariable String day, BookRequest request) {
+    public ResponseEntity<CommonResponse> findDayList(@PathVariable String day,
+                                                      @RequestParam (value = "typeCode") int typeCd,
+                                                      @RequestParam(required=false, defaultValue = "0") Long genreCode,
+                                                      @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                      @RequestParam(value = "prevId", required = false, defaultValue = "20000")Long prevId,
+                                                      @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
 //
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "요일별 리스트 조회 성공", bookService.findDayList(day, request)
+                HttpStatus.OK, "요일별 리스트 조회 성공", bookService.findDayList(day, typeCd, genreCode, size, prevId, prevScore)
         ));
     }
 
@@ -35,13 +40,13 @@ public class BookController {
     @GetMapping("/genre/{genreCode}")
     public ResponseEntity<CommonResponse> findGenreList(@PathVariable Long genreCode,
                                                         @RequestParam (value = "typeCode") int typeCd,
-                                                        @RequestParam(required=false, defaultValue = "date") String criteria,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                        @RequestParam(value = "prevId", required = false, defaultValue = "1")Long prevId) {
+                                                        @RequestParam(value = "prevId", required = false, defaultValue = "20000")Long prevId,
+                                                        @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 리스트 조회 성공", bookService.findGenreList(genreCode, size, criteria, prevId, typeCd)
+                HttpStatus.OK, "장르별 리스트 조회 성공", bookService.findGenreList(genreCode, typeCd, size, prevId, prevScore)
         ));
     }
 
