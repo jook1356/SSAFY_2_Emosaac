@@ -198,7 +198,7 @@ public class GenreService {
         return list;
     }
 
-    public Long[] getLikeList(List<TotalResponse> list, int isLike, List<Long> tmpList) { //api에서 사용
+    public Long[] getLikeList(int isLike, List<Long> tmpList) { //api에서 사용
 
         Long[] likeList = new Long[7];
 
@@ -213,10 +213,10 @@ public class GenreService {
                 likeList[idx++] = tmpList.get(i);
             }
         }
-        for (int i=0;i<likeList.length;i++){
-            System.out.println(likeList[i]);
-
-        }
+//        for (int i=0;i<likeList.length;i++){
+//            System.out.println(likeList[i]);
+//
+//        }
         return likeList;
     }
 
@@ -228,7 +228,7 @@ public class GenreService {
         List<TotalResponse> list = getTotalGenreCount(userId, typeCode, isLike); //2
 
         List<Long> tmpList = calcMinOrMax(list); //2
-        Long[] likeList = getLikeList(list, isLike, tmpList);
+        Long[] likeList = getLikeList(isLike, tmpList);
 
 
         setFavoriteGenre(tmpList, typeCode, userId); //유저에 반영, 스케줄러 처리 하면 지워도 될것 같음
@@ -244,7 +244,7 @@ public class GenreService {
         List<TotalResponse> list = getTotalGenreCount(userId, typeCd, isLike);
         List<Long> tmpList = calcMinOrMax(list); //2
 
-        Long[] likeList = getLikeList(list, isLike, tmpList);
+        Long[] likeList = getLikeList(isLike, tmpList);
 
         Long[] top2List = new Long[3];
         top2List[0] = likeList[0];
@@ -261,7 +261,7 @@ public class GenreService {
         List<TotalResponse> list = getTotalGenreCount(userId, request.getTypeCd(), request.getIsLike());
         List<Long> tmpList = calcMinOrMax(list); //2
 
-        Long[] likeList = getLikeList(list, 0, tmpList);
+        Long[] likeList = getLikeList(0, tmpList);
 
 
         Slice<BookListResponse> page = genreQueryRepository.findBookLikeGenre(userId, request, PageRequest.ofSize(request.getSize()), likeList[request.getOrder() - 1]);
