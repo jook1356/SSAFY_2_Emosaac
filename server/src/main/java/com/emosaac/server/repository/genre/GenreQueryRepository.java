@@ -82,6 +82,18 @@ public class GenreQueryRepository {
     }
 
     //장르별 읽음 카운트
+//    public List<Long> findReadSpecGenreCount1(Long userId, int typeCode, Long genre) {
+//        return jpaQueryFactory.select(readBook.book.count())
+//                .from(readBook)
+//                .join(book)
+//                .where(readBook.book.type.eq(typeCode),
+//                        readBook.user.userId.eq(userId),
+//                        readBook.book.eq(book)
+////                        readBook.book.genre.gerneId.eq(genre)
+//                        )
+//                .groupBy(book.genre)
+//                .fetch();
+//    }
     public Long findReadSpecGenreCount(Long userId, int typeCode, Long genre) {
         return jpaQueryFactory.select(readBook.book.count())
                 .from(readBook)
@@ -126,6 +138,25 @@ public class GenreQueryRepository {
         }
 
         return new SliceImpl<>(content, page, hasNext);
+    }
+
+    //선호/비선호 장르별 책 하나만
+   public List<BookListResponse> findBookLikeRandom(Long userId, int typeCd, int like,
+                                                    Long[] top2List) {
+        return  jpaQueryFactory.select(new QBookListResponse(book))
+                .from(book)
+                .where(book.type.eq(typeCd),
+                        book.genre.gerneId.in(top2List),
+                        book.notIn(
+                                JPAExpressions
+                                        .select(readBook.book).from(readBook)
+                                        .where(readBook.user.userId.eq(userId))
+                        )
+                )
+                .limit(30)
+                .orderBy(book.genre.gerneId.desc(), book.score.desc(), book.bookId.desc())
+                .fetch();
+
     }
 
 
