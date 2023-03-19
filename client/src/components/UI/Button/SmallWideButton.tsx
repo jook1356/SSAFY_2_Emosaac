@@ -24,5 +24,5 @@ const buttonCSS = css`
   font-size: 18px;
   padding: 0 20px;
   background-color: var(--main-color);
-  color: #fff;
+  color: var(--text-color);
 `;
