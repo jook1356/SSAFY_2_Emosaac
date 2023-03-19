@@ -31,9 +31,24 @@ public class SearchService {
     private final TagToonRepository tagToonRepository;
     private final TagQueryRepository tagQueryRepository;
 
-    public List<BookDayResponse> findBookListByTagName(String tagName, int size, Long prevId, Double prevScore) {
-        return tagQueryRepository.findBookListByTagName(tagName,  PageRequest.ofSize(size), prevId, prevScore).stream().map((b)-> new BookDayResponse(b)).collect(Collectors.toList());
+    public List<BookDayResponse> findBookListByTagName(String tagName, String type, int size, Long prevId, Double prevScore) {
+        if(type.equals("total")){
+            return tagQueryRepository.findTotalBookListByTagName(tagName,  PageRequest.ofSize(size), prevId, prevScore);
+        }else if(type.equals("webtoon")){
+            return tagQueryRepository.findBookListByTagName(tagName, 0,  PageRequest.ofSize(size), prevId, prevScore);
+        }else{
+            return tagQueryRepository.findBookListByTagName(tagName, 1,  PageRequest.ofSize(size), prevId, prevScore);
+        }
     }
 
+    public List<BookDayResponse> findBookListByTitle(String content, String type, int size, Long prevId, Double prevScore) {
+        if(type.equals("total")){
+            return tagQueryRepository.findTotalBookListByTitle(content,  PageRequest.ofSize(size), prevId, prevScore);
+        }else if(type.equals("webtoon")){
+            return tagQueryRepository.findBookListByTitle(content,  0, PageRequest.ofSize(size), prevId, prevScore);
+        }else{
+            return tagQueryRepository.findBookListByTitle(content,  1, PageRequest.ofSize(size), prevId, prevScore);
+        }
 
+    }
 }
