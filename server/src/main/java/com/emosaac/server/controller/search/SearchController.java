@@ -16,24 +16,26 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @ApiOperation(value = "전체 태그 이름별 리스트 조회", notes = "태그 이름별로,정렬 기준(view/date/like)으로 게시물 목록을 조회한다.")
-    @GetMapping("tag/{tagName}")
-    public ResponseEntity<CommonResponse> findByTagNamePostList(@PathVariable String tagName,
+    @ApiOperation(value = "태그 이름별 리스트 조회", notes = "태그 이름별로, 평점 순으로 게시물 목록을 조회한다. type total:전체, webtoon:웹툰, novel:소설")
+    @GetMapping("tag/{type}/{tagName}")
+    public ResponseEntity<CommonResponse> findByTagNameBookList(@PathVariable String tagName,
+                                                                @PathVariable String type,
                                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                                 @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
                                                                 @RequestParam(value = "prevScore", required = false, defaultValue = "0")Double prevScore){
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "태그 이름별 게시물 목록 조회 성공", searchService.findBookListByTagName(tagName, size, prevId, prevScore))
+                HttpStatus.OK, "태그 이름별 게시물 목록 조회 성공", searchService.findBookListByTagName(tagName, type, size, prevId, prevScore))
         );
     }
-    @ApiOperation(value = "전체 제목/작가 리스트 조회", notes = "제목/작가 이름별로,정렬 기준(view/date/like)으로 게시물 목록을 조회한다.")
-    @GetMapping("tag/{content}")
+    @ApiOperation(value = "제목/작가별 리스트 조회", notes = "제목/작가 이름별로, 평점 순으로 게시물 목록을 조회한다. type total:전체, webtoon:웹툰, novel:소설")
+    @GetMapping("title/{type}/{content}")
     public ResponseEntity<CommonResponse> findByTitlePostList(@PathVariable String content,
+                                                              @PathVariable String type,
                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                               @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
                                                               @RequestParam(value = "prevScore", required = false, defaultValue = "0")Double prevScore){
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "제목작가별 게시물 목록 조회 성공", searchService.findBookListByTitle(content, size, prevId, prevScore))
+                HttpStatus.OK, "제목작가별 게시물 목록 조회 성공", searchService.findBookListByTitle(content, type, size, prevId, prevScore))
         );
     }
 }
