@@ -25,9 +25,10 @@ public class EmopickController {
 
     @ApiOperation(value = "이모픽 리스트 조회", notes = "이모픽 리스트를 조회한다.")
     @GetMapping
-    public ResponseEntity<CommonResponse> findEmopickList() {
+    public ResponseEntity<CommonResponse> findEmopickList(@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                          @RequestParam(value = "prevId", required = false, defaultValue = "20000")Long prevId) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "이모픽 조회 완료", null
+                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickList(size, prevId)
         ));
     }
 
