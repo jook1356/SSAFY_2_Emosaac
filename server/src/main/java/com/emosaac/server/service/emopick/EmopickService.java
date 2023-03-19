@@ -1,19 +1,20 @@
 package com.emosaac.server.service.emopick;
 
+import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.emo.Emopick;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDetailResponse;
-import com.emosaac.server.dto.emopick.BookReveiwResponse;
-import com.emosaac.server.dto.emopick.DetailResponse;
-import com.emosaac.server.dto.emopick.EmopickDetailResponse;
-import com.emosaac.server.dto.emopick.EmopickSaveRequest;
+import com.emosaac.server.dto.emopick.*;
 import com.emosaac.server.repository.book.BookQueryRepository;
+import com.emosaac.server.repository.emopick.EmopickQueryRepository;
 import com.emosaac.server.repository.emopick.EmopickRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +29,17 @@ import java.util.stream.Collectors;
 public class EmopickService {
 
     private final EmopickRepository emopickRepository;
-    private final BookQueryRepository bookQueryRepository;
+    private final EmopickQueryRepository emopickQueryRepository;
     private final CommonService commonService;
 
     // 이모픽 리스트 조회
+    public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
+
+        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.ofSize(size), prevId);
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+//           return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+//
+    }
 
     // 이모픽 상세 조회
     public DetailResponse<BookReveiwResponse> findEmopickDetail(Long emopickId) {
