@@ -154,7 +154,7 @@ public class GenreQueryRepository {
                         )
                 )
                 .limit(30)
-                .orderBy(book.genre.gerneId.desc(), book.score.desc(), book.bookId.desc())
+                .orderBy(book.score.desc())
                 .fetch();
 
     }
