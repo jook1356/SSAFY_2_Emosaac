@@ -18,18 +18,16 @@ public class RecommandService1 {
 
     private final RecommandQueryRepository1 recommandQueryRepository1;
 
-    public SlicedResponse<BookListResponse> findBestWebtoonList(int size, Long prevId, Double prevScore) {
-//        return null;
-        Slice<BookListResponse> page = recommandQueryRepository1.findBestWebtoonList(0, prevId, prevScore, PageRequest.ofSize(size));
+    public SlicedResponse<BookListResponse> findBestList(int size, Long prevId, Double prevScore, int hit, int typeCd) {
+        Slice<BookListResponse> page = recommandQueryRepository1.findBestList(hit, typeCd, prevId, prevScore, PageRequest.ofSize(size));
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
-    public SlicedResponse<BookListResponse> findBestNovelList(int size, Long prevId, Double prevScore) {
-//        return null;
-        Slice<BookListResponse> page = recommandQueryRepository1.findBestNovelList(1, prevId, prevScore, PageRequest.ofSize(size));
+
+    public SlicedResponse<BookListResponse> findNewBookList(int size, Long prevId, String regist, int typeCd) {
+        Slice<BookListResponse> page = recommandQueryRepository1.findNewBookList(regist, typeCd, prevId, PageRequest.ofSize(size));
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
-
 
 
 }

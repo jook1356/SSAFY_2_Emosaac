@@ -27,14 +27,14 @@ public class RecommandQueryRepository1 {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Slice<BookListResponse> findBestNovelList(int typeCd, Long prevId, Double prevScore, PageRequest page) {
+    public Slice<BookListResponse> findBestList(int hit, int typeCd, Long prevId, Double prevScore, PageRequest page) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(typeCd),
-                        cursorIdAndCursorScore(prevId, prevScore)
+                        cursorIdAndCursorScoreAndCursorHit(prevId, prevScore, hit)
                 )
                 .limit(page.getPageSize() + 1)
-                .orderBy(book.hit.desc(), book.score.desc())
+                .orderBy(book.hit.desc(), book.score.desc(), book.bookId.desc())
                 .fetch();
 
         boolean hasNext = false;
@@ -45,14 +45,14 @@ public class RecommandQueryRepository1 {
 
         return new SliceImpl<>(content, page, hasNext);
     }
-    public Slice<BookListResponse> findBestWebtoonList(int typeCd, Long prevId, Double prevScore, PageRequest page) {
+    public Slice<BookListResponse> findNewBookList(String regist, int typeCd, Long prevId, PageRequest page) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(typeCd),
-                        cursorIdAndCursorScore(prevId, prevScore)
+                        cursorIdAndCursorRegist(prevId, regist)
                 )
                 .limit(page.getPageSize() + 1)
-                .orderBy(book.hit.desc(), book.score.desc())
+                .orderBy(book.regist.desc(), book.bookId.desc())
                 .fetch();
 
         boolean hasNext = false;
@@ -63,9 +63,14 @@ public class RecommandQueryRepository1 {
 
         return new SliceImpl<>(content, page, hasNext);
     }
-
-    private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
-        return (book.score.eq(cursorScore).and(book.bookId.lt(cursorId))).or(book.score.lt(cursorScore));
+    private Predicate cursorIdAndCursorScoreAndCursorHit(Long cursorId, Double cursorScore, Integer hit) {
+        return (book.hit.eq(hit).and(book.score.lt(cursorScore)))
+                .or(book.score.eq(cursorScore).and(book.bookId.lt(cursorId)))
+                .or(book.hit.lt(hit));
+    }
+    private Predicate cursorIdAndCursorRegist(Long cursorId, String regist) {
+        return (book.regist.eq(regist).and(book.bookId.lt(cursorId)))
+                .or(book.regist.lt(regist));
     }
 
 }
