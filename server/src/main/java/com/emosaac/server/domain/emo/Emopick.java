@@ -1,6 +1,7 @@
 package com.emosaac.server.domain.emo;
 
 import com.emosaac.server.domain.BaseEntity;
+import com.emosaac.server.domain.book.BookMark;
 import com.emosaac.server.dto.emopick.EmopickSaveRequest;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.emosaac.server.domain.book.BookCommentList;
@@ -55,6 +56,8 @@ public class Emopick extends BaseEntity implements Serializable{
 
     @Embedded
     private final EmopickCommentList commentList = new EmopickCommentList();
+    @Embedded
+    private final EmoLikeList likeList = new EmoLikeList();
 
     @Builder
     public Emopick(User user, String title, String content){
@@ -81,4 +84,9 @@ public class Emopick extends BaseEntity implements Serializable{
     public void clearUser() {
         this.user = null;
     }
+
+    public boolean toggleLikes(LikeEmo likeEmo) {
+        return likeList.toggleLike(likeEmo);
+    }
+
 }
