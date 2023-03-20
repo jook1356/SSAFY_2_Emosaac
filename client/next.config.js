@@ -20,6 +20,9 @@ const nextConfig = {
   compiler: {
     emotion: true,
   },
+  env: {
+    REACT_APP_API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
+  },
 };
 
 module.exports = nextConfig;
