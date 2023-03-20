@@ -1,4 +1,4 @@
-import defaultAxiosInstace from "./instance";
+import { defaultAxiosInstance } from "./instance";
 
 interface Search {
   status: number;
@@ -37,7 +37,7 @@ async function getListByContent(
   | null
 > {
   try {
-    const { data }: { data: Search } = await defaultAxiosInstace.get(
+    const { data }: { data: Search } = await defaultAxiosInstance.get(
       `/search/title/${type}/${content}?prevId=${pages.prevId}&prevScore=${pages.prevScore}&size=${pages.size}`
     );
     if (data.status === 200) {
