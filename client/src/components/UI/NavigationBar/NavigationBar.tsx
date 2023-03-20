@@ -238,8 +238,9 @@ const menuWrapCSS = (isDeskTop: boolean, isTablet: boolean) => {
 };
 
 const dockBarCSS = css`
+  z-index: 10;
   display: grid;
-  /* background-color: var(--back-color-op); */
+  background-color: var(--back-color-op);
   box-shadow: var(--shadow-color);
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   position: fixed;

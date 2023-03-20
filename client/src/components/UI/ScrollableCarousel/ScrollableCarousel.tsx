@@ -138,29 +138,33 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
     generateLoadingData();
   }, [bookListData]);
 
-  const renderCards = useMemo(() => bookListResult.map((el, idx) => {
-    return (
-      <div
-        key={`${identifier}-${idx}`}
-        ref={(el) => (cardsRef.current[idx] = el)}
-        css={cardWrapperCSS({ padding: cardLayout.padding })}
-      >
-        <BookCard
-          bookData={el}
-          showPlatform={true}
-          width={cardLayout.width}
-          height={cardLayout.height}
-          minWidth={cardLayout.minWidth}
-          minHeight={cardLayout.minHeight}
-        />
-      </div>
-    );
-  }), [bookListResult]);
+  const renderCards = useMemo(
+    () =>
+      bookListResult.map((el, idx) => {
+        return (
+          <div
+            key={`${identifier}-${idx}`}
+            ref={(el) => (cardsRef.current[idx] = el)}
+            css={cardWrapperCSS({ padding: cardLayout.padding })}
+          >
+            <BookCard
+              bookData={el}
+              showPlatform={true}
+              width={cardLayout.width}
+              height={cardLayout.height}
+              minWidth={cardLayout.minWidth}
+              minHeight={cardLayout.minHeight}
+            />
+          </div>
+        );
+      }),
+    [bookListResult]
+  );
 
   return (
     <div css={carouselWrapper}>
       <div
-        css={[indicatorBtn, prevBtn({isDeskTop, isTablet, isMobile})]}
+        css={[indicatorBtn, prevBtn({ isDeskTop, isTablet, isMobile })]}
         onClick={prevBtnClickHandler}
         onMouseEnter={(event) => {
           event.stopPropagation();
@@ -169,7 +173,7 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
         〈
       </div>
       <div
-        css={[indicatorBtn, nextBtn({isDeskTop, isTablet, isMobile})]}
+        css={[indicatorBtn, nextBtn({ isDeskTop, isTablet, isMobile })]}
         onClick={nextBtnClickHandler}
         onMouseEnter={(event) => {
           event.stopPropagation();
@@ -216,11 +220,10 @@ const carousel = css`
   }
 `;
 
-
 const indicatorBtn = css`
-  z-index: 999;
+  z-index: 9;
   position: absolute;
-  
+
   height: 100%;
   display: flex;
   align-items: center;
@@ -229,19 +232,16 @@ const indicatorBtn = css`
   color: var(--text-color);
   padding-left: 8px;
   padding-right: 8px;
-  
+
   transition-property: background font-size;
   transition-duration: 0.2s;
   cursor: pointer;
   user-select: none;
-  
-
-  
 
   @media (max-width: 480px) {
     display: none;
   }
-`
+`;
 
 interface nextPrevBtnProps {
   isDeskTop: boolean;
@@ -249,28 +249,28 @@ interface nextPrevBtnProps {
   isMobile: boolean;
 }
 
-const prevBtn = ({isDeskTop, isTablet, isMobile}: nextPrevBtnProps) => {
+const prevBtn = ({ isDeskTop, isTablet, isMobile }: nextPrevBtnProps) => {
   return css`
     left: 0;
     /* background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); */
-    transform: ${(isDeskTop === true && `translate(-105px, 0px)`) || (isTablet === true && `translate(-50px, 0px)`)};
+    transform: ${(isDeskTop === true && `translate(-105px, 0px)`) ||
+    (isTablet === true && `translate(-50px, 0px)`)};
     &:hover {
-        /* background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
-        font-size: 54px;
-      }
-    
-  `;
-} 
-
-const nextBtn = ({isDeskTop, isTablet, isMobile}: nextPrevBtnProps) => {
-  return css`
-    
-    right: 0;
-    /* background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); */
-    transform: ${(isDeskTop === true && `translate(105px, 0px)`) || (isTablet === true && `translate(50px, 0px)`)};
-    &:hover {
-        /* background: linear-gradient(to left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
-        font-size: 54px;
+      /* background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
+      font-size: 54px;
     }
   `;
-}
+};
+
+const nextBtn = ({ isDeskTop, isTablet, isMobile }: nextPrevBtnProps) => {
+  return css`
+    right: 0;
+    /* background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); */
+    transform: ${(isDeskTop === true && `translate(105px, 0px)`) ||
+    (isTablet === true && `translate(50px, 0px)`)};
+    &:hover {
+      /* background: linear-gradient(to left, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
+      font-size: 54px;
+    }
+  `;
+};
