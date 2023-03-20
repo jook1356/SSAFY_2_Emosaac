@@ -11,6 +11,7 @@
   --back-color-2: #e6e8f0;
   --back-color-3: #d0d2dc;
   --back-color-4: #bcc0cf;
+  --back-color-op: #d8dbe740;
   --alert-color: #ff1e1e;
   --hover-color: contrast(30%);
   --shadow-color: 0px 0px 20px #00000010;
@@ -29,6 +30,7 @@
   --back-color-2: #17171b;
   --back-color-3: #242529;
   --back-color-4: #43454f;
+  --back-color-op: #17171b40;
   --alert-color: #ff1e1e;
   --hover-color: contrast(50%);
   --shadow-color: 0px 0px 20px #ffffff10;
