@@ -27,4 +27,4 @@ async function getGenreByTypeCode(
   }
 }
 
-export { getGenreByTypeCode };
+export default getGenreByTypeCode;
