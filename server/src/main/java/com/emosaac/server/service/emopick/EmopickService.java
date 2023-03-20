@@ -6,10 +6,12 @@ import com.emosaac.server.common.exception.ResourceForbiddenException;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.emo.Emopick;
+import com.emosaac.server.domain.emo.LikeEmo;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDetailResponse;
 import com.emosaac.server.dto.emopick.*;
 import com.emosaac.server.repository.book.BookQueryRepository;
+import com.emosaac.server.repository.emopick.EmoLikeRepository;
 import com.emosaac.server.repository.emopick.EmopickQueryRepository;
 import com.emosaac.server.repository.emopick.EmopickRepository;
 import com.emosaac.server.service.CommonService;
@@ -35,6 +37,7 @@ public class EmopickService {
 
     private final EmopickRepository emopickRepository;
     private final EmopickQueryRepository emopickQueryRepository;
+    private final EmoLikeRepository emoLikeRepository;
     private final CommonService commonService;
 
     // 이모픽 리스트 조회
@@ -50,7 +53,7 @@ public class EmopickService {
     }
 
     // 이모픽 상세 조회
-    public DetailResponse<BookReveiwResponse> findEmopickDetail(Long emopickId) {
+    public DetailResponse<BookReveiwResponse> findEmopickDetail(Long emopickId, Long userId) {
         Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
 
         List<BookReveiwResponse> webtoon = new ArrayList<>();
@@ -66,7 +69,16 @@ public class EmopickService {
             novel = getList(emopick, novelId);
         }
 
-        DetailResponse result = new DetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel);
+        Boolean emoLikeStatus = false;
+        if(emoLikeRepository.existsByEmopickIdAndUserId(emopickId, userId).isPresent())
+            emoLikeStatus = true;
+
+//        Boolean bookmarkStatus = false;
+//        if(bookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
+//            bookmarkStatus = true;
+//        }
+
+        DetailResponse result = new DetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel, emoLikeStatus);
 
         return result;
     }
@@ -140,6 +152,16 @@ public class EmopickService {
 
         emopickRepository.deleteById(emopickId);
         return emopickId;
+    }
+
+    // 이모픽 좋아요
+    @Transactional
+    public Object toggleLikesByEmopick(Long emopickId, Long userId) {
+        Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
+        User user = commonService.getUser(userId);
+
+        LikeEmo likeEmo = LikeEmo.builder().emopick(emopick).user(user).build();
+        return emopick.toggleLikes(likeEmo);
     }
 
     ///////////////////////

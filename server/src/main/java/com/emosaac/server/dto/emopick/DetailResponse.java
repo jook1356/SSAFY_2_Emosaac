@@ -20,13 +20,16 @@ public class DetailResponse<T> {
     private String content;
     private Object webtoon;
     private Object novel;
+    private boolean emoLike;
 
-    public DetailResponse(User user, String title, String content, Object webtoon, Object novel){
+    public DetailResponse(User user, String title, String content, Object webtoon, Object novel, boolean emoLikeStatus){
         this.writerInfo = WriterInfo.from(user);
         this.title = title;
         this.content = content;
         this.webtoon = webtoon;
         this.novel = novel;
+
+        this.emoLike = emoLikeStatus;
     }
 
 

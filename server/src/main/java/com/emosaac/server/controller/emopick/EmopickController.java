@@ -34,10 +34,10 @@ public class EmopickController {
 
     @ApiOperation(value = "이모픽 상세 조회", notes = "이모픽을 상세 조회한다.")
     @GetMapping("/{emopickId}")
-    public ResponseEntity<CommonResponse> findEmopickDetail(@PathVariable Long emopickId) {
+    public ResponseEntity<CommonResponse> findEmopickDetail(@PathVariable Long emopickId,
+                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickDetail(emopickId)
-//                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickDetailByWebtoon(emopickId)
+                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickDetail(emopickId, userPrincipal.getId())
         ));
     }
 
@@ -75,7 +75,7 @@ public class EmopickController {
     public ResponseEntity<CommonResponse> updateLikeByUser(@PathVariable Long emopickId,
                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "이모픽 좋아요 완료", null
+                HttpStatus.CREATED, "이모픽 수정 성공", emopickService.toggleLikesByEmopick(emopickId, userPrincipal.getId())
         ));
     }
 
