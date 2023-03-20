@@ -1,9 +1,6 @@
 package com.emosaac.server.controller.recommand;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.security.CurrentUser;
-import com.emosaac.server.security.UserPrincipal;
-import com.emosaac.server.service.recommand.NovelRecommandService;
 import com.emosaac.server.service.recommand.RecommandService1;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/recommand1")
