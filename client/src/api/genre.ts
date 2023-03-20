@@ -1,4 +1,4 @@
-import { defaultAxiosInstace } from "./instance";
+import { defaultAxiosInstance } from "./instance";
 
 interface Genre {
   status: number;
@@ -13,7 +13,7 @@ async function getGenreByTypeCode(
   typeCode: number
 ): Promise<{ genreId: number; name: string }[] | null> {
   try {
-    const { data }: { data: Genre } = await defaultAxiosInstace.get(
+    const { data }: { data: Genre } = await defaultAxiosInstance.get(
       `/genres?typeCode=${typeCode}`
     );
     if (data.status === 200) {
