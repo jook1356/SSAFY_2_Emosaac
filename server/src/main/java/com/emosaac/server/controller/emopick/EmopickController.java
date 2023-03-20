@@ -64,7 +64,7 @@ public class EmopickController {
     public ResponseEntity<CommonResponse> deleteEmopickByUser(@PathVariable Long emopickId,
                                                               @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.NO_CONTENT, "이모픽 삭제 완료", null
+                HttpStatus.NO_CONTENT, "이모픽 삭제 완료", emopickService.deleteEmopickByUser(emopickId, userPrincipal.getId())
         ));
     }
 

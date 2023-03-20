@@ -70,4 +70,8 @@ public class Emopick extends BaseEntity implements Serializable{
         this.webtoonSeq = webtoonSeq;
         this.novelSeq = novelSeq;
     }
+
+    public void clearUser() {
+        this.user = null;
+    }
 }

@@ -1,6 +1,8 @@
 package com.emosaac.server.service.emopick;
 
+import com.emosaac.server.common.PagedResponse;
 import com.emosaac.server.common.SlicedResponse;
+import com.emosaac.server.common.exception.ResourceForbiddenException;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.emo.Emopick;
@@ -13,6 +15,7 @@ import com.emosaac.server.repository.emopick.EmopickRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import static com.emosaac.server.domain.emo.QEmopick.emopick;
 
 @Slf4j
 @Service
@@ -34,11 +39,14 @@ public class EmopickService {
 
     // 이모픽 리스트 조회
     public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
+//    public PagedResponse<EmopickListResponse> findEmopickList(int offset, int size){
+//
+//        Page<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.of(offset - 1, size));
+//        return new PagedResponse<>()(page.getContent(), page.getNumber()+1, page.getSize(), page.getTotalElements(), page.getTotalPages(), page.isLast());
 
         Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.ofSize(size), prevId);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
-//           return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
-//
+
     }
 
     // 이모픽 상세 조회
@@ -99,6 +107,18 @@ public class EmopickService {
     // 이모픽 수정
 
     // 이모픽 삭제
+    @Transactional
+    public Long deleteEmopickByUser(Long emopickId, Long userId) {
+        User user = commonService.getUser(userId);
+        Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
+
+        validEmopickUser(user.getUserId(), emopick.getUser().getUserId());
+
+        emopick.clearUser();
+
+        emopickRepository.deleteById(emopickId);
+        return emopickId;
+    }
 
     ///////////////////////
     private List<BookReveiwResponse> getList(Emopick emopick, String[] bookId) {
@@ -116,4 +136,13 @@ public class EmopickService {
         return result;
     }
 
+    public void validEmopickUser(Long currentUser, Long emopickUser) {
+
+        if (currentUser == emopickUser || currentUser.equals(emopickUser)) {
+            return;
+        }
+        else {
+            throw new ResourceForbiddenException("본인이 작성한 글이 아닙니다");
+        }
+    }
 }
