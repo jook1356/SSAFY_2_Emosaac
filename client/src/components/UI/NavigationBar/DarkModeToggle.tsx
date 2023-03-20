@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
 import Image from "next/image";
 import darkmode_dark from "@/assets/darkmode_dark.png";
 import darkmode_light from "@/assets/darkmode_light.png";
@@ -9,14 +9,18 @@ interface Props {
   isDeskTop: boolean;
   isTablet: boolean;
   isMobile: boolean;
+  isDarkMode: boolean;
+  setIsDarkMode: Dispatch<SetStateAction<boolean>>;
 }
 
 export const DarkModeToggle = (props: Props) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // const [isDarkMode, setIsDarkMode] = useState(false);
   useEffect(() => {
     const darkMode = localStorage.getItem("data-theme");
     if (darkMode === "dark") {
-      setIsDarkMode(true);
+      props.setIsDarkMode(true);
+    } else {
+      props.setIsDarkMode(false);
     }
     document.documentElement.setAttribute(
       "data-theme",
@@ -25,6 +29,13 @@ export const DarkModeToggle = (props: Props) => {
   }, []);
   function onChangeDarkMode() {
     const darkMode = localStorage.getItem("data-theme");
+    if (darkMode === "dark") {
+      // dark > light모드로 바꾸기
+      props.setIsDarkMode(false);
+    } else {
+      // light > dark모드로 바꾸기
+      props.setIsDarkMode(true);
+    }
     document.documentElement.setAttribute(
       "data-theme",
       darkMode === "dark" ? "light" : "dark"
@@ -38,7 +49,7 @@ export const DarkModeToggle = (props: Props) => {
       css={darkModeToggleCSS}
       onClick={onChangeDarkMode}
     >
-      <div css={circleCSS(isDarkMode)}></div>
+      <div css={circleCSS(props.isDarkMode)}></div>
       <Image alt="darkmode-icon" src={darkmode_dark} />
       <Image alt="lightmode-icon" src={darkmode_light} />
     </button>
