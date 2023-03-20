@@ -16,7 +16,7 @@ import java.util.Map;
 @AllArgsConstructor
 //@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class EmopickSaveRequest {
-    @NotBlank(message = "목표 내용이 없습니다.")
+    @NotBlank(message = "제목 내용이 없습니다.")
     @Length(max = 50, message = "50자 이하여야 합니다.")
     private String title;
 

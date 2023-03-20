@@ -1,6 +1,7 @@
 package com.emosaac.server.domain.emo;
 
 import com.emosaac.server.domain.BaseEntity;
+import com.emosaac.server.dto.emopick.EmopickSaveRequest;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.emosaac.server.domain.book.BookCommentList;
 import com.emosaac.server.domain.user.User;
@@ -61,6 +62,12 @@ public class Emopick extends BaseEntity implements Serializable{
         this.title = title;
         this.content = content;
     }
+
+    public void update(EmopickSaveRequest request){
+        this.title = request.getTitle();
+        this.content = request.getContent();
+    }
+
 
     public void addEmopick(Long bookId, String review){
         emopickList.put(bookId, review);

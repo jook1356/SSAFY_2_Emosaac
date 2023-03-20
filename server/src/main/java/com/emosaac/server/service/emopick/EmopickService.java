@@ -105,14 +105,36 @@ public class EmopickService {
     }
 
     // 이모픽 수정
+    @Transactional
+    public Long updateEmopickByUser(Long emopickId, EmopickSaveRequest request, Long userId) {
+        Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
+
+        validEmopickUser(userId, emopick.getUser().getUserId());
+
+        emopick.update(request);
+
+        String webtoonIdStr = "";
+        String novelIdStr = "";
+
+        // 웹툰 리스트
+        if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
+            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
+
+        // 노블 리스트
+        if (request.getNovelList() != null || !request.getNovelList().isEmpty())
+            novelIdStr = setIdStr(emopick, request.getNovelList());
+
+        emopick.setSeq(webtoonIdStr, novelIdStr);
+
+        return emopick.getEmopickId();
+    }
 
     // 이모픽 삭제
     @Transactional
     public Long deleteEmopickByUser(Long emopickId, Long userId) {
-        User user = commonService.getUser(userId);
         Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
 
-        validEmopickUser(user.getUserId(), emopick.getUser().getUserId());
+        validEmopickUser(userId, emopick.getUser().getUserId());
 
         emopick.clearUser();
 
@@ -145,4 +167,5 @@ public class EmopickService {
             throw new ResourceForbiddenException("본인이 작성한 글이 아닙니다");
         }
     }
+
 }
