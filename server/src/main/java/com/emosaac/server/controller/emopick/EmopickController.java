@@ -53,9 +53,10 @@ public class EmopickController {
     @ApiOperation(value = "이모픽 수정", notes = "유저가 이모픽을 수정한다.")
     @PutMapping("/{emopickId}")
     public ResponseEntity<CommonResponse> updateEmopickByUser(@PathVariable Long emopickId,
+                                                              @RequestBody @Valid EmopickSaveRequest request,
                                                               @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "이모픽 수정 완료", null
+                HttpStatus.CREATED, "이모픽 수정 완료", emopickService.updateEmopickByUser(emopickId, request, userPrincipal.getId())
         ));
     }
 
@@ -64,7 +65,7 @@ public class EmopickController {
     public ResponseEntity<CommonResponse> deleteEmopickByUser(@PathVariable Long emopickId,
                                                               @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.NO_CONTENT, "이모픽 삭제 완료", null
+                HttpStatus.NO_CONTENT, "이모픽 삭제 완료", emopickService.deleteEmopickByUser(emopickId, userPrincipal.getId())
         ));
     }
 
