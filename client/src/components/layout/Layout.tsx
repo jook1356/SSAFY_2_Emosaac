@@ -17,6 +17,7 @@ const Layout = (props: Props) => {
 
 const backCSS = css`
   background-color: var(--back-color);
+  color: var(--text-color);
 `;
 
 export default Layout;

@@ -8,8 +8,10 @@ interface Props {
 }
 
 export const SearchBarDropDown = (props: Props) => {
+  const [selectArr, setSelectArr] = useState(["전체", "웹툰", "웹소설"]);
+  function onClickDropDown() {}
   return (
-    <div css={dropDownWrapCSS}>
+    <div css={dropDownWrapCSS} onClick={}>
       {"웹툰"}
       <HiOutlineChevronDown />
       <div css={dropDownBoxCSS}>
