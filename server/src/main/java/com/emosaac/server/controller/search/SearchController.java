@@ -22,7 +22,7 @@ public class SearchController {
                                                                 @PathVariable String type,
                                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                                 @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
-                                                                @RequestParam(value = "prevScore", required = false, defaultValue = "0")Double prevScore){
+                                                                @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore){
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "태그 이름별 게시물 목록 조회 성공", searchService.findBookListByTagName(tagName, type, size, prevId, prevScore))
         );
@@ -33,7 +33,7 @@ public class SearchController {
                                                               @PathVariable String type,
                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                               @RequestParam(value = "prevId", required = false, defaultValue = "20493")Long prevId,
-                                                              @RequestParam(value = "prevScore", required = false, defaultValue = "0")Double prevScore){
+                                                              @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore){
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "제목작가별 게시물 목록 조회 성공", searchService.findBookListByTitle(content, type, size, prevId, prevScore))
         );

@@ -71,25 +71,11 @@ public class TagQueryRepository {
                 .orderBy(book.score.desc(), book.bookId.desc())
                 .fetch();
     }
-    private BooleanExpression ltBookId(Long cursorId) {
-        return cursorId == null ? null : book.bookId.lt(cursorId);
-    }
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (book.score.eq(cursorScore)
                 .and(book.bookId.lt(cursorId)))
                 .or(book.score.lt(cursorScore));
     }
 
-    public List<Book> findBookListByTitle(String content, PageRequest page, Long prevId, Double prevScore) {
-        return jpaQueryFactory.select(book)
-                .from(book)
-                .where(
-                        book.title.contains(content)
-                                .or(book.author.contains(content)),
-                        cursorIdAndCursorScore(prevId, prevScore)
-                )
-                .limit(page.getPageSize()+1)
-                .orderBy(book.score.desc(), book.bookId.desc())
-                .fetch();
-    }
+
 }
