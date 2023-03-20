@@ -10,7 +10,8 @@ import Image from "next/image";
 import HighlightedCarousel from "@/components/bookTab/HighlightedCarousel/HighlightedCarousel";
 import RowTitle from "@/components/bookTab/RowTitle/RowTitle";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
-
+import contentBannerDesktop from "../../assets/content_banner_desktop_tablet.png"
+import contentBannerMobile from "../../assets/content_banner_mobile.png"
 
 export default function Home() {
   const parentRef = useRef<HTMLInputElement>(null);
@@ -64,6 +65,12 @@ export default function Home() {
         <div css={bookCarouselWrapperCSS}>
           <ScrollableCarousel API={recvBooks} identifier={"test1"} />
         </div>
+        <div css={whiteSpace1CSS} />
+      </div>
+
+      <Image src={isMobile === true ? contentBannerMobile : contentBannerDesktop} alt={""} css={bannerImage} />
+
+      <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
         <div css={whiteSpace1CSS} />
         <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
