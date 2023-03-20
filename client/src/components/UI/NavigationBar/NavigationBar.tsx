@@ -15,12 +15,21 @@ import { BsPersonFill } from "react-icons/bs";
 
 export const NavigationBar = () => {
   // DeskTop Nav content의 최소 너비
+  const darkMode = localStorage.getItem("data-theme");
   const isNavLimit = !useMediaQuery({
     query: "(min-width: 1185px) or (max-width: 1023px)",
   });
   const isClient = useIsClient();
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  useEffect(() => {
+    const darkMode = localStorage.getItem("data-theme");
+    if (darkMode === "dark") {
+      setIsDarkMode(true);
+    } else {
+      setIsDarkMode(false);
+    }
+  }, []);
   useEffect(() => {
     console.log(
       `isDeskTop:${isDeskTop}, isTablet:${isTablet}, isMobile:${isMobile}`

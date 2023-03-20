@@ -17,6 +17,8 @@ export const DarkModeToggle = (props: Props) => {
     const darkMode = localStorage.getItem("data-theme");
     if (darkMode === "dark") {
       setIsDarkMode(true);
+    } else {
+      setIsDarkMode(false);
     }
     document.documentElement.setAttribute(
       "data-theme",
@@ -25,6 +27,13 @@ export const DarkModeToggle = (props: Props) => {
   }, []);
   function onChangeDarkMode() {
     const darkMode = localStorage.getItem("data-theme");
+    if (darkMode === "dark") {
+      // dark > light모드로 바꾸기
+      setIsDarkMode(false);
+    } else {
+      // light > dark모드로 바꾸기
+      setIsDarkMode(true);
+    }
     document.documentElement.setAttribute(
       "data-theme",
       darkMode === "dark" ? "light" : "dark"
