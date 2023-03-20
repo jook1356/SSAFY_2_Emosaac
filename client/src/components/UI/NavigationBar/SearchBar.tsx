@@ -17,9 +17,9 @@ export const SearchBar = (props: Props) => {
   function onChangeSearchInput(event: React.ChangeEvent<HTMLInputElement>) {
     const inputText = event.target.value;
     setSearchInput(inputText);
-    console.log(inputText);
+    // console.log(inputText);
   }
-  function onEnterKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
+  function onEnterKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
       if (searchInput === "") {
         alert("검색어를 입력해주세요");
@@ -43,7 +43,7 @@ export const SearchBar = (props: Props) => {
         css={inputWrapCSS}
         value={searchInput}
         onChange={onChangeSearchInput}
-        onKeyPress={onEnterKeyPress}
+        onKeyDown={onEnterKeyDown}
       />
       {props.isMobile ? null : (
         <>
