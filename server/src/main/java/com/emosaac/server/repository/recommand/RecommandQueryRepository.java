@@ -23,7 +23,7 @@ import static com.emosaac.server.domain.book.QReadBook.readBook;
 
 @RequiredArgsConstructor
 @Repository
-public class RecommandQueryRepository1 {
+public class RecommandQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 

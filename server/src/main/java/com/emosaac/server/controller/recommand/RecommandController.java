@@ -22,29 +22,38 @@ public class RecommandController {
     @Autowired
     RecommandService recommandService;
 
-    @ApiOperation(value = "인기작 top 30", notes = "웹툰 인기작 top 30 리스트를 조회한다.")
+    @ApiOperation(value = "인기작 top 30", notes = "소설 인기작 top 30 리스트를 조회한다.")
     @GetMapping("/best30")
-    public ResponseEntity<CommonResponse> findBestList(@RequestParam (value = "typeCode") int typeCd,
-                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
-                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                       @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
-
+    public ResponseEntity<CommonResponse> findBestList(@RequestParam(value = "size", required = false, defaultValue = "10")
+                                                       int size,
+                                                       @RequestParam(value = "prevId", required = false, defaultValue = "20000")
+                                                       Long prevId,
+                                                       @RequestParam(value = "prevScore", required = false, defaultValue = "10")
+                                                       Double prevScore,
+                                                       @RequestParam(value = "hit", required = false, defaultValue = "1000")
+                                                       Integer hit,
+                                                       @RequestParam(value = "typeCd", required = true)
+                                                       int typeCd) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "인기작 top 30 조회 성공", recommandService.findBestList(typeCd, size, criteria, id)
+                HttpStatus.OK, "인기작 top 30 조회 성공", recommandService.findBestList(size, prevId, prevScore, hit, typeCd)
         ));
     }
 
     @ApiOperation(value = "올해의 신작", notes = "올해의 신작(n개?)을 조회한다.")
     @GetMapping("/newbook")
-    public ResponseEntity<CommonResponse> findNewBookList(@RequestParam (value = "typeCode") int typeCd,
-                                                          @RequestParam(required=false, defaultValue = "date") String criteria,
-                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                          @RequestParam(value = "id", required = false, defaultValue = "1")Long id) {
+    public ResponseEntity<CommonResponse> findNewBookList(@RequestParam(value = "size", required = false, defaultValue = "10")
+                                                          int size,
+                                                          @RequestParam(value = "prevId", required = false, defaultValue = "20000")
+                                                          Long prevId,
+                                                          @RequestParam(value = "prevRegist", required = false, defaultValue = "2023.03.20")
+                                                          String prevRegist,
+                                                          @RequestParam(value = "typeCd", required = true)
+                                                          int typeCd){
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "올해의 신작 조회 성공", recommandService.findNewBookList(typeCd, size, criteria, id))
+                HttpStatus.OK, "올해의 신작 조회 성공", recommandService.findNewBookList(size, prevId,prevRegist, typeCd))
         );
     }
 
