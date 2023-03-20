@@ -1,4 +1,4 @@
-import defaultAxiosInstace from "./instance";
+import { defaultAxiosInstace } from "./instance";
 
 interface Genre {
   status: number;
