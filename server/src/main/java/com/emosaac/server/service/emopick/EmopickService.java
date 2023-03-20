@@ -72,12 +72,7 @@ public class EmopickService {
         Boolean emoLikeStatus = false;
         if(emoLikeRepository.existsByEmopickIdAndUserId(emopickId, userId).isPresent())
             emoLikeStatus = true;
-
-//        Boolean bookmarkStatus = false;
-//        if(bookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
-//            bookmarkStatus = true;
-//        }
-
+        
         DetailResponse result = new DetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel, emoLikeStatus);
 
         return result;
