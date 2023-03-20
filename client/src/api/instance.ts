@@ -19,5 +19,5 @@ function defaultFormDataInstance() {
   return instance;
 }
 
-export const defaultAxiosInstace = defaultInstace();
+export const defaultAxiosInstance = defaultInstace();
 export const defaultAxiosFormDataInstance = defaultFormDataInstance();
