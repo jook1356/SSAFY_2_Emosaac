@@ -11,6 +11,13 @@ function defaultInstace() {
   });
   return instance;
 }
+function defaultFormDataInstance() {
+  const instance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    headers: { "Content-Type": "multipart/from-data", Authorization: token },
+  });
+  return instance;
+}
 
-const defaultAxiosInstace = defaultInstace();
-export default defaultAxiosInstace;
+export const defaultAxiosInstace = defaultInstace();
+export const defaultAxiosFormDataInstance = defaultFormDataInstance();

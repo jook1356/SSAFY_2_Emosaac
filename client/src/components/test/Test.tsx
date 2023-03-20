@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import getGenreByTypeCode from "../../api/list";
+import getGenreByTypeCode from "../../api/genre";
 export default function test() {
   //   const [webToonGenre, setWebToonGenre] = useState([]);
   useEffect(() => {
