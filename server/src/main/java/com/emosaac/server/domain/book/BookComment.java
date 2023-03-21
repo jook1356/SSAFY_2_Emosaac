@@ -54,6 +54,7 @@ public class BookComment extends BaseEntity {
 
     @Embedded
     private final BookCommentLikeList bookCommentLikeList = new BookCommentLikeList();
+    private Double likeScore;
 
     public void setChild(BookComment bookComment) {
         this.children.add(bookComment);
@@ -81,4 +82,7 @@ public class BookComment extends BaseEntity {
         return bookCommentLikeList.toggleBookCommentLike(bookCommentLike);
     }
 
+    public Integer getTotalLikes(){
+        return bookCommentLikeList.size();
+    }
 }

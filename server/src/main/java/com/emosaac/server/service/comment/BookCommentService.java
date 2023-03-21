@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -83,8 +84,8 @@ public class BookCommentService {
     }
     
     // state 0 : 부모, 1 : 자식
-    public List<CommentResponse> findBookCommentList(Long bookId, int state, int offset, int size) {
-        return bookCommentQueryRepository.findCommentByBookId(bookId, state, PageRequest.of(offset - 1, size));
+    public List<CommentResponse> findBookCommentList(Long bookId, String criteria, int state, int offset, int size) {
+        return bookCommentQueryRepository.findCommentByBookId(bookId, criteria, state, PageRequest.of(offset - 1, size));
     }
 
     @Transactional
