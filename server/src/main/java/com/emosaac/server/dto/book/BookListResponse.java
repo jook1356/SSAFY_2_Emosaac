@@ -19,6 +19,10 @@ public class BookListResponse {
     private String author;
     private String href;
     private double score;
+    private Integer hit;
+    private String regist;
+    private Long genreId;
+    private String genreName;
 
     @QueryProjection
     public BookListResponse(Book book){
@@ -28,7 +32,14 @@ public class BookListResponse {
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.href = book.getHref();
+        //<----추가
         this.score = book.getScore();
+        this.hit = book.getHit();
+        this.regist = book.getRegist();
+        this.genreId = book.getGenre().getGerneId();
+        this.genreName = book.getGenre().getName();
     }
+
+
 
 }

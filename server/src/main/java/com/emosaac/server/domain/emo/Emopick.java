@@ -1,6 +1,8 @@
 package com.emosaac.server.domain.emo;
 
 import com.emosaac.server.domain.BaseEntity;
+import com.emosaac.server.domain.book.BookMark;
+import com.emosaac.server.dto.emopick.EmopickSaveRequest;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.emosaac.server.domain.book.BookCommentList;
 import com.emosaac.server.domain.user.User;
@@ -46,18 +48,16 @@ public class Emopick extends BaseEntity implements Serializable{
     @Column(name = "CONTENTS_LIST", columnDefinition = "json")
     private Map<Long, String> emopickList = new LinkedHashMap<>();
 
-    @Column(name = "BOOK_SEQ")
-    private String bookSeq;
-//    bookId, review
+    @Column(name = "WEBTOON_SEQ")
+    private String webtoonSeq;
 
-    // 웹툰, 웹소설 등록은 한번에, 조회할 때는 맵으로 나눠서
-
-    /*
-    * map 웹툰: 웹툰리스트, 소설: 소설리스트
-    *  */
+    @Column(name = "NOVEL_SEQ")
+    private String novelSeq;
 
     @Embedded
     private final EmopickCommentList commentList = new EmopickCommentList();
+    @Embedded
+    private final EmoLikeList likeList = new EmoLikeList();
 
     @Builder
     public Emopick(User user, String title, String content){
@@ -66,11 +66,27 @@ public class Emopick extends BaseEntity implements Serializable{
         this.content = content;
     }
 
+    public void update(EmopickSaveRequest request){
+        this.title = request.getTitle();
+        this.content = request.getContent();
+    }
+
+
     public void addEmopick(Long bookId, String review){
         emopickList.put(bookId, review);
     }
 
-    public void setBookSeq(String bookSeq){
-        this.bookSeq = bookSeq;
+    public void setSeq(String webtoonSeq, String novelSeq){
+        this.webtoonSeq = webtoonSeq;
+        this.novelSeq = novelSeq;
     }
+
+    public void clearUser() {
+        this.user = null;
+    }
+
+    public boolean toggleLikes(LikeEmo likeEmo) {
+        return likeList.toggleLike(likeEmo);
+    }
+
 }

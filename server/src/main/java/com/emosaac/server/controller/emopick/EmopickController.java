@@ -25,17 +25,19 @@ public class EmopickController {
 
     @ApiOperation(value = "이모픽 리스트 조회", notes = "이모픽 리스트를 조회한다.")
     @GetMapping
-    public ResponseEntity<CommonResponse> findEmopickList() {
+    public ResponseEntity<CommonResponse> findEmopickList(@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                          @RequestParam(value = "prevId", required = false, defaultValue = "20000")Long prevId) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "이모픽 조회 완료", null
+                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickList(size, prevId)
         ));
     }
 
     @ApiOperation(value = "이모픽 상세 조회", notes = "이모픽을 상세 조회한다.")
     @GetMapping("/{emopickId}")
-    public ResponseEntity<CommonResponse> findEmopickDetail(@PathVariable Long emopickId) {
+    public ResponseEntity<CommonResponse> findEmopickDetail(@PathVariable Long emopickId,
+                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickDetail(emopickId)
+                HttpStatus.OK, "이모픽 조회 완료", emopickService.findEmopickDetail(emopickId, userPrincipal.getId())
         ));
     }
 
@@ -51,9 +53,10 @@ public class EmopickController {
     @ApiOperation(value = "이모픽 수정", notes = "유저가 이모픽을 수정한다.")
     @PutMapping("/{emopickId}")
     public ResponseEntity<CommonResponse> updateEmopickByUser(@PathVariable Long emopickId,
+                                                              @RequestBody @Valid EmopickSaveRequest request,
                                                               @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "이모픽 수정 완료", null
+                HttpStatus.CREATED, "이모픽 수정 완료", emopickService.updateEmopickByUser(emopickId, request, userPrincipal.getId())
         ));
     }
 
@@ -62,7 +65,7 @@ public class EmopickController {
     public ResponseEntity<CommonResponse> deleteEmopickByUser(@PathVariable Long emopickId,
                                                               @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.NO_CONTENT, "이모픽 삭제 완료", null
+                HttpStatus.NO_CONTENT, "이모픽 삭제 완료", emopickService.deleteEmopickByUser(emopickId, userPrincipal.getId())
         ));
     }
 
@@ -72,7 +75,7 @@ public class EmopickController {
     public ResponseEntity<CommonResponse> updateLikeByUser(@PathVariable Long emopickId,
                                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "이모픽 좋아요 완료", null
+                HttpStatus.CREATED, "이모픽 수정 성공", emopickService.toggleLikesByEmopick(emopickId, userPrincipal.getId())
         ));
     }
 
