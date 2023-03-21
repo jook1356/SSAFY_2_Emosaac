@@ -6,7 +6,7 @@ import { resolve } from "node:path/win32";
 import { BiChevronRightCircle } from "react-icons/bi";
 import Button from "@/components/UI/Button/Button";
 import { BookmarkToggle, HasBeenReadToggle, CommentBtn } from "../../components/bookDetail/icons";
-import TagList from "@/components/bookDetail/tagList";
+import TagList from "@/components/bookDetail/TagList";
 
 
 type bookDataType = {
