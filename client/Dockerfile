@@ -20,7 +20,7 @@ WORKDIR /app
 # work dir 에 build 폴더 생성 /app/build
 RUN mkdir ./build
 
-COPY --from=0 /app/build ./build 
+# COPY --from=0 /app/build ./build 
 
 # host pc의 현재경로의 build 폴더를 workdir 의 build 폴더로 복사
 ADD ./.next/server/pages ./build 
