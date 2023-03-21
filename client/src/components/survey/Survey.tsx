@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 
 import SmallWideButton from "../UI/Button/SmallWideButton";
 import Image from "next/image";
-import thumbnail from "../../assets/thumbnail.png";
+// import thumbnail from "../../assets/thumbnail.png";
 export default function Survey() {
   const onClickNextButton = () => {
     console.log("버튼");
@@ -21,20 +21,20 @@ export default function Survey() {
       </section>
       <section>
         <div css={surveygridCSS}>
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
-          <Image src={thumbnail} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
+          <img src={"/assets/thumbnail.png"} alt="설문조사용 웹툰 썸네일입니다" />
         </div>
       </section>
     </>

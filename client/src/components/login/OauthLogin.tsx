@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import Image from "next/image";
-import emosaacLogo from "../../assets/emosaac_logo.png";
-import kakao from "../../assets/social_kakao.png";
+// import emosaacLogo from "../../assets/emosaac_logo.png";
+// import kakao from "../../assets/social_kakao.png";
 import naver from "../../assets/social_naver.png";
 import OauthLoginButton from "../UI/OauthLogin/OauthLoginButton";
 export default function OauthLogin() {
@@ -10,9 +10,9 @@ export default function OauthLogin() {
     <>
       <main css={topWrapperCSS}>
         <section>
-          <Image
+          <img
             css={imageWrapperCSS}
-            src={emosaacLogo}
+            src={"/assets/emosaac_logo.png"}
             alt="이모작의 로고입니다."
           />
         </section>
@@ -20,7 +20,7 @@ export default function OauthLogin() {
           <div css={buttonWrapperCSS}>
             <div css={eachButtonCSS}>
               <OauthLoginButton
-                src={kakao}
+                src={"/assets/social_kakao.png"}
                 alt={"카카오 로그인"}
                 text={"카카오로 로그인"}
                 backgroundColor="#FEE502"
@@ -29,7 +29,7 @@ export default function OauthLogin() {
             </div>
             <div>
               <OauthLoginButton
-                src={naver}
+                src={"/assets/social_naver.png"}
                 alt={"네이버 로그인"}
                 text={"네이버로 로그인"}
                 backgroundColor="#24CD0B"

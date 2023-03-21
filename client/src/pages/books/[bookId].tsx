@@ -85,7 +85,7 @@ const BookDetail = ({bookData}: BookDetailProps) => {
                                         {bookData.story}
                                     </div>
                                     
-                                    <Button width={"50%"} height={"64px"}>보러가기</Button>
+                                    {/* <Button width={"50%"} height={"64px"}>보러가기</Button> */}
                                 </div>
                                 
                             </div>
