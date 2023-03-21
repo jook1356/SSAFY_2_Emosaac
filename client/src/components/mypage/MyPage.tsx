@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
-import profile from "../../assets/profileexample.jpg";
-import thumbnail from "../../assets/thumbnail.png";
+// import profile from "../../assets/profileexample.jpg";
+// import thumbnail from "../../assets/thumbnail.png";
 import Image from "next/image";
 import MiddleWideButton from "../UI/Button/MiddleWideButton";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export default function MyPage() {
     <>
       <section css={userinfoCSS}>
         <div css={profileimagewrapperCSS}>
-          <Image src={profile} alt="프로필 이미지" css={profileimageCSS} />
+          <img src={"/assets/profileexample.jpg"} alt="프로필 이미지" css={profileimageCSS} />
         </div>
         <div>
           <h2 css={nicknameCSS}>밥먹고올게</h2>
@@ -40,9 +40,9 @@ export default function MyPage() {
             <div>가장 많이 본 장르의 작품을 추천해줄게요</div>
             <div css={contentCSS}>
               <div css={imagewrapperCSS}>
-                <Image
+                <img
                   css={imageCSS}
-                  src={thumbnail}
+                  src={"/assets/thumbnail.png"}
                   alt="많이 본 장르 썸네일"
                 />
               </div>
@@ -57,9 +57,9 @@ export default function MyPage() {
             <div>가장 적게 본 장르의 작품을 추천해줄게요</div>
             <div css={contentCSS}>
               <div css={imagewrapperCSS}>
-                <Image
+                <img
                   css={imageCSS}
-                  src={thumbnail}
+                  src={"/assets/thumbnail.png"}
                   alt="적게 본 장르 썸네일"
                 />
               </div>

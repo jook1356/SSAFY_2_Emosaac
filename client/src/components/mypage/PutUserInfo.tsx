@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 
 import Image from "next/image";
-import profileimage from "../../assets/profileexample.jpg";
+// import profileimage from "../../assets/profileexample.jpg";
 export default function PutUserInfo() {
   return (
     <>
@@ -14,7 +14,7 @@ export default function PutUserInfo() {
           <div>
             <div css={imagewrapCSS}>
               <label htmlFor="profileImage">
-                <Image css={imageCSS} src={profileimage} alt="프로필 이미지" />
+                <img css={imageCSS} src={"/assets/profileexample.jpg"} alt="프로필 이미지" />
               </label>
             </div>
             <input
