@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { throttle } from "lodash";
 import { BsFillArrowUpCircleFill } from "react-icons/bs";
+import { useRouter } from "next/router"
 
 interface BookCardModalProps {
   modalToggler: boolean;
@@ -28,6 +29,7 @@ const BookCardModal = ({
   const [contentToggler, setContentToggler] = useState<boolean>(false);
   const [isOpened, setisOpened] = useState<boolean>(false);
   const [isClosing, setIsClosing] = useState<boolean>(false);
+  const router = useRouter()
 
   const modalLayout = {
     widthValue: 450,
@@ -87,6 +89,10 @@ const BookCardModal = ({
     }
   }
 
+  const onClickNavigateHandler = () => {
+    router.push(`/books/${bookData.bookId}`)
+  }
+
   return (
     <div
       onMouseLeave={modalHandler}
@@ -131,7 +137,7 @@ const BookCardModal = ({
           
           <div css={css`display:flex; justify-content:space-between;`}>
             <div></div>
-            <BsFillArrowUpCircleFill css={icons} />
+            <BsFillArrowUpCircleFill css={icons} onClick={onClickNavigateHandler} />
           </div>
           
         </div>

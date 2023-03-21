@@ -2,8 +2,8 @@
 import { jsx, css } from "@emotion/react";
 import { Dispatch, SetStateAction, useState, useEffect } from "react";
 import Image from "next/image";
-import darkmode_dark from "@/assets/darkmode_dark.png";
-import darkmode_light from "@/assets/darkmode_light.png";
+// import darkmode_dark from "/assets/darkmode_dark.png";
+// import darkmode_light from "/assets/darkmode_light.png";
 
 interface Props {
   isDeskTop: boolean;
@@ -50,8 +50,8 @@ export const DarkModeToggle = (props: Props) => {
       onClick={onChangeDarkMode}
     >
       <div css={circleCSS(props.isDarkMode)}></div>
-      <Image alt="darkmode-icon" src={darkmode_dark} />
-      <Image alt="lightmode-icon" src={darkmode_light} />
+      <img alt="darkmode-icon" src={"/assets/darkmode_dark.png"} />
+      <img alt="lightmode-icon" src={"/assets/darkmode_light.png"} />
     </button>
   );
 };

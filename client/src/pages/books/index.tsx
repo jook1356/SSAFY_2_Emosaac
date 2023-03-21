@@ -4,14 +4,14 @@ import { useState, useRef } from "react";
 import ScrollableCarousel from "@/components/UI/ScrollableCarousel/ScrollableCarousel";
 import SwipeableGallery from "@/components/UI/SwipeableCarousel/SwipeableGallery";
 import { recvBooks } from "@/api/DummyData";
-import banner1 from "../../assets/temp_banner_1.png";
-import banner2 from "../../assets/temp_banner_2.png";
+// import banner1 from "../../assets/temp_banner_1.png";
+// import banner2 from "../../assets/temp_banner_2.png";
 import Image from "next/image";
 import HighlightedCarousel from "@/components/bookTab/HighlightedCarousel/HighlightedCarousel";
 import RowTitle from "@/components/bookTab/RowTitle/RowTitle";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
-import contentBannerDesktop from "../../assets/content_banner_desktop_tablet.png"
-import contentBannerMobile from "../../assets/content_banner_mobile.png"
+// import contentBannerDesktop from "/assets/content_banner_desktop_tablet.png"
+// import contentBannerMobile from "/assets/content_banner_mobile.png"
 
 export default function Home() {
   const parentRef = useRef<HTMLInputElement>(null);
@@ -22,9 +22,9 @@ export default function Home() {
   // 임시 데이터
   const postData = {
     content: [
-      <Image src={banner1} alt={""} css={bannerImage} />,
-      <Image src={banner2} alt={""} css={bannerImage} />,
-      <Image src={banner2} alt={""} css={bannerImage} />,
+      <img src={"/assets/temp_banner_1.png"} alt={""} css={bannerImage} />,
+      <img src={"/assets/temp_banner_2.png"} alt={""} css={bannerImage} />,
+
     ],
   };
 
@@ -68,7 +68,7 @@ export default function Home() {
         <div css={whiteSpace1CSS} />
       </div>
 
-      <Image src={isMobile === true ? contentBannerMobile : contentBannerDesktop} alt={""} css={bannerImage} />
+      <img src={isMobile === true ? "/assets/content_banner_mobile.png" : "/assets/content_banner_desktop_tablet.png"} alt={""} css={bannerImage} />
 
       <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
         <div css={whiteSpace1CSS} />

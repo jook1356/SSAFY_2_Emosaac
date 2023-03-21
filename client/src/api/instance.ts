@@ -1,6 +1,6 @@
 import axios from "axios";
 const token =
-  "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2IiwiaWF0IjoxNjc4ODkyMzAzLCJleHAiOjE2Nzk3NTYzMDN9.TjRTWw-uPiccXjZdt0ZFDhQuVkiqRaLIYwBAC4nEVBd27NIxG2hzf3TjWx34zuEPrFwr0fUJbxNNs9wmWzfoPw";
+  "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4IiwiaWF0IjoxNjc5MzU5MDQwLCJleHAiOjE2ODAyMjMwNDB9.5rJDelPFgBQRZclfOF5KE7teD-xIKTGyMkPEw7BQRJtETqM36wUqOaEnmNN12cIwz1drC9SOo03gLshlqGhuLw";
 function defaultInstace() {
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
