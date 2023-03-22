@@ -10,19 +10,26 @@ interface Props {
 const Layout = (props: Props) => {
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
   return (
-    <div css={backCSS(isMobile)}>
+    <div css={backCSS({ isDeskTop, isTablet, isMobile })}>
       <NavigationBar />
       {props.children}
     </div>
   );
 };
 
-const backCSS = (isMobile: boolean) => {
+interface IsResponsive {
+  isDeskTop: boolean;
+  isTablet: boolean;
+  isMobile: boolean;
+}
+
+const backCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   return css`
     background-color: var(--back-color);
     color: var(--text-color);
-    ${isMobile && "padding-top: 60px;"}
-    ${!isMobile && "padding-top: 70px;"}
+    ${isDeskTop && "padding-top: 70px;"}
+    ${isTablet && "padding-top: 110px;"}
+    ${isMobile && "padding: 60px 0 75px;"}
   `;
 };
 

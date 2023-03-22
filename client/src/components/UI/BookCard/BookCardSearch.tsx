@@ -163,8 +163,11 @@ const cardInnerWrapperCSS = ({
   minHeight,
 }: CardInnerWrapperProps) => {
   return css`
-    width: ${width !== undefined ? width : "auto"};
-    height: ${height !== undefined ? height : "100%"};
+    position: relative;
+    /* width: ${width !== undefined ? width : "auto"}; */
+    width: 100%;
+    /* height: ${height !== undefined ? height : "100%"}; */
+    height: 100%;
     ${minWidth && `min-width: ${minWidth}`};
     ${minHeight && `min-height: ${minHeight}`};
     position: relative;
@@ -187,9 +190,12 @@ const platformBarCSS = css`
 `;
 
 const imageCSS = css`
-  width: auto;
+  /* width: auto;
+  height: 100%; */
+  width: 100%;
   height: 100%;
   transition: transform 0.3s;
+  object-fit: cover;
   &:hover {
     transform: scale(1.1);
   }
@@ -201,6 +207,7 @@ interface skeletonLoadingTagCSSProps {
 
 const skeletonLoadingTagCSS = ({ state }: skeletonLoadingTagCSSProps) => {
   return css`
+    position: absolute;
     width: 100%;
     height: 100%;
     transition-property: opacity;
