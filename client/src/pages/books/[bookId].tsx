@@ -7,6 +7,9 @@ import { BiChevronRightCircle } from "react-icons/bi";
 import Button from "@/components/UI/Button/Button";
 import { BookmarkToggle, HasBeenReadToggle, CommentBtn } from "../../components/bookDetail/icons";
 import TagList from "@/components/bookDetail/TagList";
+import RedirButton from "@/components/bookDetail/RedirButton";
+import StarRating from "@/components/bookDetail/StarRating";
+
 
 
 type bookDataType = {
@@ -64,28 +67,31 @@ const BookDetail = ({bookData}: BookDetailProps) => {
                                     <div css={scoreDivCSS}>
                                         평균 평점 : {bookData.avgScore}
                                         <BiChevronRightCircle css={scoreBtnCSS} />
+                                        <StarRating />
                                     </div>
                                 </div>
                                 
                                 <div css={bottomContentCSS}>
-                                    <div css={iconFunctionCSS}>
-                                        <CommentBtn bookId={bookData.bookId} />
-                                        <BookmarkToggle bookId={bookData.bookId} isClicked={bookData.bookmark} />
-                                        <HasBeenReadToggle bookId={bookData.bookId} isClicked={bookData.read} />
-                                        
-                                    </div>
-                                    <div css={bookInfoWrapperCSS}>
-                                        <div css={boldTextCSS}>
-                                            {bookData.genre} · {new Date(bookData.regist).getFullYear()} &nbsp; &nbsp;
+                                    <div>
+                                        <div css={iconFunctionCSS}>
+                                            <CommentBtn bookId={bookData.bookId} />
+                                            <BookmarkToggle bookId={bookData.bookId} isClicked={bookData.bookmark} />
+                                            <HasBeenReadToggle bookId={bookData.bookId} isClicked={bookData.read} />
                                         </div>
-                                        <div>{bookData.author}</div>
-                                    </div>
+                                        <div css={bookInfoWrapperCSS}>
+                                            <div css={boldTextCSS}>
+                                                {bookData.genre} · {new Date(bookData.regist).getFullYear()} &nbsp; &nbsp;
+                                            </div>
+                                            <div>{bookData.author}</div>
+                                        </div>
 
-                                    <div css={storyWrapperCSS}>
-                                        {bookData.story}
+                                        <div css={storyWrapperCSS}>
+                                            {bookData.story}
+                                        </div>
                                     </div>
                                     
-                                    {/* <Button width={"50%"} height={"64px"}>보러가기</Button> */}
+                                    
+                                    <RedirButton width={"50%"} height={"64px"} platform={bookData.platform} href={bookData.href} />
                                 </div>
                                 
                             </div>
