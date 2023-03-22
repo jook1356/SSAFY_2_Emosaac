@@ -106,7 +106,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<User> userOptional = userRepository.findByEmailANDProviderType(authentication.getName(), providerType);
 
         if(userOptional.isPresent()) {
-            if(userOptional.get().getNickName()!=null || userOptional.get().getNickName()!=""){ //이미 회원
+            if(userOptional.get().getNickName()!=null || !userOptional.get().getNickName().equals("")){ //이미 회원
                 flag = true;
             }
         }
