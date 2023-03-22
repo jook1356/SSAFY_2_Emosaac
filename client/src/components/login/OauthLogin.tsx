@@ -6,12 +6,8 @@ import Image from "next/image";
 import naver from "../../assets/social_naver.png";
 import OauthLoginButton from "../UI/OauthLogin/OauthLoginButton";
 export default function OauthLogin() {
-  const onClickKakao = () => {
-    window.location.href = process.env.NEXT_PUBLIC_KAKAO_AUTH_URL;
-  };
-  const onClickNaver = () => {
-    window.location.href = process.env.NEXT_PUBLIC_NAVER_AUTH_URL;
-  };
+  const onClickKakao = () => {};
+  const onClickNaver = () => {};
   return (
     <>
       <main css={topWrapperCSS}>
