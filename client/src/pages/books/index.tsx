@@ -24,7 +24,6 @@ export default function Home() {
     content: [
       <img src={"/assets/temp_banner_1.png"} alt={""} css={bannerImage} />,
       <img src={"/assets/temp_banner_2.png"} alt={""} css={bannerImage} />,
-
     ],
   };
 
@@ -41,7 +40,7 @@ export default function Home() {
       </div>
 
       <div css={whiteSpace1CSS} />
-      <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
+      <div css={innerLayoutWrapperCSS({ isDeskTop, isTablet, isMobile })}>
         <RowTitle
           beforeLabel="희MD"
           highlightedLabel=" EMOSAAC!"
@@ -49,13 +48,13 @@ export default function Home() {
           marginBottom={"45px"}
         />
       </div>
-      
+
       <div css={highlightedCarouselWrapper}>
         {bookData.length !== 0 && <HighlightedCarousel bookData={bookData} />}
       </div>
       <div css={whiteSpace2CSS} />
 
-      <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
+      <div css={innerLayoutWrapperCSS({ isDeskTop, isTablet, isMobile })}>
         <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
           <ScrollableCarousel API={recvBooks} identifier={"test1"} />
@@ -68,9 +67,17 @@ export default function Home() {
         <div css={whiteSpace1CSS} />
       </div>
 
-      <img src={isMobile === true ? "/assets/content_banner_mobile.png" : "/assets/content_banner_desktop_tablet.png"} alt={""} css={bannerImage} />
+      <img
+        src={
+          isMobile === true
+            ? "/assets/content_banner_mobile.png"
+            : "/assets/content_banner_desktop_tablet.png"
+        }
+        alt={""}
+        css={bannerImage}
+      />
 
-      <div css={innerLayoutWrapperCSS({isDeskTop, isTablet, isMobile})}>
+      <div css={innerLayoutWrapperCSS({ isDeskTop, isTablet, isMobile })}>
         <div css={whiteSpace1CSS} />
         <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
@@ -128,16 +135,19 @@ const bookCarouselWrapperCSS = css`
   border-radius: 10px; ;
 `;
 
-
 interface innerLayoutWrapperCSSProps {
   isDeskTop: boolean;
   isTablet: boolean;
   isMobile: boolean;
 }
-const innerLayoutWrapperCSS = ({isDeskTop, isTablet, isMobile}: innerLayoutWrapperCSSProps) => {
-  const whiteSpace = (isDeskTop && 210) || (isTablet && 100) || (isMobile && 0)
+const innerLayoutWrapperCSS = ({
+  isDeskTop,
+  isTablet,
+  isMobile,
+}: innerLayoutWrapperCSSProps) => {
+  const whiteSpace = (isDeskTop && 210) || (isTablet && 100) || (isMobile && 0);
   return css`
     width: calc(100% - ${whiteSpace}px);
     /* margin: 0px 105px; */
-  `
-}
+  `;
+};
