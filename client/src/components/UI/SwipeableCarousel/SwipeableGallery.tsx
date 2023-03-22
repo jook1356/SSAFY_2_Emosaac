@@ -3,6 +3,7 @@ import { jsx, css } from "@emotion/react";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Swipe from "react-easy-swipe";
 import styles from "./SwipeableGallery.module.css";
+import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 
 const SwipeableGallery = ({ parentRef, content }: any) => {
   const movingDiv = useRef<HTMLInputElement>(null);
@@ -10,6 +11,7 @@ const SwipeableGallery = ({ parentRef, content }: any) => {
   const [contentCount, setContentCount] = useState(1);
   const [endSwipe, setEndSwipe] = useState(false);
   const postData = content;
+  const [isDeskTop, isTablet, isMobile] = useIsResponsive();
 
   const [width, setWidth] = useState(null);
   const [height, setHeight] = useState(null);
@@ -148,15 +150,21 @@ const SwipeableGallery = ({ parentRef, content }: any) => {
     )
   })
 
-
-  return (
-    <div css={outerWrapperCSS}>
-      <div css={prevBtnCSS} onClick={onClickPrevBtn}>
+  const indicatorBtn = (
+    <>
+    <div css={prevBtnCSS} onClick={onClickPrevBtn}>
         〈
       </div>
       <div css={nextBtnCSS} onClick={onClickNextBtn}>
         〉
       </div>
+    </>
+  )
+
+
+  return (
+    <div css={outerWrapperCSS}>
+      {isMobile === false && indicatorBtn}
       <div css={indicatorWrapperCSS}>
         {indicator}
       </div>

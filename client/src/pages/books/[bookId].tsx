@@ -53,40 +53,48 @@ const BookDetail = ({ bookData }: BookDetailProps) => {
   }, []);
 
   const desktopDecoration = (
-  <div css={backgroundWrapperCSS}>
-          <div css={blurredImgCSS({ thumbnail: bookData.thumbnail })} />
-          <div css={verticalGradientCSS} />
-          <div css={horizontalGradientCSS} />
+  <div css={backgroundWrapperCSS} className={"third-level-el-background"}>
+          <div css={blurredImgCSS({ thumbnail: bookData.thumbnail, isDeskTop: isDeskTop })} />
+          <div css={verticalGradientCSS({isDeskTop })} className={"vertical-gradient"}/>
+          {isDeskTop && <div css={horizontalGradientCSS} />}
         </div>
   )
+
+  const iconBtn = (
+    <div css={iconFunctionCSS}>
+      <CommentBtn bookId={bookData.bookId} stateHandler={setCommentModalState} />
+      <BookmarkToggle
+        bookId={bookData.bookId}
+        isClicked={bookData.bookmark}
+      />
+      <HasBeenReadToggle
+        bookId={bookData.bookId}
+        isClicked={bookData.read}
+      />
+      {/* <button onClick={() => {setCommentModalState(true); console.log(commentModalState)}}>test</button> */}
+    </div>
+  )
+
   const content = (
     <div className={'content'} css={contentCSS({isDeskTop})}>
-              <div css={rowGridCSS}>
+              <div className={'rowGrid'} css={rowGridCSS({isDeskTop})}>
                 <div>
-                  <TagList tag={bookData.tag} />
-                  <div css={titleCSS}>{bookData.title}</div>
+                  {isDeskTop === false && iconBtn}
+                  {isDeskTop === true && <TagList tag={bookData.tag} />}
+                  
+                  <div css={titleCSS({isDeskTop})}>{bookData.title}</div>
                   <div css={scoreDivCSS}>
                     평균 평점 : {bookData.avgScore}
                     <BiChevronRightCircle css={scoreBtnCSS} />
                     {/* <StarRating /> */}
                   </div>
+                  {isDeskTop === false && <div css={lineCSS}/>}
                 </div>
 
                 <div css={bottomContentCSS}>
                   <div>
-                    <div css={iconFunctionCSS}>
-                      <CommentBtn bookId={bookData.bookId} stateHandler={setCommentModalState} />
-                      <BookmarkToggle
-                        bookId={bookData.bookId}
-                        isClicked={bookData.bookmark}
-                      />
-                      <HasBeenReadToggle
-                        bookId={bookData.bookId}
-                        isClicked={bookData.read}
-                      />
-                      {/* <button onClick={() => {setCommentModalState(true); console.log(commentModalState)}}>test</button> */}
-                    </div>
-                    <div css={bookInfoWrapperCSS}>
+                    {isDeskTop && iconBtn}
+                    <div css={bookInfoWrapperCSS({isDeskTop})}>
                       <div css={boldTextCSS}>
                         {bookData.genre} ·{" "}
                         {new Date(bookData.regist).getFullYear()} &nbsp; &nbsp;
@@ -111,25 +119,29 @@ const BookDetail = ({ bookData }: BookDetailProps) => {
   )
 
   const thumbnail = (
+
       <div css={thumbnailGridCSS}>
-              <img css={thumbnailCSS({isDeskTop})} src={bookData.thumbnail} />
-            </div>
+  
+        <img css={thumbnailCSS({isDeskTop})} src={bookData.thumbnail} />
+      </div>
+
+    
   )
 
   return (
-    <div>
+    <div css={mainContentCSS} className={"top-level-el"}>
       <FixedModal
          modalState={commentModalState}
          stateHandler={setCommentModalState}
          content={<DetailComment />}
       />
 
-      <div css={mainContentCSS}>
-        {isDeskTop && desktopDecoration}
-
-        <div css={contentOuterWrapperCSS}>
-          <div css={columnGridCSS({isDeskTop})}>
-
+      <div css={mainContentInnerWrapperCSS} className={"second-level-el"} >
+        {/* {isDeskTop && desktopDecoration} */}
+        {desktopDecoration}
+        <div css={contentOuterWrapperCSS({isDeskTop})} className={"third-level-el"}>
+          <div css={columnGridCSS({isDeskTop})} className={"column-grid"}>
+            
             {isDeskTop ? <>{content}{thumbnail}</> : <>{thumbnail}{content}</>}
 
             
@@ -162,39 +174,48 @@ export const getServerSideProps = async (context: any) => {
 const mainContentCSS = css`
   width: 100%;
   /* height: 100vh; */
-  /* overflow: hidden; */
+  
+  /* overflow-x: hidden; */
 `;
 
 const backgroundWrapperCSS = css`
-  /* width: 100%;
-    height: 100%; */
+  width: 100%;
+    height: 100%;
 
-  position: relative;
+  
+  position: absolute;
 `;
 
 interface blurredImgProps {
   thumbnail: string;
+  isDeskTop: boolean;
 }
-const blurredImgCSS = ({ thumbnail }: blurredImgProps) => {
+const blurredImgCSS = ({ thumbnail, isDeskTop }: blurredImgProps) => {
   return css`
     background: no-repeat url("${thumbnail}") 0 / cover;
     filter: blur(10px);
     -webkit-filter: blur(20px);
     pointer-events: none;
     position: absolute;
-    right: 0;
-    top: 3vh;
-    width: 70vw;
-    height: 120vh;
+    ${isDeskTop && 'right: 0'};
+
+    ${isDeskTop ? 'width: 70vw' : 'width: 100vw'};
+    ${isDeskTop ? 'height: 120vh' : 'height: calc(90% - 72px)'};
+    ${isDeskTop ? 'opacity: 100%;' : 'opacity: 50%;'};
+    
+
+    
   `;
 };
 
-const verticalGradientCSS = css`
-  width: 100vw;
-  height: 125vh;
-  background: linear-gradient(rgba(0, 0, 0, 0) 0%, var(--back-color) 90%);
-  position: absolute;
-`;
+const verticalGradientCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
+  return css`
+    width: 100vw;
+    height: ${isDeskTop ? '125vh' : 'calc(100% - 72px)'};
+    background: linear-gradient(rgba(0, 0, 0, 0) 0%, var(--back-color) 90%);
+    position: absolute;
+  `;
+}
 
 const horizontalGradientCSS = css`
   width: 100vw;
@@ -207,23 +228,26 @@ const horizontalGradientCSS = css`
   position: absolute;
 `;
 
-const contentOuterWrapperCSS = css`
-  width: 100vw;
-  height: calc(100vh - 72px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* padding */
-`;
+const contentOuterWrapperCSS = ({isDeskTop}: {isDeskTop: boolean}) => { 
+  return css`
+    width: 100vw;
+    height: ${isDeskTop ? 'calc(100vh - 72px)' : '100%'};
+    /* height: calc(100vh - 72px); */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* padding */
+  `;
+}
 
 const columnGridCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
   return css`
     position: relative;
     display: grid;
-    ${isDeskTop ? 'grid-template-columns: 50% 50%' : 'grid-template-rows: 100vw 100%'};
+    ${isDeskTop ? 'grid-template-columns: 50% 50%' : 'grid-template-rows: 100vw auto'};
     
     /* background-color: red; */
-    height: 80vh;
+    height: ${isDeskTop ? '80vh' : 'auto'};
     width: 100vw;
 
 
@@ -250,29 +274,33 @@ const thumbnailCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
 const contentCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
   return css`
     width: 100%;
-    height: 100%;
     ${isDeskTop ? 'padding-left: 10vw' : 'padding: 36px;'};
   `;
 }
 
-const rowGridCSS = css`
-  display: grid;
-  grid-template-rows: 50% 50%;
-  height: 100%;
-  /* background-color: red; */
-`;
+const rowGridCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
+  return css`
+    display: grid;
+    grid-template-rows: ${isDeskTop ? '50%' : 'auto'} 50%;
+    ${isDeskTop && 'height: 100%'};
+    /* background-color: red; */
+  `;
+}
 
-const titleCSS = css`
-  font-size: 5vw;
-  font-weight: 700;
-  margin-bottom: 24px;
-`;
+const titleCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
+  return css`
+    font-size: 6vw;
+    font-weight: 700;
+    margin-bottom: ${isDeskTop ? '24px' : '12px'};
+  `;
+}
 
 const scoreDivCSS = css`
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   display: flex;
   align-items: center;
+  margin-bottom: 12px;
 `;
 
 const scoreBtnCSS = css`
@@ -285,6 +313,7 @@ const bottomContentCSS = css`
   display: flex;
   flex-direction: column;
   justify-content: end;
+  
   /* justify-content: space-between; */
 `;
 
@@ -292,10 +321,13 @@ const iconFunctionCSS = css`
   display: flex;
 `;
 
-const bookInfoWrapperCSS = css`
-  display: flex;
-  margin-bottom: 24px;
-`;
+const bookInfoWrapperCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
+  return css`
+    display: flex;
+    margin-bottom: ${isDeskTop ? '24px' : '12px'};
+    margin-top: 12px;
+  `;
+}
 
 const boldTextCSS = css`
   font-weight: 700;
@@ -318,4 +350,14 @@ const buttonWrapperCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
   ${isDeskTop === false && 'display: flex; justify-content: center;'}
  `
 }
+
+const lineCSS = css`
+  border-bottom: 1px var(--text-color-4) solid;
+`
+
+const mainContentInnerWrapperCSS = css`
+  height: 100%;
+  width: 100%;
+`
+
 export default BookDetail;

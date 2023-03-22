@@ -2,20 +2,27 @@ test-job: # 임의로 지정한 JOB 이름
   stage: deploy # build, test, deploy 3단계 스테이지 중 하나
   only:
     - fe/develop # develop 브랜치 이벤트 발생시 실행
-  script:
-    - echo "Hello World" # 실행할 스크립트
+  before_script:
+    # - git submodule update --init --recursive
+  script: 
+    - echo "Hello World" # 실행할 스크립트 
     # /home/gitlab-runner/builds/sZ_Zkzi3/0/s08-bigdata-recom-sub2/S08P22D203
     - git pull origin fe/develop
-    # - pm2 stop emosaac
-    # - pm2 kill
+    # - echo 'shine7065@naver.com' echo 'dZT2Cnrxmzy3ExthKsNG' |sudo git clone --recurse-submodules https://lab.ssafy.com/gms9424/emosaac_front.git
+    # - cp emosaac_front/.env client/.env
+    # - git submodule foreach git pull origin emosaac_front
+    # - cp emosaac_front/.env client/.env
+    - pm2 stop emosaac
+    - pm2 kill
     - sudo chown -R `whoami` ~/.npm
     - sudo chown -R `whoami` /usr/local/lib/node_modules
     - cd client
     - npm i
     - sudo npm run build
+    - sudo chown -R  gitlab-runner:gitlab-runner .next
     - pm2 list
     # - sudo npm run start
     - pm2 start npm --name "emosaac" -w -i max -- start
     - sudo npm run start
-  tags:
+  tags: 
     - nextjs # build-server 태그가 달린 runner에서 실행
