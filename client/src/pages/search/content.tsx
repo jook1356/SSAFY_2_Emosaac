@@ -63,9 +63,12 @@ const content = ({ type, content, data }: any) => {
         검색 결과
       </h2>
       <div
-        css={[innerPaddingCSS({ isDeskTop, isTablet, isMobile }), searchResCSS]}
+        css={[
+          innerPaddingCSS({ isDeskTop, isTablet, isMobile }),
+          searchResCSS({ isDeskTop, isTablet, isMobile }),
+        ]}
       >
-        <div>
+        <div css={searchContentCSS}>
           "{content}"<span css={josaCSS}>{josa} 포함된 컨텐츠</span>
         </div>
         <div css={toggleWrapCSS}>
@@ -131,14 +134,22 @@ const innerPaddingCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   `;
 };
 
-const searchResCSS = css`
+const searchResCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
+  return css`
+    ${!isMobile &&
+    "display: flex; justify-content: space-between; align-items: center;"}
+    ${isMobile && "display: block;"}
+    font-size: 34px;
+    background-color: var(--back-color-2);
+    padding-top: 20px;
+    padding-bottom: 20px;
+  `;
+};
+
+const searchContentCSS = css`
+  height: 70px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 34px;
-  background-color: var(--back-color-2);
-  padding-top: 20px;
-  padding-bottom: 20px;
 `;
 
 const josaCSS = css`
@@ -146,7 +157,7 @@ const josaCSS = css`
 `;
 
 const toggleWrapCSS = css`
-  padding: 20px 0;
+  padding: 5px 0;
   display: flex;
   justify-content: flex-end;
   & > button {
@@ -158,7 +169,8 @@ const booksWrapCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   return css`
     padding-top: 20px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    ${isMobile && "grid-template-columns: repeat(3, 1fr);"}
+    ${!isMobile && "grid-template-columns: repeat(5, 1fr);"}
     column-gap: 30px;
     row-gap: 30px;
   `;
@@ -167,7 +179,7 @@ const booksWrapCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
 export const getServerSideProps = async (context: any) => {
   const type = context.query.type;
   const content = context.query.query;
-  const [prevId, prevScore, size] = [20493, 10, 10];
+  const [prevId, prevScore, size] = [20493, 10, 14];
   if (typeof type == "string" && typeof content == "string") {
     const data = await getListByContent(
       type,

@@ -7,7 +7,7 @@ import naverSeries from "../../../assets/platform_naver_series.webp";
 import naverWebtoon from "../../../assets/platform_naver_webtoon.webp";
 import kakaoPage from "../../../assets/platform_kakao_page.png";
 
-import BookCardModal from "@/components/bookCardModal/BookCardModal";
+import BookCardModal from "@/components/bookCardModal/BookCardModalSearch";
 import Portal from "@/components/function/Portal";
 
 interface BookData {
