@@ -22,6 +22,7 @@ import {
   RiPlayCircleFill,
   RiPlayCircleLine,
 } from "react-icons/ri";
+import Link from "next/link";
 
 export const NavigationBar = () => {
   // DeskTop Nav content의 최소 너비
@@ -37,109 +38,115 @@ export const NavigationBar = () => {
     );
   }, [isDeskTop, isTablet, isMobile]);
   return (
-    <nav css={navAllCSS}>
-      <div css={navBackCSS(isTablet)}>
-        <div
-          css={navWrapCSS({
-            isClient,
-            isNavLimit,
-            isDeskTop,
-            isTablet,
-            isMobile,
-          })}
-        >
-          <h1 css={logoWrapCSS}>
-            {isMobile && <Image alt="logo" src={"/assets/emosaac_logo_mobile.png"} />}
-            {!isMobile && isDarkMode && (
-              <img alt="logo" src={"/assets/emosaac_logo_white.png"} />
+    <nav>
+      <div css={navTopCSS}>
+        <div css={navBackCSS(isTablet)}>
+          <div
+            css={navWrapCSS({
+              isClient,
+              isNavLimit,
+              isDeskTop,
+              isTablet,
+              isMobile,
+            })}
+          >
+            <Link href={"/"}>
+              <h1 css={logoWrapCSS}>
+                {isMobile && (
+                  <img alt="logo" src={"/assets/emosaac_logo_mobile.png"} />
+                )}
+                {!isMobile && isDarkMode && (
+                  <img alt="logo" src={"/assets/emosaac_logo_white.png"} />
+                )}
+                {!isMobile && !isDarkMode && (
+                  <img alt="logo" src={"/assets/emosaac_logo.png"} />
+                )}
+              </h1>
+            </Link>
+            {isDeskTop && (
+              <div css={menuWrapCSS(isDeskTop, isTablet)}>
+                <Link href={"/books"}>웹툰</Link>
+                <Link href={"/books"}>웹소설</Link>
+                <Link href={"/emopick"}>EMOPICK</Link>
+              </div>
             )}
-            {!isMobile && !isDarkMode && (
-              <img alt="logo" src={"/assets/emosaac_logo.png"} />
+            {!isMobile && (
+              <>
+                <SearchBar
+                  isDeskTop={isDeskTop}
+                  isTablet={isTablet}
+                  isMobile={isMobile}
+                />
+              </>
             )}
-          </h1>
-          {isDeskTop && (
-            <div css={menuWrapCSS(isDeskTop, isTablet)}>
-              <a href="#">웹툰</a>
-              <a href="#">웹소설</a>
-              <a href="#">EMOPICK</a>
-            </div>
-          )}
-          {!isMobile && (
-            <>
-              <SearchBar
-                isDeskTop={isDeskTop}
-                isTablet={isTablet}
-                isMobile={isMobile}
+            {isMobile && <div></div>}
+            <DarkModeToggle
+              isDeskTop={isDeskTop}
+              isTablet={isTablet}
+              isMobile={isMobile}
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
+            />
+            {isDeskTop ? (
+              <BasicButton />
+            ) : isTablet ? (
+              <BsPersonFill
+                size={24}
+                css={css`
+                  color: var(--text-color);
+                `}
               />
-            </>
-          )}
-          {isMobile && <div></div>}
-          <DarkModeToggle
-            isDeskTop={isDeskTop}
-            isTablet={isTablet}
-            isMobile={isMobile}
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
-          {isDeskTop ? (
-            <BasicButton />
-          ) : isTablet ? (
-            <BsPersonFill
-              size={24}
-              css={css`
-                color: var(--text-color);
-              `}
-            />
-          ) : null}
-          {isMobile && (
-            <FiSearch
-              size={24}
-              css={css`
-                cursor: pointer;
-              `}
-            />
-          )}
+            ) : null}
+            {isMobile && (
+              <FiSearch
+                size={24}
+                css={css`
+                  cursor: pointer;
+                `}
+              />
+            )}
+          </div>
         </div>
+        {isTablet && (
+          <div css={menuWrapCSS(isDeskTop, isTablet)}>
+            <Link href={"/"}>홈</Link>
+            <Link href={"/books"}>웹툰</Link>
+            <Link href={"/books"}>웹소설</Link>
+            <Link href={"/emopick"}>EMOPICK</Link>
+          </div>
+        )}
       </div>
-      {isTablet && (
-        <div css={menuWrapCSS(isDeskTop, isTablet)}>
-          <a href="#">홈</a>
-          <a href="#">웹툰</a>
-          <a href="#">웹소설</a>
-          <a href="#">EMOPICK</a>
-        </div>
-      )}
       {isMobile && (
         <ul css={dockBarCSS}>
           <li>
-            <a href="#">
+            <Link href="/">
               <AiFillHome size={24} />
               <div>홈</div>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link href="books">
               <MdOutlineCookie size={24} />
               <div>웹툰</div>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link href="books">
               <RiBookReadLine size={24} />
               <div>웹소설</div>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link href="emopick">
               <RiPlayCircleLine size={24} />
               <div>이모픽</div>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link href="/login">
               <BsPerson size={24} />
               <div>MY</div>
-            </a>
+            </Link>
           </li>
         </ul>
       )}
@@ -153,8 +160,12 @@ interface IsResponsive {
   isTablet: boolean;
   isMobile: boolean;
 }
-const navAllCSS = css`
-  /* border-bottom: 1px solid var(--border-color-2); */
+const navTopCSS = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  width: 100%;
 `;
 
 const navBackCSS = (isTablet: boolean) => {
