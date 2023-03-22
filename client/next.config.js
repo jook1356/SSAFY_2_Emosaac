@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
 
   // SWC 컴파일러 사용을 위한 최적화 코드 삽입
   // swcMinifty이란 Terser와 비슷한 역할을 한다고 생각하면 된다.
@@ -25,4 +25,11 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+// module.exports = nextConfig;
+module.exports = {
+  // output: 'standalone',
+  images: {
+    loader: "imgix",
+    path: "https://j8d203.p.ssafy.io",
+  },
+};

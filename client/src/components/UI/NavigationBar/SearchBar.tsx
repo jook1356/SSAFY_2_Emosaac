@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { useState, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction } from "react";
+import { useRouter } from "next/router";
 import { SearchBarDropDown } from "./SearchBarDropDown";
 import { FiSearch } from "react-icons/fi";
+import { getListByContent, getListByTagName } from "../../../api/search";
 
 interface Props {
   isDeskTop: boolean;
@@ -11,23 +13,55 @@ interface Props {
 }
 
 export const SearchBar = (props: Props) => {
+  const router = useRouter();
+  const typeDict: { [key: string]: string } = {
+    ["전체"]: "total",
+    ["웹툰"]: "webtoon",
+    ["웹소설"]: "novel",
+  };
   const [searchInput, setSearchInput] = useState("");
   const [selectedCate, setSelectedCate] = useState("전체");
+  const [type, setType] = useState("total");
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isTagName, setIsTagName] = useState(false);
+  useEffect(() => {
+    setType(typeDict[selectedCate]);
+  }, [selectedCate]);
+  useEffect(() => {
+    if (searchInput.slice(0, 1) === "#") {
+      setIsTagName(true);
+    } else {
+      setIsTagName(false);
+    }
+  }, [searchInput]);
   function onChangeSearchInput(event: React.ChangeEvent<HTMLInputElement>) {
     const inputText = event.target.value;
     setSearchInput(inputText);
-    // console.log(inputText);
   }
   function onEnterKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
       if (searchInput === "") {
         alert("검색어를 입력해주세요");
       } else {
-        if (searchInput.slice(0, 1) === "#") {
-          console.log(`tag 검색, ${selectedCate}`);
+        const [prevId, prevScore, size] = [20493, 10, 10];
+        if (isTagName) {
+          const tagName = searchInput.slice(1);
+          router.push({
+            pathname: `/search/tagname`,
+            query: {
+              type,
+              query: tagName,
+            },
+          });
         } else {
-          console.log(`제목 / 내용 검색 ${selectedCate}`);
+          const content = searchInput;
+          router.push({
+            pathname: `/search/content`,
+            query: {
+              type,
+              query: content,
+            },
+          });
         }
       }
     }
