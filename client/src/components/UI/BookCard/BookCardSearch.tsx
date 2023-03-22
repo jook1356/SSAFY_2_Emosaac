@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import ridi from "../../../assets/platform_ridi.webp";
 import naverSeries from "../../../assets/platform_naver_series.webp";
@@ -12,7 +12,7 @@ import Portal from "@/components/function/Portal";
 
 interface BookData {
   title: string;
-  img: string;
+  thumbnail: string;
   platform: string;
 }
 
@@ -33,11 +33,16 @@ const BookCard = ({
   minWidth,
   minHeight,
 }: Props) => {
+  const [user, setUser] = useState<any>(null);
+  // let user: any = null;
+  useEffect(() => {
+    setUser(() => navigator.userAgent);
+  }, []);
+
   const isMobile = () => {
-    var user = navigator.userAgent;
-    var is_mobile = false;
+    let is_mobile = false;
     if (
-      user.indexOf("iPhone") > -1 ||
+      (user !== undefined && user.length > 0 && user.indexOf("iPhone") > -1) ||
       user.indexOf("Android") > -1 ||
       user.indexOf("iPad") > -1 ||
       user.indexOf("iPod") > -1
@@ -47,7 +52,7 @@ const BookCard = ({
     return is_mobile;
   };
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLInputElement>(null);
   const [modalToggler, setModalToggler] = useState<boolean>(false);
   const [isMouseOn, setIsMouseOn] = useState<boolean>(false);
 
@@ -68,7 +73,7 @@ const BookCard = ({
   };
 
   const instantlyRedirect = () => {
-    if (isMobile() === true) {
+    if (user !== null && isMobile() === true) {
       // 모바일에서 Detail 페이지로 바로 이동
     }
   };
@@ -99,7 +104,7 @@ const BookCard = ({
       }}
       onMouseLeave={hideModal}
     >
-      {isMobile() === false && modalToggler && modal}
+      {user !== null && isMobile() === false && modalToggler && modal}
 
       <div
         className={"bookcard-inner-wrapper"}
@@ -112,7 +117,7 @@ const BookCard = ({
         />
         <img
           className={"img"}
-          src={bookData && bookData.img}
+          src={bookData && bookData.thumbnail}
           alt={bookData && bookData.title}
           css={imageCSS}
         />
@@ -158,8 +163,11 @@ const cardInnerWrapperCSS = ({
   minHeight,
 }: CardInnerWrapperProps) => {
   return css`
-    width: ${width !== undefined ? width : "auto"};
-    height: ${height !== undefined ? height : "100%"};
+    position: relative;
+    /* width: ${width !== undefined ? width : "auto"}; */
+    width: 100%;
+    /* height: ${height !== undefined ? height : "100%"}; */
+    height: 100%;
     ${minWidth && `min-width: ${minWidth}`};
     ${minHeight && `min-height: ${minHeight}`};
     position: relative;
@@ -182,9 +190,12 @@ const platformBarCSS = css`
 `;
 
 const imageCSS = css`
-  width: auto;
+  /* width: auto;
+  height: 100%; */
+  width: 100%;
   height: 100%;
   transition: transform 0.3s;
+  object-fit: cover;
   &:hover {
     transform: scale(1.1);
   }
@@ -196,6 +207,7 @@ interface skeletonLoadingTagCSSProps {
 
 const skeletonLoadingTagCSS = ({ state }: skeletonLoadingTagCSSProps) => {
   return css`
+    position: absolute;
     width: 100%;
     height: 100%;
     transition-property: opacity;

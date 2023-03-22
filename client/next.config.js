@@ -25,4 +25,11 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+// module.exports = nextConfig;
+module.exports = {
+  // output: 'standalone',
+  images: {
+    loader: "imgix",
+    path: "https://j8d203.p.ssafy.io",
+  },
+};

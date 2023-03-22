@@ -25,7 +25,7 @@ export default function OauthLoginButton({
         css={oauthButtonCSS}
       >
         <div css={imageWrapCSS}>
-          <Image src={src} alt={alt} css={socialLogoCSS} />
+          <img src={src} alt={alt} css={socialLogoCSS} />
         </div>
         <div css={textWrapCSS}>{text}</div>
       </button>
