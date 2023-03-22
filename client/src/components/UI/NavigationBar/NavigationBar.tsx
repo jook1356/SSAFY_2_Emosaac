@@ -2,9 +2,9 @@
 import { jsx, css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import emosaac_logo from "@/assets/emosaac_logo.png";
-import emosaac_logo_white from "@/assets/emosaac_logo_white.png";
-import emosaac_logo_mobile from "@/assets/emosaac_logo_mobile.png";
+// import emosaac_logo from "@/assets/emosaac_logo.png";
+// import emosaac_logo_white from "@/assets/emosaac_logo_white.png";
+// import emosaac_logo_mobile from "@/assets/emosaac_logo_mobile.png";
 // import { ReactComponent as Logo } from "@/assets/emosaac_logo.svg";
 import { SearchBar } from "./SearchBar";
 import { DarkModeToggle } from "./DarkModeToggle";
@@ -49,12 +49,12 @@ export const NavigationBar = () => {
           })}
         >
           <h1 css={logoWrapCSS}>
-            {isMobile && <Image alt="logo" src={emosaac_logo_mobile} />}
+            {isMobile && <Image alt="logo" src={"/assets/emosaac_logo_mobile.png"} />}
             {!isMobile && isDarkMode && (
-              <Image alt="logo" src={emosaac_logo_white} />
+              <img alt="logo" src={"/assets/emosaac_logo_white.png"} />
             )}
             {!isMobile && !isDarkMode && (
-              <Image alt="logo" src={emosaac_logo} />
+              <img alt="logo" src={"/assets/emosaac_logo.png"} />
             )}
           </h1>
           {isDeskTop && (
