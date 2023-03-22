@@ -239,7 +239,7 @@ export const NavigationBar = () => {
           <li>
             <Link href="/" replace>
               {currentRoute.home ? (
-                <AiFillHome size={24} css={routerCSS(currentRoute.home)} />
+                <AiFillHome size={24} />
               ) : (
                 <AiOutlineHome size={24} />
               )}
@@ -249,7 +249,7 @@ export const NavigationBar = () => {
           <li>
             <Link href="/books" replace>
               {currentRoute.webtoon ? (
-                <MdCookie size={24} css={routerCSS(currentRoute.webtoon)} />
+                <MdCookie size={24} />
               ) : (
                 <MdOutlineCookie size={24} />
               )}
@@ -259,7 +259,7 @@ export const NavigationBar = () => {
           <li>
             <Link href="/books" replace>
               {currentRoute.novel ? (
-                <RiBookReadFill size={24} css={routerCSS(currentRoute.novel)} />
+                <RiBookReadFill size={24} />
               ) : (
                 <RiBookReadLine size={24} />
               )}
@@ -269,10 +269,7 @@ export const NavigationBar = () => {
           <li>
             <Link href="/emopick" replace>
               {currentRoute.emopick ? (
-                <RiPlayCircleFill
-                  size={24}
-                  css={routerCSS(currentRoute.emopick)}
-                />
+                <RiPlayCircleFill size={24} />
               ) : (
                 <RiPlayCircleLine size={24} />
               )}
@@ -282,7 +279,7 @@ export const NavigationBar = () => {
           <li>
             <Link href="/">
               {currentRoute.mypage ? (
-                <MdPerson size={24} css={routerCSS(currentRoute.mypage)} />
+                <MdPerson size={24} />
               ) : (
                 <MdOutlinePersonOutline size={24} />
               )}
