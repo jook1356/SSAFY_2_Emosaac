@@ -7,7 +7,7 @@ export default function Document() {
     <Html lang="en">
       <Head />
       <body>
-        <div className="overlay-root" css={overlayCSS} />
+        <div id="overlay-root" className="overlay-root" css={overlayCSS} />
         <Main />
         <NextScript />
       </body>
@@ -16,6 +16,6 @@ export default function Document() {
 }
 
 const overlayCSS = css`
-  z-index: 9999;
+  z-index: 999999;
   position: fixed;
 `;
