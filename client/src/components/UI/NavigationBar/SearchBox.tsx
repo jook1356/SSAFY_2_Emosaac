@@ -54,12 +54,12 @@ const visibleCSS = (transY: string) => {
 
 const searchWrapCSS = css`
   position: relative;
+  z-index: 18;
 `;
 
 const searchBoxCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   return css`
     position: absolute;
-    z-index: 18;
     width: 100%;
     height: 200px;
     border-radius: 0 0 10px 10px;
