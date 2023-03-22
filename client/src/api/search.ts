@@ -14,16 +14,12 @@ interface Search {
   }[];
 }
 
-interface Pages {
-  prevId: number;
-  prevScore: number;
-  size: number;
-}
-
 async function getListByContent(
   type: string,
   content: string,
-  pages: Pages
+  prevId: number,
+  prevScore: number,
+  size: number
 ): Promise<
   | {
       bookId: number;
@@ -38,7 +34,7 @@ async function getListByContent(
 > {
   try {
     const { data }: { data: Search } = await defaultAxiosInstance.get(
-      `/search/title/${type}/${content}?prevId=${pages.prevId}&prevScore=${pages.prevScore}&size=${pages.size}`
+      `/search/title/${type}/${content}?prevId=${prevId}&prevScore=${prevScore}&size=${size}`
     );
     if (data.status === 200) {
       return data.data;
@@ -51,4 +47,37 @@ async function getListByContent(
   }
 }
 
-export default { getListByContent };
+async function getListByTagName(
+  type: string,
+  tagName: string,
+  prevId: number,
+  prevScore: number,
+  size: number
+): Promise<
+  | {
+      bookId: number;
+      platform: number;
+      thumbnail: string;
+      title: string;
+      author: string;
+      href: string;
+      score: number;
+    }[]
+  | null
+> {
+  try {
+    const { data }: { data: Search } = await defaultAxiosInstance.get(
+      `/search/tag/${type}/${tagName}?prevId=${prevId}&prevScore=${prevScore}&size=${size}`
+    );
+    if (data.status === 200) {
+      return data.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export { getListByContent, getListByTagName };

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import ridi from "../../../assets/platform_ridi.webp";
 import naverSeries from "../../../assets/platform_naver_series.webp";
@@ -12,7 +12,7 @@ import Portal from "@/components/function/Portal";
 
 interface BookData {
   title: string;
-  img: string;
+  thumbnail: string;
   platform: string;
 }
 
@@ -33,11 +33,16 @@ const BookCard = ({
   minWidth,
   minHeight,
 }: Props) => {
+  const [user, setUser] = useState<any>(null);
+  // let user: any = null;
+  useEffect(() => {
+    setUser(() => navigator.userAgent);
+  }, []);
+
   const isMobile = () => {
-    var user = navigator.userAgent;
-    var is_mobile = false;
+    let is_mobile = false;
     if (
-      user.indexOf("iPhone") > -1 ||
+      (user !== undefined && user.length > 0 && user.indexOf("iPhone") > -1) ||
       user.indexOf("Android") > -1 ||
       user.indexOf("iPad") > -1 ||
       user.indexOf("iPod") > -1
@@ -68,7 +73,7 @@ const BookCard = ({
   };
 
   const instantlyRedirect = () => {
-    if (isMobile() === true) {
+    if (user !== null && isMobile() === true) {
       // 모바일에서 Detail 페이지로 바로 이동
     }
   };
@@ -99,7 +104,7 @@ const BookCard = ({
       }}
       onMouseLeave={hideModal}
     >
-      {isMobile() === false && modalToggler && modal}
+      {user !== null && isMobile() === false && modalToggler && modal}
 
       <div
         className={"bookcard-inner-wrapper"}
@@ -112,7 +117,7 @@ const BookCard = ({
         />
         <img
           className={"img"}
-          src={bookData && bookData.img}
+          src={bookData && bookData.thumbnail}
           alt={bookData && bookData.title}
           css={imageCSS}
         />
