@@ -16,16 +16,8 @@ interface Book {
   score: number;
 }
 
-// bookData?: any;
-// showPlatform: boolean;
-// width?: string;
-// height?: string;
-// minWidth?: string;
-// minHeight?: string;
-
 const content = ({ data }: any) => {
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
-  console.log(data);
   return (
     <>
       {data.map((book: Book) => (

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { getListByTagName } from "../../api/search";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
-import BookCardSearch from "@/components/UI/BookCard/BookCard";
+import BookCardSearch from "@/components/UI/BookCard/BookCardSearch";
 
 interface Book {
   bookId: number;
@@ -18,7 +18,6 @@ interface Book {
 
 const tagName = ({ data }: any) => {
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
-  console.log(data);
   return (
     <>
       {data.map((book: Book) => (
