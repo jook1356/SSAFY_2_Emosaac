@@ -5,8 +5,8 @@ test-job: # 임의로 지정한 JOB 이름
   script:
     - echo "Hello World" # 실행할 스크립트
     - git pull origin fe/develop
-    - pm2 kill
     - cd /client
+    - next kill
     - npm install
     - npm run build
     - pm2 start npm --name "next" -w -i max -- start
