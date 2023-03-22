@@ -3,6 +3,7 @@ import { jsx, css } from "@emotion/react";
 import { useState, useEffect, useRef } from "react";
 import BookCard from "@/components/UI/BookCard/BookCard";
 import Swipe from "react-easy-swipe";
+import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 
 interface HighlightedCarousel {
   bookData: object[];
@@ -16,6 +17,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   const carouselWrapperRef = useRef<HTMLInputElement>(null);
   
   const dummyHighlightedRef = useRef<HTMLInputElement>(null);
+  const [isDeskTop, isTablet, isMobile] = useIsResponsive();
 
   const cardLayout = {
     widthValue: 13,
@@ -113,6 +115,17 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
     setPositionx(() => 0)
   }
 
+  const indicatorBtn = (
+    <>
+    <div css={prevBtnCSS} onClick={prevBtnHandler}>
+            〈
+          </div>
+          <div css={nextBtnCSS} onClick={nextBtnHandler}>
+            〉
+          </div>
+    </>
+    
+  )
   return (
     // <div css={carouselOuterWrapperCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, highlightedRef: dummyHighlightedRef})}></div>
     
@@ -140,12 +153,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
           </button>
           <button onClick={nextBtnHandler}>next</button> */}
 
-          <div css={prevBtnCSS} onClick={prevBtnHandler}>
-            〈
-          </div>
-          <div css={nextBtnCSS} onClick={nextBtnHandler}>
-            〉
-          </div>
+          {isMobile === false && indicatorBtn}
           
           <div
             ref={carouselWrapperRef}

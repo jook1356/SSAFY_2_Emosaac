@@ -9,6 +9,7 @@ import kakaoPage from "../../../assets/platform_kakao_page.png";
 
 import BookCardModal from "@/components/bookCardModal/BookCardModal";
 import Portal from "@/components/function/Portal";
+import { useRouter } from "next/router"
 
 interface BookData {
   title: string;
@@ -46,7 +47,7 @@ const BookCard = ({
     }
     return is_mobile;
   };
-
+  const router = useRouter()
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [modalToggler, setModalToggler] = useState<boolean>(false);
   const [isMouseOn, setIsMouseOn] = useState<boolean>(false);
@@ -70,6 +71,7 @@ const BookCard = ({
   const instantlyRedirect = () => {
     if (isMobile() === true) {
       // 모바일에서 Detail 페이지로 바로 이동
+      router.push(`/books/${bookData.bookId}`)
     }
   };
 
