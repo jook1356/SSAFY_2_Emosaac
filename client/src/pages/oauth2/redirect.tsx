@@ -23,18 +23,26 @@ const OAuth2RedirectHandler = (props: any) => {
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
-      router.push({
-        pathname: "/",
-        query: { from: router.asPath },
-      });
+      router
+        .push({
+          pathname: "/",
+          query: { from: router.asPath },
+        })
+        .then(() => {
+          window.history.replaceState({}, document.title, "/");
+        });
     } else {
-      router.push({
-        pathname: "/login",
-        query: {
-          from: router.asPath,
-          error: error,
-        },
-      });
+      router
+        .push({
+          pathname: "/login",
+          query: {
+            from: router.asPath,
+            error: error,
+          },
+        })
+        .then(() => {
+          window.history.replaceState({}, document.title, "/");
+        });
     }
   }, [router]);
 
