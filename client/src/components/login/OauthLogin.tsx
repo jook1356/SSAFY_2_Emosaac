@@ -5,9 +5,19 @@ import Image from "next/image";
 // import kakao from "../../assets/social_kakao.png";
 import naver from "../../assets/social_naver.png";
 import OauthLoginButton from "../UI/OauthLogin/OauthLoginButton";
+import { useRouter } from "next/router";
 export default function OauthLogin() {
-  const onClickKakao = () => {};
-  const onClickNaver = () => {};
+  const router = useRouter();
+  const onClickNaver = () => {
+    const authUrl = process.env.NEXT_PUBLIC_NAVER_AUTH_URL ?? "";
+    console.log(authUrl);
+    window.location.href = authUrl;
+  };
+  const onClickKakao = () => {
+    const authUrl = process.env.NEXT_PUBLIC_KAKAO_AUTH_URL ?? "";
+    console.log(authUrl);
+    window.location.href = authUrl;
+  };
   return (
     <>
       <main css={topWrapperCSS}>
