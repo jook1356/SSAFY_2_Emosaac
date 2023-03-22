@@ -17,20 +17,45 @@ const OAuth2RedirectHandler = (props: any) => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(props.token);
+    console.log(props);
+    // console.log(props.token);
     const token = getUrlParameter("token", window.location.search);
     const error = getUrlParameter("error", window.location.search);
+    const code = getUrlParameter("code", window.location.search);
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
-      router
-        .push({
-          pathname: "/",
-          query: { from: router.asPath },
-        })
-        .then(() => {
-          window.history.replaceState({}, document.title, "/");
-        });
+      if (code === "200") {
+        router
+          .push({
+            pathname: "/",
+            query: { from: router.asPath },
+          })
+          .then(() => {
+            window.history.replaceState({}, document.title, "/login");
+          });
+      } else if (code === "201") {
+        router
+          .push({
+            pathname: "/survey",
+            query: {
+              from: router.asPath,
+              error: error,
+            },
+          })
+          .then(() => {
+            window.history.replaceState({}, document.title, "/survey");
+          });
+      } else {
+        router
+          .push({
+            pathname: "/error",
+            query: { from: router.asPath },
+          })
+          .then(() => {
+            window.history.replaceState({}, document.title, "/error");
+          });
+      }
     } else {
       router
         .push({
@@ -41,7 +66,7 @@ const OAuth2RedirectHandler = (props: any) => {
           },
         })
         .then(() => {
-          window.history.replaceState({}, document.title, "/");
+          window.history.replaceState({}, document.title, "/login");
         });
     }
   }, [router]);
@@ -51,7 +76,7 @@ const OAuth2RedirectHandler = (props: any) => {
 
 export const getServerSideProps = async (context: any) => {
   const token = await context.query.token;
-
+  console.log(context.query);
   return await {
     props: {
       token,
