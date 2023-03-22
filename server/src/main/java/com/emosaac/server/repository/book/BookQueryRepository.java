@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.emosaac.server.domain.book.QBook.book;
+import static com.emosaac.server.domain.book.QHit.hit;
 
 @RequiredArgsConstructor
 @Repository
@@ -94,6 +95,18 @@ public class BookQueryRepository {
                         book.bookId.ne(bookId)
                 )
                 .orderBy(book.score.desc(), book.bookId.desc())
+                .fetch();
+    }
+
+    public List<BookListResponse> findBookByHit(Long userId){
+
+        return jpaQueryFactory.select(new QBookListResponse(book))
+                .from(book).join(hit).on(book.bookId.eq(hit.book.bookId))
+                .where(
+                        hit.user.userId.eq(userId)
+                )
+                .orderBy(hit.createdDate.desc())
+                .limit(4)
                 .fetch();
     }
 

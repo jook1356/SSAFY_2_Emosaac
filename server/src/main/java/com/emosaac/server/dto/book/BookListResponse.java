@@ -23,6 +23,7 @@ public class BookListResponse {
     private String regist;
     private Long genreId;
     private String genreName;
+    private int typeCd;
 
     @QueryProjection
     public BookListResponse(Book book){
@@ -38,6 +39,8 @@ public class BookListResponse {
         this.regist = book.getRegist();
         this.genreId = book.getGenre().getGerneId();
         this.genreName = book.getGenre().getName();
+
+        this.typeCd = book.getType();
     }
 
 
