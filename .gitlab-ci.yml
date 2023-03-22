@@ -19,3 +19,4 @@ test-job: # 임의로 지정한 JOB 이름
     - sudo npm run start
   tags:
     - nextjs # build-server 태그가 달린 runner에서 실행
+ 
