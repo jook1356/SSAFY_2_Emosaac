@@ -3,8 +3,10 @@ package com.emosaac.server.domain.book;
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -13,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@DynamicInsert
 @DynamicUpdate
 public class Hit extends BaseEntity {
 
@@ -28,4 +31,11 @@ public class Hit extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_NO")
     private User user;
+
+    @Builder
+    public Hit(Book book, User user){
+        this.book = book;
+        this.user = user;
+    }
+
 }

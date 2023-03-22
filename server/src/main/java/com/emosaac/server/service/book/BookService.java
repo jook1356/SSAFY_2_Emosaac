@@ -1,14 +1,12 @@
 package com.emosaac.server.service.book;
 
 import com.emosaac.server.common.SlicedResponse;
-import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.domain.book.BookMark;
-import com.emosaac.server.domain.book.ReadBook;
-import com.emosaac.server.domain.book.Score;
+import com.emosaac.server.domain.book.*;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.*;
 import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.bookmark.BookmarkRepository;
+import com.emosaac.server.repository.hit.HitRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
 import com.emosaac.server.repository.score.ScoreQueryRepository;
 import com.emosaac.server.service.CommonService;
@@ -30,6 +28,7 @@ public class BookService {
     private final BookmarkRepository bookmarkRepository;
     private final ReadRepository readRepository;
     private final ScoreQueryRepository scoreQueryRepository;
+    private final HitRepository hitRepository;
     private final CommonService commonService;
 
     // 요일별 작품 리스트
@@ -47,12 +46,20 @@ public class BookService {
     }
 
     // 작품 상세 조회
+    @Transactional
     public BookDetailResponse findDetailByBook(Long bookId, Long userId) {
 
+        User user = commonService.getUser(userId);
         Book book = commonService.getBook(bookId);
 
-        book.addHit(); // 이부분은 다시,,
+        book.addHit();
         book.setAvgScore();
+
+        if(!hitRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
+            System.out.println("hihi");
+            Hit hit = Hit.builder().book(book).user(user).build();
+            hitRepository.save(hit);
+        }
 
         Boolean bookmarkStatus = false;
         if(bookmarkRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
