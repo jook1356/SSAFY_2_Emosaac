@@ -98,12 +98,13 @@ public class BookQueryRepository {
     }
 
     private BooleanExpression ltBookId(Long cursorId) {
-        return cursorId == null ? null : book.bookId.lt(cursorId);
+        return cursorId == 0 ? null : book.bookId.lt(cursorId);
     }
 
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (book.score.eq(cursorScore)
-                .and(book.bookId.lt(cursorId)))
+                .and(ltBookId(cursorId)))
+//                .and(book.bookId.lt(cursorId)))
                 .or(book.score.lt(cursorScore));
     }
 

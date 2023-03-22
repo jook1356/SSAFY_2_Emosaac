@@ -27,7 +27,7 @@ public class BookController {
                                                       @RequestParam (value = "typeCode") int typeCd,
                                                       @RequestParam(required=false, defaultValue = "0") Long genreCode,
                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                      @RequestParam(value = "prevId", required = false, defaultValue = "20000")Long prevId,
+                                                      @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
                                                       @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
 //
 
@@ -41,7 +41,7 @@ public class BookController {
     public ResponseEntity<CommonResponse> findGenreList(@PathVariable Long genreCode,
                                                         @RequestParam (value = "typeCode") int typeCd,
                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                        @RequestParam(value = "prevId", required = false, defaultValue = "20000")Long prevId,
+                                                        @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
                                                         @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore) {
 
 

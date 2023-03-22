@@ -38,4 +38,6 @@ public class SearchController {
                 HttpStatus.OK, "제목작가별 게시물 목록 조회 성공", searchService.findBookListByTitle(content, type, size, prevId, prevScore))
         );
     }
+
+    /**/
 }
