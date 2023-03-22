@@ -10,7 +10,7 @@ interface OauthLoginButtonProps {
   color: string;
   // onClick 프로퍼티는 이벤트 핸들러 함수를 전달해야 하며,
   // 이 함수의 반환 타입은 void가 됩니다. 따라서 void 대신에 () => void 혹은 Function 등의 타입을 사용할 수 있습니다.
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export default function OauthLoginButton({

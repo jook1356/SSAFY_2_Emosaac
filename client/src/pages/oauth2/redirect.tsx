@@ -1,86 +1,54 @@
-import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-type RedirectPageProps = {};
+const ACCESS_TOKEN = "your_access_token_key";
 
-const RedirectPage = (props: RedirectPageProps) => {
+function getUrlParameter(name: string, search: string): string {
+  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+  const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+
+  const results = regex.exec(search);
+  return results === null
+    ? ""
+    : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+const OAuth2RedirectHandler = (props: any) => {
   const router = useRouter();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-    const ACCESS_TOKEN: string = process.env.NEXT_PUBLIC_ACCESS_TOKEN || "";
-    console.log(token);
-    // TODO: API와 연동하여 access token을 받아옴
-    if (token !== null) {
-      console.log(token);
-      localStorage.setItem(ACCESS_TOKEN, token);
-      console.log("돼요?");
-    }
+    console.log(props.token);
+    const token = getUrlParameter("token", window.location.search);
+    const error = getUrlParameter("error", window.location.search);
 
-    router.push("/");
+    if (token) {
+      localStorage.setItem(ACCESS_TOKEN, token);
+      router.push({
+        pathname: "/",
+        query: { from: router.asPath },
+      });
+    } else {
+      router.push({
+        pathname: "/login",
+        query: {
+          from: router.asPath,
+          error: error,
+        },
+      });
+    }
   }, [router]);
 
-  return <div>인증 코드 받아오는 중...</div>;
+  return null;
 };
 
-export default RedirectPage;
+export const getServerSideProps = async (context: any) => {
+  const token = await context.query.token;
 
-// import React, { useEffect } from "react";
-// import { ACCESS_TOKEN } from "../../../constants";
-// import { Navigate, useLocation, useSearchParams } from "react-router-dom";
-// import { useSelector, useDispatch } from "react-redux";
-// import { userAuthSliceActions } from "../../../redux/userAuthSlice";
+  return await {
+    props: {
+      token,
+    },
+  };
+};
 
-// const OAuthRedirectHandler = (props) => {
-//   const location = useLocation();
-//   const dispatch = useDispatch();
-//   const [searchParams, setSearchParams] = useSearchParams();
-
-//   const token = searchParams.get("token");
-//   const error = searchParams.get("error");
-//   const code = searchParams.get("code");
-
-//   if (token) {
-//     // 성공
-//     localStorage.setItem(ACCESS_TOKEN, token);
-//     dispatch(userAuthSliceActions.changeToken(token));
-
-//     if (code === "201") {
-//       // 회원가입 시
-//       return (
-//         <Navigate
-//           to={{
-//             pathname: "/profile",
-//             state: { from: location },
-//           }}
-//         />
-//       );
-//     } else if (code === "200") {
-//       // 기존 유저 로그인 시
-//       return (
-//         <Navigate
-//           to={{
-//             pathname: "/index",
-//             state: { from: location },
-//           }}
-//         />
-//       );
-//     }
-//   } else {
-//     // 실패
-//     return (
-//       <Navigate
-//         to={{
-//           pathname: "/login",
-//           state: {
-//             from: location,
-//             error: error,
-//           },
-//         }}
-//       />
-//     );
-//   }
-// };
-
-// export default OAuthRedirectHandler;
+export default OAuth2RedirectHandler;

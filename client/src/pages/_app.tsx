@@ -12,6 +12,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const isClient = useIsClient();
   return (
     <Provider store={mainStore}>
+      <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
       <Layout>
         <Component {...pageProps} />
       </Layout>
