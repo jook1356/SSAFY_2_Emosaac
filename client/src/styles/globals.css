@@ -1,6 +1,6 @@
 :root {
   --main-color: #f6ba44;
-  --main-color-2: #ffe296;
+  --main-color-2: rgb(255, 213, 106);
   --text-color: #090a0d;
   --text-color-2: #121319;
   --text-color-3: #1b1d25;
@@ -19,7 +19,7 @@
 
 [data-theme="dark"] {
   --main-color: #f6ba44;
-  --main-color-2: #ffe296;
+  --main-color-2: rgb(255, 213, 106);
   --text-color: #fff;
   --text-color-2: #e6e9f3;
   --text-color-3: #d8dbe7;

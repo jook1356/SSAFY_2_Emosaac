@@ -47,7 +47,7 @@ const BookCard = ({
     return is_mobile;
   };
 
-  const wrapperRef = useRef<HTMLInputElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [modalToggler, setModalToggler] = useState<boolean>(false);
   const [isMouseOn, setIsMouseOn] = useState<boolean>(false);
 
