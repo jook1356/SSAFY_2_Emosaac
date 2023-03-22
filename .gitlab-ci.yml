@@ -9,6 +9,7 @@ test-job: # 임의로 지정한 JOB 이름
     # - pm2 stop next
     # - pm2 kill
     - cd client
+    - sudo chown -R ubuntu $(npm config get prefix)/{lib/node_modules,bin,share}
     - sudo npm i
     - npm run build
     - pm2 start npm --name "next" -w -i max -- start
