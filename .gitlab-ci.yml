@@ -9,7 +9,31 @@ test-job: # 임의로 지정한 JOB 이름
     # - pm2 stop next
     # - pm2 kill
     - cd client
-    - echo 'GR1348941bfxbkjWGhBCqJzB2LzUR' | sudo -S npm i -g pm2
+    - echo 'MIIEowIBAAKCAQEA6AKsKd/zt0YgT/KxXHMKLzL/7n86V+hGuiTWt8QaqRaRxqxV
+igu6mYHE77OEAa+QpsFI0YFSbPnzXBoqj9m0vtLvcO9rcY37yyrEiewrIftMA4k2
+o8uO1zmpOn2NjL46W14EAi77GpoAUVsiaNc6oDfrTPxcyUROxQJCRmdbrXUMaBW4
+tISgUoCkwl6u1l2gjYg3J6gqh8snDLAK5qUTVr1nqwslO2RqN/SXWVA07l/hbRBR
+sT84Kvthi381a8i3X7ZvfAyKj+0aeQaBz6CWsNq4Z4CBm//2hF7zDrTXEpWQZ0N2
+0QEs86kkyP9oXOcg4ifjx792gSqPfXGp/NxuKwIDAQABAoIBAG0MDIVmCHPk1v0c
+sbYlL+09SEN9sxtsRgnplK4s0ucUf5HkoBPRLXRHJRwQwQPV0+Q8xpAJ+4bS+Eoa
+1lRkW+qw0++96D8oH+e/Az9cLG29Yl3rGS5lV47bQCoIpwY2xtD44GNyV32KUonq
+jsK+HoT9o2+80ZObsnYweJwEqndcviiOqiHU96sUKUGeccLbBpC6cMfIeOqhV7+A
+1wSzqLLEYXMNZlAUj97usZjsfiXbJPciHBwZg3EvhzNOEeTp6xMwefSs0WiKBijl
+FmHNS1Q82+u5DgBzTd+rQWBDPRKMESoJ3My9+0kCKziSdKN8nUcjreukLEmI07eV
+4QtJXMkCgYEA/KVeNwa1DiBXeG++J6UWwIrEfTG71xhq6DAdbkMdIQqY9zsxammT
+/SVQxYwuFnvpIsU4Qwv/qDBszjhpvBkIDLmr3+jU4yzXAIoeHBbCl0HJ04To4WuO
+bdM7TJDmMWxRBMoKJEliTKQL7ORGuWHLdbs2x5DaLul/ms7ad7dKsd8CgYEA6xcs
+ZtKHB5Hx8+9uT4PyapjEfr5nhUQoQIRKJz49oJTSAHX6FLsig1VjYYIE0G4U4rj4
+2ZQsLUxAzJAd4gP5sAh8wmlVG17nAYy+9x8zo+sYkm+2Eh5uaAfJk6E2+qNoW/3v
++M8N7yvB2czBap/YHqRi+ABTW5uDyNazx9MbxTUCgYEAkiLFQGbsy2MBtXRNNXlU
+k8KwrQnbcSt6ixtpqqG/c6FBoZ/nkXnIVCEFe37+GZtK2wXg6UdDdfGsvgv7fQWt
+lk6/kCCJI26IXpOFnxG7NOqk52h1nA4usHACWONngyb4JiEHhL290j8BduED168t
+lMfZg83RplkBqnYEAENRPVkCgYBljGQEoknrjjJacYFP3aoYO5cdPHgRC8jrXXl+
+jBcox0ATLOLyk4cr/fVoyDX2Jqbk7IupyKRwiLCw7EvMNnVjgbcKb19w7ESS2c4f
+hx3SX5oEnzahiv2b+EkteQT7rRxGKGHBMwdM2bTptNWTjipXyiBqChH3zyxU09Fi
+rqEfRQKBgGJlp/V+SjhwI6MYZApqN/NgVgBvAx9w1brsuB3/NN9asnPzsvTQi1fJ
+UIf27/Uq04DppXClP2tzAX76TlSah1Y6filWiG/DHQIiJ+YmnuQX9oysxfp8OXQJ
+B85kq7E8mk8nKEBZf9p/+Fhdwz8BjVARYrHjmG/Y2wkLtE1sYW+L' | sudo -S npm i -g
     - npm run build
     - pm2 start npm --name "next" -w -i max -- start
     - npm run start
