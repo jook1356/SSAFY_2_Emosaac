@@ -10,7 +10,7 @@ test-job: # 임의로 지정한 JOB 이름
     # - pm2 kill
     - cd client
     - npm i
-    - npm run build
+    # - npm run build
     - pm2 start npm --name "next" -w -i max -- start
     - npm run start
   tags:
