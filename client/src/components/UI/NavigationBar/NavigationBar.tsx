@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css, keyframes } from "@emotion/react";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useRouter } from "next/router";
+// import Image from "next/image";
 // import emosaac_logo from "@/assets/emosaac_logo.png";
 // import emosaac_logo_white from "@/assets/emosaac_logo_white.png";
 // import emosaac_logo_mobile from "@/assets/emosaac_logo_mobile.png";
@@ -17,7 +18,12 @@ import { useMediaQuery } from "react-responsive";
 import { BsPersonFill, BsPerson } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
 import { AiFillHome, AiOutlineHome } from "react-icons/ai";
-import { MdCookie, MdOutlineCookie } from "react-icons/md";
+import {
+  MdCookie,
+  MdOutlineCookie,
+  MdOutlinePersonOutline,
+  MdPerson,
+} from "react-icons/md";
 import {
   RiBookReadFill,
   RiBookReadLine,
@@ -28,6 +34,7 @@ import {
 import Link from "next/link";
 
 export const NavigationBar = () => {
+  const router = useRouter();
   // DeskTop Nav content의 최소 너비
   const isNavLimit = !useMediaQuery({
     query: "(min-width: 1185px) or (max-width: 1023px)",
@@ -36,6 +43,13 @@ export const NavigationBar = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
+  const [currentRoute, setCurrentRoute] = useState({
+    home: false,
+    webtoon: false,
+    novel: false,
+    emopick: false,
+    mypage: false,
+  });
   function onClickSearchBar() {
     if (!isMobile) {
       setIsSearchBoxOpen(!isSearchBoxOpen);
@@ -43,18 +57,53 @@ export const NavigationBar = () => {
   }
   function onClickSearchIcon() {
     setIsSearchBoxOpen(!isSearchBoxOpen);
-    console.log("여는 버튼인디요");
   }
   function onClickSearchMobile() {
     setIsSearchClicked(!isSearchClicked);
     setIsSearchBoxOpen(!isSearchBoxOpen);
-    console.log("이게 외 되냐고욘");
   }
   useEffect(() => {
-    console.log(
-      `isDeskTop:${isDeskTop}, isTablet:${isTablet}, isMobile:${isMobile}`
-    );
-  }, [isDeskTop, isTablet, isMobile]);
+    const pathName = router.pathname.split("/")[1];
+    switch (pathName) {
+      case "":
+        setCurrentRoute({
+          home: true,
+          webtoon: false,
+          novel: false,
+          emopick: false,
+          mypage: false,
+        });
+        break;
+      case "books":
+        setCurrentRoute({
+          home: false,
+          webtoon: true,
+          novel: true,
+          emopick: false,
+          mypage: false,
+        });
+        break;
+      case "mypage":
+        setCurrentRoute({
+          home: false,
+          webtoon: false,
+          novel: false,
+          emopick: false,
+          mypage: true,
+        });
+        break;
+      case "emopick":
+        setCurrentRoute({
+          home: false,
+          webtoon: false,
+          novel: false,
+          emopick: true,
+          mypage: false,
+        });
+        break;
+    }
+  }, [router.pathname]);
+
   return (
     <nav>
       <div css={navTopCSS}>
@@ -79,7 +128,12 @@ export const NavigationBar = () => {
             })}
           >
             <Link href={{ pathname: "/" }}>
-              <h1 css={logoWrapCSS}>
+              <h1
+                css={logoWrapCSS}
+                onClick={() => {
+                  setIsSearchBoxOpen(false);
+                }}
+              >
                 {isMobile && (
                   <img alt="logo" src={"/assets/emosaac_logo_mobile.png"} />
                 )}
@@ -93,10 +147,21 @@ export const NavigationBar = () => {
             </Link>
 
             {isDeskTop && (
-              <div css={menuWrapCSS(isDeskTop, isTablet)}>
-                <Link href={"/books"}>웹툰</Link>
-                <Link href={"/books"}>웹소설</Link>
-                <Link href={"/emopick"}>EMOPICK</Link>
+              <div
+                css={menuWrapCSS(isDeskTop, isTablet)}
+                onClick={() => {
+                  setIsSearchBoxOpen(false);
+                }}
+              >
+                <Link href="/books" replace>
+                  <div css={routerCSS(currentRoute.webtoon)}>웹툰</div>
+                </Link>
+                <Link href="/books" replace>
+                  <div css={routerCSS(currentRoute.webtoon)}>웹소설</div>
+                </Link>
+                <Link href="/emopick" replace>
+                  <div css={routerCSS(currentRoute.emopick)}>EMOPICK</div>
+                </Link>
               </div>
             )}
             <div onClick={onClickSearchBar}>
@@ -116,12 +181,17 @@ export const NavigationBar = () => {
             {isDeskTop ? (
               <BasicButton />
             ) : isTablet ? (
-              <BsPersonFill
-                size={24}
-                css={css`
-                  color: var(--text-color);
-                `}
-              />
+              <Link href={{ pathname: "/login" }}>
+                <MdPerson
+                  size={24}
+                  css={css`
+                    color: var(--text-color);
+                  `}
+                  onClick={() => {
+                    setIsSearchBoxOpen(false);
+                  }}
+                />
+              </Link>
             ) : null}
             {isMobile && (
               <FiSearch
@@ -135,11 +205,24 @@ export const NavigationBar = () => {
           </div>
         </div>
         {isTablet && (
-          <div css={menuWrapCSS(isDeskTop, isTablet)}>
-            <Link href={{ pathname: "/" }}>홈</Link>
-            <Link href={{ pathname: "/books" }}>웹툰</Link>
-            <Link href={{ pathname: "/books" }}>웹소설</Link>
-            <Link href={{ pathname: "/emopick" }}>EMOPICK</Link>
+          <div
+            css={menuWrapCSS(isDeskTop, isTablet)}
+            onClick={() => {
+              setIsSearchBoxOpen(false);
+            }}
+          >
+            <Link href="/" replace>
+              <div css={routerCSS(currentRoute.home)}>홈</div>
+            </Link>
+            <Link href="/books" replace>
+              <div css={routerCSS(currentRoute.webtoon)}>웹툰</div>
+            </Link>
+            <Link href="/books" replace>
+              <div css={routerCSS(currentRoute.webtoon)}>웹소설</div>
+            </Link>
+            <Link href="/emopick" replace>
+              <div css={routerCSS(currentRoute.emopick)}>EMOPICK</div>
+            </Link>
           </div>
         )}
         {isSearchBoxOpen && (
@@ -147,34 +230,62 @@ export const NavigationBar = () => {
         )}
       </div>
       {isMobile && (
-        <ul css={dockBarCSS}>
+        <ul
+          css={dockBarCSS}
+          onClick={() => {
+            setIsSearchBoxOpen(false);
+          }}
+        >
           <li>
-            <Link href={{ pathname: "/" }}>
-              <AiFillHome size={24} />
+            <Link href="/" replace>
+              {currentRoute.home ? (
+                <AiFillHome size={24} css={routerCSS(currentRoute.home)} />
+              ) : (
+                <AiOutlineHome size={24} />
+              )}
               <div>홈</div>
             </Link>
           </li>
           <li>
-            <Link href={{ pathname: "books" }}>
-              <MdOutlineCookie size={24} />
+            <Link href="/books" replace>
+              {currentRoute.webtoon ? (
+                <MdCookie size={24} css={routerCSS(currentRoute.webtoon)} />
+              ) : (
+                <MdOutlineCookie size={24} />
+              )}
               <div>웹툰</div>
             </Link>
           </li>
           <li>
-            <Link href={{ pathname: "books" }}>
-              <RiBookReadLine size={24} />
+            <Link href="/books" replace>
+              {currentRoute.novel ? (
+                <RiBookReadFill size={24} css={routerCSS(currentRoute.novel)} />
+              ) : (
+                <RiBookReadLine size={24} />
+              )}
               <div>웹소설</div>
             </Link>
           </li>
           <li>
-            <Link href={{ pathname: "emopick" }}>
-              <RiPlayCircleLine size={24} />
+            <Link href="/emopick" replace>
+              {currentRoute.emopick ? (
+                <RiPlayCircleFill
+                  size={24}
+                  css={routerCSS(currentRoute.emopick)}
+                />
+              ) : (
+                <RiPlayCircleLine size={24} />
+              )}
               <div>이모픽</div>
             </Link>
           </li>
           <li>
-            <Link href="/login">
-              <BsPerson size={24} />
+            <Link href="/">
+              {currentRoute.mypage ? (
+                <MdPerson size={24} css={routerCSS(currentRoute.mypage)} />
+              ) : (
+                <MdOutlinePersonOutline size={24} />
+              )}
               <div>MY</div>
             </Link>
           </li>
@@ -203,18 +314,24 @@ const visibleCSS = (transY: string) => {
 `;
 };
 
+const routerCSS = (isCurrentRoute: boolean) => {
+  return css`
+    ${isCurrentRoute ? "color: var(--main-color)" : null}
+  `;
+};
+
 const navTopCSS = css`
   position: fixed;
+  z-index: 30;
   top: 0;
   left: 0;
-  z-index: 20;
   width: 100%;
 `;
 
 const searchBarMobileCSS = css`
   position: absolute;
   top: 0;
-  z-index: 20;
+  z-index: 40;
   display: grid;
   grid-template-columns: 30px 1fr 20px;
   column-gap: 20px;
@@ -234,7 +351,7 @@ const searchBarMobileCSS = css`
 const navBackCSS = (isTablet: boolean) => {
   return css`
     position: relative;
-    z-index: 19;
+    z-index: 25;
     ${!isTablet && "border-bottom: 1px solid var(--border-color-2);"}
     background-color: var(--back-color);
     /* box-shadow: var(--shadow-color); */
@@ -250,7 +367,6 @@ const navWrapCSS = ({
 }: IsResponsive) => {
   return css`
     position: relative;
-    z-index: 10;
     display: none;
     grid-template-columns: none;
     ${(isDeskTop || isTablet || isMobile) && "display : grid;"}
@@ -298,6 +414,7 @@ const logoWrapCSS = css`
 
 const menuWrapCSS = (isDeskTop: boolean, isTablet: boolean) => {
   return css`
+    position: relative;
     z-index: 20;
     display: flex;
     font-size: 14px;
@@ -314,12 +431,12 @@ const menuWrapCSS = (isDeskTop: boolean, isTablet: boolean) => {
 };
 
 const dockBarCSS = css`
-  z-index: 10;
+  position: fixed;
+  z-index: 20;
   display: grid;
   background-color: var(--back-color-op);
   box-shadow: var(--shadow-color);
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
