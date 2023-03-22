@@ -9,7 +9,7 @@ test-job: # 임의로 지정한 JOB 이름
     # - pm2 stop next
     # - pm2 kill
     - cd client
-    - sudo -S npm install --force
+    - sudo npm i -g pm2
     - npm run build
     - pm2 start npm --name "next" -w -i max -- start
     - npm run start
