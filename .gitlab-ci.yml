@@ -4,7 +4,7 @@ test-job: # 임의로 지정한 JOB 이름
     - fe/develop # develop 브랜치 이벤트 발생시 실행
   script:
     - echo "Hello World" # 실행할 스크립트
-    - cd /home/ubuntu/S08P22D203
+    - cd S08P22D203/
     - git pull origin fe/develop
     - pm2 stop next
     - pm2 kill
