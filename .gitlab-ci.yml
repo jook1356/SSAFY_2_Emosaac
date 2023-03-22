@@ -11,6 +11,7 @@ test-job: # 임의로 지정한 JOB 이름
     - cd client
     - npm i
     # - npm run build
+    - sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000
     - pm2 start npm --name "emosaac" -w -i max -- start
     - npm run start
   tags:
