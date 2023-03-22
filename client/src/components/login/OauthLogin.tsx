@@ -6,6 +6,12 @@ import Image from "next/image";
 import naver from "../../assets/social_naver.png";
 import OauthLoginButton from "../UI/OauthLogin/OauthLoginButton";
 export default function OauthLogin() {
+  const onClickKakao = () => {
+    window.location.href = process.env.NEXT_PUBLIC_KAKAO_AUTH_URL;
+  };
+  const onClickNaver = () => {
+    window.location.href = process.env.NEXT_PUBLIC_NAVER_AUTH_URL;
+  };
   return (
     <>
       <main css={topWrapperCSS}>
@@ -25,6 +31,7 @@ export default function OauthLogin() {
                 text={"카카오로 로그인"}
                 backgroundColor="#FEE502"
                 color="#000"
+                onClick={onClickKakao}
               />
             </div>
             <div>
@@ -34,6 +41,7 @@ export default function OauthLogin() {
                 text={"네이버로 로그인"}
                 backgroundColor="#24CD0B"
                 color="#FFF"
+                onClick={onClickNaver}
               />
             </div>
           </div>

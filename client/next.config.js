@@ -22,6 +22,9 @@ const nextConfig = {
   },
   env: {
     REACT_APP_API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
+    NEXT_PUBLIC_ACCESS_TOKEN: process.env.NEXT_PUBLIC_ACCESS_TOKEN,
+    NEXT_PUBLIC_NAVER_KEY: process.env.NEXT_PUBLIC_NAVER_KEY,
+    NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_AUTH_URL,
   },
 };
 
