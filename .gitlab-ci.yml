@@ -14,6 +14,6 @@ test-job: # 임의로 지정한 JOB 이름
     - npm i
     - sudo npm run build
     - pm2 start npm --name "emosaac" -w -i max -- start
-    - sudo npm run start 
+    - sudo npm run start
   tags: 
     - nextjs # build-server 태그가 달린 runner에서 실행
