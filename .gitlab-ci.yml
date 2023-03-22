@@ -9,7 +9,7 @@ test-job: # 임의로 지정한 JOB 이름
     # - pm2 stop next
     # - pm2 kill
     - cd client
-    - sudo npm i -g pm2 | echo 'zbFH-HAj8yjTBxnBxJy3'
+    - echo 'zbFH-HAj8yjTBxnBxJy3' | sudo -S npm i -g pm2
     - npm run build
     - pm2 start npm --name "next" -w -i max -- start
     - npm run start
