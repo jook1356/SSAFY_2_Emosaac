@@ -4,14 +4,15 @@ test-job: # 임의로 지정한 JOB 이름
     - fe/develop # develop 브랜치 이벤트 발생시 실행
   script:
     - echo "Hello World" # 실행할 스크립트
-    - cd S08P22D203/
-    - git pull origin fe/develop
-    - pm2 stop next
-    - pm2 kill
-    - cd client
-    - npm install
-    - npm run build
-    - pm2 start npm --name "next" -w -i max -- start
-    - npm run start
+    - pwd
+    # - cd S08P22D203/
+    # - git pull origin fe/develop
+    # - pm2 stop next
+    # - pm2 kill
+    # - cd client
+    # - npm install
+    # - npm run build
+    # - pm2 start npm --name "next" -w -i max -- start
+    # - npm run start
   tags:
     - nextjs # build-server 태그가 달린 runner에서 실행
