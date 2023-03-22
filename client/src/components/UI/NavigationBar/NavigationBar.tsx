@@ -49,7 +49,7 @@ export const NavigationBar = () => {
           })}
         >
           <h1 css={logoWrapCSS}>
-            {isMobile && <Image alt="logo" src={"/assets/emosaac_logo_mobile.png"} />}
+            {isMobile && <img alt="logo" src={"/assets/emosaac_logo_mobile.png"} />}
             {!isMobile && isDarkMode && (
               <img alt="logo" src={"/assets/emosaac_logo_white.png"} />
             )}

@@ -74,10 +74,12 @@ export const HasBeenReadToggle = ({isClicked, bookId}: ToggleBtnProps) => {
 }
 
 
-export const CommentBtn = ({bookId}: {bookId: number}) => {
-
+export const CommentBtn = ({bookId, stateHandler}: {bookId: number, stateHandler: any}) => {
+    const onClickStateHandler = () => {
+        stateHandler(() => true)
+    }
     return (
-        <div css={btnWrapperCSS}>
+        <div css={btnWrapperCSS} onClick={onClickStateHandler}>
             {comment}
         </div>
     )
@@ -89,6 +91,7 @@ const btnWrapperCSS = css`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 `
 
 
