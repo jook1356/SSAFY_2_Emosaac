@@ -11,7 +11,7 @@ test-job: # 임의로 지정한 JOB 이름
     - cd client
     - npm i
     # - npm run build
-    - pm2 start npm --name "next" -w -i max -- start
+    - pm2 start npm --name "emosaac" -w -i max -- start
     - npm run start
   tags:
     - nextjs # build-server 태그가 달린 runner에서 실행
