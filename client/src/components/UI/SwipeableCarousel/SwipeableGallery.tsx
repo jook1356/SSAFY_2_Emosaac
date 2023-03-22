@@ -89,10 +89,7 @@ const SwipeableGallery = ({ parentRef, content }: any) => {
   };
 
   const onClickNextBtn = useCallback(() => {
-    if (
-      movingDiv.current !== null &&
-      width !== null
-    ) {
+    if (movingDiv.current !== null && width !== null) {
       if (contentCount < postData.content.length) {
         movingDiv.current.style.transitionProperty = "transform";
         movingDiv.current.style.transitionDuration = "0.5s";
@@ -106,14 +103,12 @@ const SwipeableGallery = ({ parentRef, content }: any) => {
         setContentCount(() => 1);
         movingDiv.current.style.transform = `translateX(0px)`;
       }
-      
     }
   }, [contentCount, width]);
 
   const onClickPrevBtn = useCallback(() => {
     if (movingDiv.current !== null && width !== null) {
       if (contentCount > 1) {
-
         movingDiv.current.style.transitionProperty = "transform";
         movingDiv.current.style.transitionDuration = "0.5s";
         setContentCount((prev) => prev - 1);
@@ -124,50 +119,43 @@ const SwipeableGallery = ({ parentRef, content }: any) => {
         movingDiv.current.style.transitionProperty = "transform";
         movingDiv.current.style.transitionDuration = "0.5s";
         setContentCount(() => postData.content.length);
-        movingDiv.current.style.transform = `translateX(${-width * (postData.content.length - 1)
+        movingDiv.current.style.transform = `translateX(${
+          -width * (postData.content.length - 1)
         }px)`;
       }
-      
     }
   }, [contentCount, width]);
 
-  
-
   useEffect(() => {
-    const autoSlide = setInterval(function() { onClickNextBtn(); }, 10000);
-    
+    const autoSlide = setInterval(function () {
+      onClickNextBtn();
+    }, 10000);
+
     return () => {
-      clearInterval(autoSlide)
-    }
-  }, [width, contentCount])
-  // 
+      clearInterval(autoSlide);
+    };
+  }, [width, contentCount]);
+  //
 
   const indicator = postData.content.map((el: any, idx: number) => {
-    return (
-      <div css={indicatorCSS({idx, contentCount})}>
-        
-      </div>
-    )
-  })
+    return <div css={indicatorCSS({ idx, contentCount })}></div>;
+  });
 
   const indicatorBtn = (
     <>
-    <div css={prevBtnCSS} onClick={onClickPrevBtn}>
+      <div css={prevBtnCSS} onClick={onClickPrevBtn}>
         〈
       </div>
       <div css={nextBtnCSS} onClick={onClickNextBtn}>
         〉
       </div>
     </>
-  )
-
+  );
 
   return (
     <div css={outerWrapperCSS}>
       {isMobile === false && indicatorBtn}
-      <div css={indicatorWrapperCSS}>
-        {indicator}
-      </div>
+      <div css={indicatorWrapperCSS}>{indicator}</div>
       <Swipe
         onSwipeStart={(event: any) => {
           event.stopPropagation();
@@ -202,7 +190,7 @@ const outerWrapperCSS = css`
 `;
 
 const prevBtnCSS = css`
-  z-index: 999;
+  z-index: 9;
   position: absolute;
   left: 0;
   height: 100%;
@@ -224,7 +212,7 @@ const prevBtnCSS = css`
 `;
 
 const nextBtnCSS = css`
-  z-index: 999;
+  z-index: 9;
   position: absolute;
   right: 0;
   height: 100%;
@@ -245,30 +233,28 @@ const nextBtnCSS = css`
   }
 `;
 
-
 const indicatorWrapperCSS = css`
-  z-index: 999;
+  z-index: 9;
   position: absolute;
-  color:white;
+  color: white;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: end;
   pointer-events: none;
-  padding-bottom:16px;
-`
-
+  padding-bottom: 16px;
+`;
 
 interface indicatorCSSProps {
   idx: number;
   contentCount: number;
 }
-const indicatorCSS = ({idx, contentCount}: indicatorCSSProps) => {
+const indicatorCSS = ({ idx, contentCount }: indicatorCSSProps) => {
   return css`
     width: 30px;
     height: 2px;
-    background-color: ${contentCount - 1 === idx ? 'white' : 'gray'};
+    background-color: ${contentCount - 1 === idx ? "white" : "gray"};
     margin: 2px;
-  `
-}
+  `;
+};

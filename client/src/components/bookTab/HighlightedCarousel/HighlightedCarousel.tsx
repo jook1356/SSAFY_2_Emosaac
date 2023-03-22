@@ -15,7 +15,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   const dummyNormalRef = useRef<HTMLInputElement>(null);
   // const wrapperRef = useRef<any>([]);
   const carouselWrapperRef = useRef<HTMLInputElement>(null);
-  
+
   const dummyHighlightedRef = useRef<HTMLInputElement>(null);
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
 
@@ -36,12 +36,11 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   };
 
   useEffect(() => {
-    
     if (bookDataList[0].title !== bookDataList[bookDataList.length - 5].title) {
       const temp = bookDataList.concat(bookDataList.slice(0, 5));
       setBookDataList(() => temp);
     }
-    
+
     // console.log(bookDataList);
     // console.log(temp);
   }, []);
@@ -101,39 +100,44 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
   const [positionx, setPositionx] = useState<number>(0);
 
   const onSwipeMove = (position = { x: 0 }) => {
-    setPositionx(() => position.x)
+    setPositionx(() => position.x);
   };
 
   const onSwipeEnd = () => {
-    console.log(positionx)
+    console.log(positionx);
     if (positionx > 40) {
-      prevBtnHandler()
+      prevBtnHandler();
     }
     if (positionx < -40) {
-      nextBtnHandler()
+      nextBtnHandler();
     }
-    setPositionx(() => 0)
-  }
+    setPositionx(() => 0);
+  };
 
   const indicatorBtn = (
     <>
-    <div css={prevBtnCSS} onClick={prevBtnHandler}>
-            〈
-          </div>
-          <div css={nextBtnCSS} onClick={nextBtnHandler}>
-            〉
-          </div>
+      <div css={prevBtnCSS} onClick={prevBtnHandler}>
+        〈
+      </div>
+      <div css={nextBtnCSS} onClick={nextBtnHandler}>
+        〉
+      </div>
     </>
-    
-  )
+  );
   return (
     // <div css={carouselOuterWrapperCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, highlightedRef: dummyHighlightedRef})}></div>
-    
-    
-      <div className={"carousel-outer-wrapper"} css={carouselOuterWrapperCSS}>
 
-        <div css={highlightedDecoratorCSS({highlightedHeightValue: cardLayout.highlightedHeightValue, minHighlightedHeightValue: cardLayout.minHighlightedHeightValue, unit: cardLayout.unit, highlightedRef: dummyHighlightedRef, carouselWrapperRef: carouselWrapperRef})}/>
-        <Swipe
+    <div className={"carousel-outer-wrapper"} css={carouselOuterWrapperCSS}>
+      <div
+        css={highlightedDecoratorCSS({
+          highlightedHeightValue: cardLayout.highlightedHeightValue,
+          minHighlightedHeightValue: cardLayout.minHighlightedHeightValue,
+          unit: cardLayout.unit,
+          highlightedRef: dummyHighlightedRef,
+          carouselWrapperRef: carouselWrapperRef,
+        })}
+      />
+      <Swipe
         onSwipeStart={(event: any) => {
           event.stopPropagation();
         }}
@@ -141,8 +145,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
         onSwipeMove={onSwipeMove}
         onSwipeEnd={onSwipeEnd}
       >
-        
-        <div >
+        <div>
           {/* <button onClick={prevBtnHandler}>prev</button>
           <button
             onClick={() => {
@@ -154,7 +157,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
           <button onClick={nextBtnHandler}>next</button> */}
 
           {isMobile === false && indicatorBtn}
-          
+
           <div
             ref={carouselWrapperRef}
             className={"carousel-inner-wrapper"}
@@ -167,7 +170,7 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
               spaceValue: cardLayout.spaceValue,
               minSpaceValue: cardLayout.minSpaceValue,
               normalRef: dummyNormalRef,
-              carouselWrapperRef: carouselWrapperRef
+              carouselWrapperRef: carouselWrapperRef,
             })}
           >
             {renderBooks}
@@ -183,15 +186,26 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
                 unit: cardLayout.unit,
               })}
             />
-            <div className={"dummy-highlighted"} ref={dummyHighlightedRef} css={dummyHighlightedCSS({highlightedWidthValue: cardLayout.highlightedWidthValue, highlightedHeightValue: cardLayout.highlightedHeightValue, unit: cardLayout.unit})} />
-            <div className={"dummy-min-highlighted"} css={dummyMinHighlightedCSS({minHighlightedHeightValue: cardLayout.minHighlightedHeightValue})} />
+            <div
+              className={"dummy-highlighted"}
+              ref={dummyHighlightedRef}
+              css={dummyHighlightedCSS({
+                highlightedWidthValue: cardLayout.highlightedWidthValue,
+                highlightedHeightValue: cardLayout.highlightedHeightValue,
+                unit: cardLayout.unit,
+              })}
+            />
+            <div
+              className={"dummy-min-highlighted"}
+              css={dummyMinHighlightedCSS({
+                minHighlightedHeightValue: cardLayout.minHighlightedHeightValue,
+              })}
+            />
           </div>
-          
         </div>
-        </Swipe>
-      </div>
-    
-  )
+      </Swipe>
+    </div>
+  );
 };
 
 export default HighlightedCarousel;
@@ -349,8 +363,8 @@ interface carouselInnerWrapperCSSProps {
   widthValue: number;
   unit: string;
   highlightedWidthValue: number;
-  minWidthValue: number,
-  minHighlightedWidthValue: number,
+  minWidthValue: number;
+  minHighlightedWidthValue: number;
   spaceValue: number;
   minSpaceValue: number;
   normalRef: any;
@@ -366,15 +380,21 @@ const carouselInnerWrapperCSS = ({
   minWidthValue,
   minHighlightedWidthValue,
   normalRef,
-  carouselWrapperRef
+  carouselWrapperRef,
 }: carouselInnerWrapperCSSProps) => {
-
   const calcWidth =
     normalRef?.current?.clientWidth < minWidthValue
-      ? ((minWidthValue + minSpaceValue) * 4 + minHighlightedWidthValue) + "px"
-      : ((widthValue + spaceValue) * 4 + highlightedWidthValue) + unit;
+      ? (minWidthValue + minSpaceValue) * 4 + minHighlightedWidthValue + "px"
+      : (widthValue + spaceValue) * 4 + highlightedWidthValue + unit;
 
-  const calcLeft = carouselWrapperRef?.current?.clientWidth > document.body.offsetWidth ? -(carouselWrapperRef?.current?.clientWidth - document.body.offsetWidth) / 2 + 'px' : '0px'
+  const calcLeft =
+    carouselWrapperRef?.current?.clientWidth > document.body.offsetWidth
+      ? -(
+          carouselWrapperRef?.current?.clientWidth - document.body.offsetWidth
+        ) /
+          2 +
+        "px"
+      : "0px";
   return css`
     width: ${calcWidth};
     left: ${calcLeft};
@@ -421,10 +441,8 @@ const dummyHighlightedCSS = ({
   `;
 };
 
-
-
 const prevBtnCSS = css`
-  z-index: 999;
+  z-index: 9;
   position: absolute;
   left: 0;
   height: 100%;
@@ -446,7 +464,7 @@ const prevBtnCSS = css`
 `;
 
 const nextBtnCSS = css`
-  z-index: 999;
+  z-index: 9;
   position: absolute;
   right: 0;
   height: 100%;
@@ -467,7 +485,6 @@ const nextBtnCSS = css`
   }
 `;
 
-
 interface highlightedDecoratorCSS {
   unit: string;
   highlightedHeightValue: number;
@@ -476,7 +493,12 @@ interface highlightedDecoratorCSS {
   carouselWrapperRef: any;
 }
 
-const highlightedDecoratorCSS = ({highlightedHeightValue, minHighlightedHeightValue, unit, highlightedRef}: highlightedDecoratorCSS) => {
+const highlightedDecoratorCSS = ({
+  highlightedHeightValue,
+  minHighlightedHeightValue,
+  unit,
+  highlightedRef,
+}: highlightedDecoratorCSS) => {
   const calcHeight =
     highlightedRef?.current?.clientHeight < minHighlightedHeightValue
       ? minHighlightedHeightValue + 48 + "px"
@@ -488,23 +510,23 @@ const highlightedDecoratorCSS = ({highlightedHeightValue, minHighlightedHeightVa
     background-color: var(--border-color-2);
     border-radius: 10000px;
     position: absolute;
-
-  `
-}
-
+  `;
+};
 
 interface dummyMinHighlightedCSSProps {
   minHighlightedHeightValue: number;
 }
-const dummyMinHighlightedCSS = ({minHighlightedHeightValue}: dummyMinHighlightedCSSProps) => {
+const dummyMinHighlightedCSS = ({
+  minHighlightedHeightValue,
+}: dummyMinHighlightedCSSProps) => {
   return css`
     width: 1px;
     height: ${minHighlightedHeightValue}px;
     pointer-events: none;
-  `
-}
+  `;
+};
 
 const dummyWrapper = css`
   display: flex;
   justify-content: center;
-`
+`;
