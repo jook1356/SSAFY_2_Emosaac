@@ -139,7 +139,7 @@ const searchResCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
     ${!isMobile &&
     "display: flex; justify-content: space-between; align-items: center;"}
     ${isMobile && "display: block;"}
-      font-size: 34px;
+    font-size: 34px;
     background-color: var(--back-color-2);
     padding-top: 20px;
     padding-bottom: 20px;
@@ -171,7 +171,7 @@ const booksWrapCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
     display: grid;
     ${isMobile && "grid-template-columns: repeat(3, 1fr);"}
     ${!isMobile && "grid-template-columns: repeat(5, 1fr);"}
-      column-gap: 30px;
+    column-gap: 20px;
     row-gap: 30px;
   `;
 };

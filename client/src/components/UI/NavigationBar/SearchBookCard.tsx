@@ -1,13 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import ridi from "../../../assets/platform_ridi.webp";
 import naverSeries from "../../../assets/platform_naver_series.webp";
 import naverWebtoon from "../../../assets/platform_naver_webtoon.webp";
 import kakaoPage from "../../../assets/platform_kakao_page.png";
-
-import BookCardModal from "@/components/bookCardModal/BookCardModalSearch";
 import Portal from "@/components/function/Portal";
 
 interface BookData {
@@ -25,7 +24,7 @@ interface Props {
   minHeight?: string;
 }
 
-const BookCard = ({
+const SearchBookCard = ({
   bookData,
   showPlatform,
   width,
@@ -33,24 +32,12 @@ const BookCard = ({
   minWidth,
   minHeight,
 }: Props) => {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   // let user: any = null;
   useEffect(() => {
     setUser(() => navigator.userAgent);
   }, []);
-
-  const isMobile = () => {
-    let is_mobile = false;
-    if (
-      (user !== undefined && user.length > 0 && user.indexOf("iPhone") > -1) ||
-      user.indexOf("Android") > -1 ||
-      user.indexOf("iPad") > -1 ||
-      user.indexOf("iPod") > -1
-    ) {
-      is_mobile = true;
-    }
-    return is_mobile;
-  };
 
   const wrapperRef = useRef<HTMLInputElement>(null);
   const [modalToggler, setModalToggler] = useState<boolean>(false);
@@ -58,39 +45,9 @@ const BookCard = ({
 
   const platformBar = <div css={platformBarCSS}></div>;
 
-  const showModal = () => {
-    setTimeout(function () {
-      setModalToggler(() => true);
-    }, 500);
-    setIsMouseOn(() => true);
-  };
-
-  const hideModal = () => {
-    setIsMouseOn(() => false);
-    setTimeout(function () {
-      setModalToggler(() => false);
-    }, 500);
-  };
-
   const instantlyRedirect = () => {
-    if (user !== null && isMobile() === true) {
-      // 모바일에서 Detail 페이지로 바로 이동
-    }
+    router.push(`books/${bookData.bookId}`);
   };
-
-  const modal = (
-    <Portal selector=".overlay-root">
-      <BookCardModal
-        modalToggler={modalToggler}
-        isMouseOn={isMouseOn}
-        setModalToggler={setModalToggler}
-        bookData={bookData}
-        parentRef={wrapperRef}
-        imgHeight={height}
-        imgMinHeight={minHeight}
-      />
-    </Portal>
-  );
 
   return (
     <div
@@ -100,12 +57,8 @@ const BookCard = ({
       onClick={instantlyRedirect}
       onMouseOver={(event) => {
         event.stopPropagation();
-        showModal();
       }}
-      onMouseLeave={hideModal}
     >
-      {user !== null && isMobile() === false && modalToggler && modal}
-
       <div
         className={"bookcard-inner-wrapper"}
         css={cardInnerWrapperCSS({ width, height, minWidth, minHeight })}
@@ -117,7 +70,7 @@ const BookCard = ({
         />
         <img
           className={"img"}
-          src={bookData && bookData.thumbnail}
+          src={bookData && bookData.img}
           alt={bookData && bookData.title}
           css={imageCSS}
         />
@@ -147,6 +100,7 @@ const cardOuterWrapper = ({
     height: ${height !== undefined ? height : "100%"};
     ${minWidth && `min-width: ${minWidth}`};
     ${minHeight && `min-height: ${minHeight}`};
+    box-shadow: var(--shadow-color);
     overflow: hidden;
     border-radius: 10px;
   `;
@@ -223,4 +177,4 @@ const skeletonLoadingTagCSS = ({ state }: skeletonLoadingTagCSSProps) => {
   `;
 };
 
-export default BookCard;
+export default SearchBookCard;
