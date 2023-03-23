@@ -34,13 +34,25 @@ export const BasicButton = () => {
   const handleMouseLeave = () => {
     setIsOpen(false);
   };
+  const onClickMoveMypage = () => {
+    router.push("/mypage");
+  };
   // 비 로그인시 로그인, 로그인 이면 프로필 사진 보이게. 호버하면 마이페이지랑 로그아웃 버튼
   return (
     <>
       {isLogin ? (
-        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div
+          css={topCSS}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <div css={profileimgCSS}>
-            <img src={"/assets/bazzi.jpg"} alt="프로필 사진" css={imgCSS} />
+            <img
+              src={"/assets/bazzi.jpg"}
+              alt="프로필 사진"
+              css={imgCSS}
+              onClick={onClickMoveMypage}
+            />
           </div>
           <div css={hoverwrapCSS(isOpen)}>
             <button css={ButtonWrapCSS}>마이페이지</button>
@@ -57,6 +69,10 @@ export const BasicButton = () => {
     </>
   );
 };
+const topCSS = css`
+  position: relative;
+`;
+
 const profileimgCSS = css`
   border-radius: 100%;
   background-color: var(--back-color-4);
@@ -72,6 +88,7 @@ const imgCSS = css`
 
 const hoverwrapCSS = (isOpen: boolean) => css`
   display: ${isOpen ? "flex" : "none"};
+  position: absolute;
 `;
 
 const ButtonWrapCSS = css`
