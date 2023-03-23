@@ -13,6 +13,7 @@ class BestBook30Model(models.Model):
     book_no = models.ForeignKey('Book', models.DO_NOTHING, db_column='book_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand' # 추가
         managed = False
         db_table = 'best_book30model'
 
@@ -37,6 +38,7 @@ class Book(models.Model):
     tag = models.TextField(blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'book'
 
@@ -54,6 +56,7 @@ class BookComment(models.Model):
     like_score = models.FloatField(blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'book_comment'
 
@@ -67,6 +70,7 @@ class BookCommentLike(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'book_comment_like'
 
@@ -80,6 +84,7 @@ class BookMark(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'book_mark'
 
@@ -90,6 +95,7 @@ class DayNovel(models.Model):
     day_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'day_novel'
 
@@ -100,6 +106,7 @@ class DayToon(models.Model):
     day_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'day_toon'
 
@@ -113,6 +120,7 @@ class EmoCommentLike(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'emo_comment_like'
 
@@ -130,6 +138,7 @@ class Emopick(models.Model):
     modified_dt = models.DateTimeField()
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'emopick'
 
@@ -146,6 +155,7 @@ class EmopickComment(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'emopick_comment'
 
@@ -155,6 +165,7 @@ class Genre(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'genre'
 
@@ -164,6 +175,7 @@ class Gerne1(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'gerne1'
 
@@ -176,6 +188,7 @@ class Hit(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'hit'
 
@@ -185,6 +198,7 @@ class ItemBasedcfmodel(models.Model):
     book_no = models.ForeignKey(Book, models.DO_NOTHING, db_column='book_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'item_basedcfmodel'
 
@@ -197,6 +211,7 @@ class LikeEmo(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'like_emo'
 
@@ -209,6 +224,7 @@ class ReadBook(models.Model):
     user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'read_book'
 
@@ -221,6 +237,7 @@ class Research(models.Model):
     book_no = models.ForeignKey(Book, models.DO_NOTHING, db_column='book_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'research'
 
@@ -234,6 +251,7 @@ class Score(models.Model):
     modified_dt = models.DateTimeField()
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'score'
 
@@ -244,6 +262,7 @@ class TagNovel(models.Model):
     tag_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'tag_novel'
 
@@ -254,6 +273,7 @@ class TagToon(models.Model):
     tag_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'tag_toon'
 
@@ -275,6 +295,7 @@ class User(models.Model):
     favorite_webtoon_genre = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'user'
 
@@ -285,15 +306,17 @@ class UserPredictedGradeModel(models.Model):
     user_no = models.ForeignKey(User, models.DO_NOTHING, db_column='user_no', blank=True, null=True)
 
     class Meta:
+        app_label = 'recommand'  # 추가
         managed = False
         db_table = 'user_predicted_grade_model'
 
 
-class UserRefreshToken(models.Model):
-    refresh_token_no = models.BigAutoField(primary_key=True)
-    refresh_token = models.CharField(max_length=256)
-    user_id = models.CharField(unique=True, max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'user_refresh_token'
+# class UserRefreshToken(models.Model):
+#     refresh_token_no = models.BigAutoField(primary_key=True)
+#     refresh_token = models.CharField(max_length=256)
+#     user_id = models.CharField(unique=True, max_length=64)
+#
+#     class Meta:
+#         app_label = 'recommand'  # 추가
+#         managed = False
+#         db_table = 'user_refresh_token'
