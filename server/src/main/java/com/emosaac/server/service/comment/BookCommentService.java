@@ -84,10 +84,13 @@ public class BookCommentService {
     }
     
     // state 0 : 부모, 1 : 자식
-    public List<CommentResponse> findBookCommentList(Long bookId, String criteria, int state, int offset, int size) {
-        return bookCommentQueryRepository.findCommentByBookId(bookId, criteria, state, PageRequest.of(offset - 1, size));
+    public List<CommentResponse> findParentBookCommentList(Long bookId, String criteria, int offset, int size) {
+        return bookCommentQueryRepository.findParentCommentByBookId(bookId, criteria, PageRequest.of(offset - 1, size));
     }
 
+    public List<CommentResponse> findChildBookCommentList(Long parentId, String criteria, int offset, int size) {
+        return bookCommentQueryRepository.findChildCommentByBookId(parentId, criteria, PageRequest.of(offset - 1, size));
+    }
     @Transactional
     public Boolean toggleBookCommentLike(Long userId, Long bookCommentId) {
         BookComment bookComment = bookCommentRepository.findByBookCommentId(bookCommentId);
