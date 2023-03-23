@@ -14,7 +14,7 @@ function defaultInstace() {
 function defaultFormDataInstance() {
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    headers: { "Content-Type": "multipart/from-data", Authorization: token },
+    headers: { "Content-Type": "multipart/form-data", Authorization: token },
   });
   return instance;
 }

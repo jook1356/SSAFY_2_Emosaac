@@ -17,6 +17,8 @@ test-job: # 임의로 지정한 JOB 이름
     - sudo chown -R `whoami` ~/.npm
     - sudo chown -R `whoami` /usr/local/lib/node_modules
     - cd client
+    - cp .env.production .env
+    # - rm .env.local
     - npm i
     - sudo npm run build
     - sudo chown -R  gitlab-runner:gitlab-runner .next

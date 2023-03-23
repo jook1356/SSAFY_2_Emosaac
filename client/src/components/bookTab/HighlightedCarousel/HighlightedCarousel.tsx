@@ -4,13 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import BookCard from "@/components/UI/BookCard/BookCard";
 import Swipe from "react-easy-swipe";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
+import { bookContentType } from "@/types/books";
 
 interface HighlightedCarousel {
-  bookData: object[];
+  bookData: bookContentType[];
 }
 
 const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
-  const [bookDataList, setBookDataList] = useState<any[]>([...bookData]);
+  const [bookDataList, setBookDataList] = useState<bookContentType[]>([...bookData]);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const dummyNormalRef = useRef<HTMLInputElement>(null);
   // const wrapperRef = useRef<any>([]);

@@ -6,24 +6,26 @@ import Image from "next/image";
 import naver from "../../assets/social_naver.png";
 import OauthLoginButton from "../UI/OauthLogin/OauthLoginButton";
 import { useRouter } from "next/router";
+import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 export default function OauthLogin() {
   const router = useRouter();
+  const [isDeskTop, isTablet, isMobile] = useIsResponsive();
   const onClickNaver = () => {
     const authUrl = process.env.NEXT_PUBLIC_NAVER_AUTH_URL ?? "";
-    console.log(authUrl);
+    // console.log(authUrl);
     window.location.href = authUrl;
   };
   const onClickKakao = () => {
     const authUrl = process.env.NEXT_PUBLIC_KAKAO_AUTH_URL ?? "";
-    console.log(authUrl);
+    // console.log(authUrl);
     window.location.href = authUrl;
   };
   return (
     <>
-      <main css={topWrapperCSS}>
-        <section>
+      <main css={topWrapperCSS(isDeskTop)}>
+        <section css={logosectionCSS(isDeskTop)}>
           <img
-            css={imageWrapperCSS}
+            css={imageWrapperCSS(isDeskTop)}
             src={"/assets/emosaac_logo.png"}
             alt="이모작의 로고입니다."
           />
@@ -56,20 +58,29 @@ export default function OauthLogin() {
     </>
   );
 }
-const topWrapperCSS = css`
+const topWrapperCSS = (isDeskTop: boolean) => css`
   display: flex;
+  flex-direction: ${isDeskTop ? "row" : "column"};
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 85vh;
+`;
+const logosectionCSS = (isDeskTop: boolean) => css`
+  display: ${isDeskTop ? null : "flex"};
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: ${isDeskTop ? null : "100%"};
+  margin-bottom: ${isDeskTop ? null : "30px"};
 `;
 
-const imageWrapperCSS = css`
+const imageWrapperCSS = (isDeskTop: boolean) => css`
   width: 70%;
   height: 70%;
   /* 범위 안에서 안 짤리게 */
   /* cover는 짤리더라도 꽉 채우게 */
   object-fit: contain;
-  margin-right: 30vh;
+  margin-right: ${isDeskTop ? "30vh" : "0"};
 `;
 
 const buttonWrapperCSS = css`
