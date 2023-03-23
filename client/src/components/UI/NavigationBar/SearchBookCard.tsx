@@ -17,6 +17,7 @@ interface BookData {
 
 interface Props {
   bookData?: any;
+  title?: string;
   showPlatform: boolean;
   width?: string;
   height?: string;
@@ -46,7 +47,7 @@ const SearchBookCard = ({
   const platformBar = <div css={platformBarCSS}></div>;
 
   const instantlyRedirect = () => {
-    router.push(`books/${bookData.bookId}`);
+    router.replace("/books/2");
   };
 
   return (
@@ -147,8 +148,6 @@ const platformBarCSS = css`
 `;
 
 const imageCSS = css`
-  /* width: auto;
-  height: 100%; */
   width: 100%;
   height: 100%;
   transition: transform 0.3s;

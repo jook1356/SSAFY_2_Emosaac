@@ -4,8 +4,7 @@ import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 import { recvBooks } from "@/api/DummyData";
 import SearchBookCard from "./SearchBookCard";
-import { divide } from "lodash";
-import { BsDisplay } from "react-icons/bs";
+import ToggleButton from "../Button/ToggleButton";
 
 interface Props {
   setIsSearchBoxOpen: Dispatch<SetStateAction<boolean>>;
@@ -14,6 +13,13 @@ interface Props {
 const SearchBox = (props: Props) => {
   const [bookData, setBookData] = useState([]);
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
+  const [tagList, setTagList] = useState([
+    "먼치킨",
+    "복수",
+    "환생",
+    "회귀",
+    "로판",
+  ]);
   function onClickBack() {
     props.setIsSearchBoxOpen(false);
   }
@@ -35,7 +41,8 @@ const SearchBox = (props: Props) => {
             {bookData && (
               <div css={booksWrapCSS({ isDeskTop, isTablet, isMobile })}>
                 {bookData.map((book, idx) => (
-                  <div css={bookWrapCSS}>
+                  <div css={bookWrapCSS} onClick={onClickBack}>
+                    <span>웹소설</span>
                     <SearchBookCard
                       bookData={book}
                       showPlatform={false}
@@ -43,9 +50,8 @@ const SearchBox = (props: Props) => {
                       // height={isMobile ? "150px" : "200px"}
                       key={idx}
                     />
-                    <div css={titleCSS}>
-                      <span>소설</span>
-                      <div>제목 여기다가</div>
+                    <div css={titleCSS({ isDeskTop, isTablet, isMobile })}>
+                      <div>상수리 나무 아래</div>
                     </div>
                   </div>
                 ))}
@@ -55,7 +61,11 @@ const SearchBox = (props: Props) => {
           </div>
           <div css={tagSearchCSS({ isDeskTop, isTablet, isMobile })}>
             <h3>태그로 검색하기</h3>
-            <div></div>
+            <div>
+              {tagList.map((tag, idx) => (
+                <ToggleButton key={idx} text={"#" + tag} isClicked={false} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -154,24 +164,53 @@ const booksWrapCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
 };
 
 const bookWrapCSS = css`
+  position: relative;
   display: grid;
-  grid-template-rows: 1fr 30px;
-  line-height: 30p;
-`;
-
-const titleCSS = css`
-  display: flex;
-  line-height: 30px;
-  align-items: center;
+  grid-template-rows: 1fr 40px;
+  line-height: 40px;
   & > span {
-    font-size: 8px;
-    height: 20px;
-    line-height: 20px;
-    padding: 0 6px;
-    border-radius: 5px;
-    background-color: blue;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    display: block;
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    height: 25px;
+    line-height: 25px;
+    border-radius: 5px 0px 5px 0px;
+    background-color: var(--main-color);
+    margin-right: 6px;
+    font-size: 12px;
   }
 `;
+
+const titleCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
+  return css`
+    display: flex;
+    line-height: 40px;
+    align-items: center;
+    ${isDeskTop ? "font-size: 14px;" : "font-size: 14px;"}
+    & > span {
+      display: block;
+      width: 34px;
+      text-align: center;
+      font-weight: bold;
+      ${isDeskTop ? "font-size: 10px;" : "font-size: 10px;"}
+      height: 20px;
+      line-height: 20px;
+      border-radius: 5px;
+      background-color: var(--main-color);
+      margin-right: 6px;
+    }
+    & > div {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  `;
+};
 
 const tagSearchCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   return css`
@@ -180,8 +219,9 @@ const tagSearchCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
       font-weight: bold;
       margin-bottom: 20px;
     }
-    & > div {
-      background-color: aliceblue;
+    & button {
+      margin-right: 6px;
+      margin-bottom: 6px;
     }
   `;
 };
