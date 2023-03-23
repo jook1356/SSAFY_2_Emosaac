@@ -8,6 +8,18 @@
 from django.db import models
 
 
+
+class UserBasedCFModel(models.Model):
+    item_no = models.IntegerField(primary_key=True)
+    book_no = models.ForeignKey('Book', models.DO_NOTHING, db_column='book_no', blank=True, null=True)
+    user_no = models.ForeignKey('User', models.DO_NOTHING, db_column='user_no', blank=True, null=True)
+
+    class Meta:
+        app_label = 'recommand'  # 추가
+        managed = False
+        db_table = 'user_basedcfmodel'
+
+
 class BestBook30Model(models.Model):
     best_no = models.IntegerField(primary_key=True)
     book_no = models.ForeignKey('Book', models.DO_NOTHING, db_column='book_no', blank=True, null=True)
@@ -168,16 +180,6 @@ class Genre(models.Model):
         app_label = 'recommand'  # 추가
         managed = False
         db_table = 'genre'
-
-
-class Gerne1(models.Model):
-    genre_cd = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        app_label = 'recommand'  # 추가
-        managed = False
-        db_table = 'gerne1'
 
 
 class Hit(models.Model):
