@@ -11,6 +11,8 @@ import BookCardModal from "@/components/bookCardModal/BookCardModal";
 import Portal from "@/components/function/Portal";
 import { useRouter } from "next/router"
 
+import { bookContentType } from "@/types/books";
+
 interface BookData {
   title: string;
   img: string;
@@ -114,7 +116,7 @@ const BookCard = ({
         />
         <img
           className={"img"}
-          src={bookData && bookData.img}
+          src={bookData && bookData.thumbnail}
           alt={bookData && bookData.title}
           css={imageCSS}
         />
