@@ -59,8 +59,7 @@ export const NavigationBar = () => {
     setIsSearchBoxOpen(!isSearchBoxOpen);
   }
   function onClickSearchMobile() {
-    setIsSearchClicked(!isSearchClicked);
-    setIsSearchBoxOpen(!isSearchBoxOpen);
+    setIsSearchClicked(true);
   }
   useEffect(() => {
     const pathName = router.pathname.split("/")[1];
