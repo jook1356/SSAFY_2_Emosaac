@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { getBookData } from "@/api/book";
+import { getBookDetail } from "@/api/book/getBookDetail";
 import { useEffect, useState } from "react";
 import { resolve } from "node:path/win32";
 import { BiChevronRightCircle } from "react-icons/bi";
@@ -14,7 +14,7 @@ import TagList from "@/components/bookDetail/TagList";
 import RedirButton from "@/components/bookDetail/RedirButton";
 import StarRating from "@/components/bookDetail/StarRating";
 import FixedModal from "@/components/UI/FixedModal/FixedModal";
-import DetailComment from "@/components/bookDetail/DetailComment";
+import DetailComment from "@/components/DetailComment/DetailComment";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 
 type bookDataType = {
@@ -133,7 +133,7 @@ const BookDetail = ({ bookData }: BookDetailProps) => {
       <FixedModal
          modalState={commentModalState}
          stateHandler={setCommentModalState}
-         content={<DetailComment />}
+         content={<DetailComment bookId={bookData.bookId} />}
       />
 
       <div css={mainContentInnerWrapperCSS} className={"second-level-el"} >
@@ -156,7 +156,7 @@ const BookDetail = ({ bookData }: BookDetailProps) => {
 // getServerSideProps는 async/await를 사용하여 API를 모두 받아올 때까지 대기하였다가 컴포넌트로 props를 넘겨주고, 이후 컴포넌트는 사전 생성 됩니다.
 export const getServerSideProps = async (context: any) => {
   const params = await context.params;
-  const data = await getBookData(params.bookId)
+  const data = await getBookDetail(params.bookId)
     .then((res) => {
       return res;
     })

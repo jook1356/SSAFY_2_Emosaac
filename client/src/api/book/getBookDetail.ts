@@ -1,4 +1,4 @@
-import { defaultAxiosInstance } from "./instance";
+import { defaultAxiosInstance } from "../instance";
 
 import { AxiosResponse } from "axios";
 
@@ -28,7 +28,7 @@ interface bookDataResponse {
   data: bookDataType;
 }
 
-// export async function getBookData(
+// export async function getBookDetail(
 //   bookId: number
 // ): Promise<bookDataType | null> {
 //   try {
@@ -49,7 +49,7 @@ interface bookDataResponse {
 
 import axios from "axios";
 
-export const getBookData = async (bookId: number): Promise<bookDataType> => {
+export const getBookDetail = async (bookId: number): Promise<bookDataType> => {
   return await axios({
     method: "get",
     url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/books/${bookId}`,
