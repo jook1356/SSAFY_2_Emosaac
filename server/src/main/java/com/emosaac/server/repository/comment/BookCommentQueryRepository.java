@@ -18,11 +18,21 @@ import static com.emosaac.server.domain.book.QBookComment.bookComment;
 @Repository
 public class BookCommentQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
-    public List<CommentResponse> findCommentByBookId(Long bookId, String criteria, int state, PageRequest pageRequest){
+    public List<CommentResponse> findParentCommentByBookId(Long bookId, String criteria, PageRequest pageRequest){
         return jpaQueryFactory.select(new QCommentResponse(bookComment))
                 .distinct().from(bookComment)
                 .where(bookComment.book.bookId.eq(bookId),
-                        bookComment.depth.eq(state))
+                        bookComment.depth.eq(0))
+                .orderBy(findCriteria(criteria))
+                .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
+                .fetch();
+
+    }
+
+    public List<CommentResponse> findChildCommentByBookId(Long parentId, String criteria, PageRequest pageRequest){
+        return jpaQueryFactory.select(new QCommentResponse(bookComment))
+                .distinct().from(bookComment)
+                .where(bookComment.parent.commentId.eq(parentId))
                 .orderBy(findCriteria(criteria))
                 .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
                 .fetch();

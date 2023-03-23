@@ -24,17 +24,27 @@ public class BookCommentController {
     @Autowired
     private BookCommentService bookCommentService;
 
-    @ApiOperation(value = "해당 북의 댓글 리스트 조회", notes = "게시물 bookId를 입력받은 후 댓글을 조회한다. (date : 날짜, like : 좋아요 순으로 정렬) / state 0:부모댓글 조회, 1:자식댓글 조회")
-    @GetMapping("/{bookId}/{state}")
-    public ResponseEntity<CommonResponse> findBookCommentList(@PathVariable Long bookId,
+    @ApiOperation(value = "해당 북의 부모 댓글 리스트 조회", notes = "게시물 bookId를 입력받은 후 댓글을 조회한다. (date : 날짜, like : 좋아요 순으로 정렬)")
+    @GetMapping("/parent/{bookId}")
+    public ResponseEntity<CommonResponse> findParentBookCommentList(@PathVariable Long bookId,
                                                               @RequestParam(required=false, defaultValue = "date") String criteria,
-                                                              @PathVariable int state,
                                                               @RequestParam(required=false, defaultValue = "1") int offset,
                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size){
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "해당 게시물의 댓글 목록 조회 성공", bookCommentService.findBookCommentList(bookId, criteria, state, offset, size)));
+                HttpStatus.OK, "해당 게시물의 댓글 목록 조회 성공", bookCommentService.findParentBookCommentList(bookId, criteria, offset, size)));
+    }
+    @ApiOperation(value = "해당 북의 자식 댓글 리스트 조회", notes = "부모 댓글의 parentId를 입력받은 후 댓글을 조회한다. (date : 날짜, like : 좋아요 순으로 정렬)")
+    @GetMapping("/child/{parentId}")
+    public ResponseEntity<CommonResponse> findChildBookCommentList(@PathVariable Long parentId,
+                                                              @RequestParam(required=false, defaultValue = "date") String criteria,
+                                                              @RequestParam(required=false, defaultValue = "1") int offset,
+                                                              @RequestParam(value = "size", required = false, defaultValue = "10") int size){
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "해당 게시물의 댓글 목록 조회 성공", bookCommentService.findChildBookCommentList(parentId, criteria, offset, size)));
     }
 
     @ApiOperation(value = "북 댓글 등록", notes = "북 댓글을 등록한다")
