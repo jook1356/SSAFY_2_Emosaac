@@ -1,20 +1,78 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { useEffect } from "react";
 
 export const BasicButton = () => {
   const router = useRouter();
+  const [isLogin, setIsLogin] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const token = localStorage.getItem("your_access_token_key");
   function onClickLogin() {
     router.push({
       pathname: `/login`,
     });
   }
+  function onClickLogout() {
+    localStorage.clear();
+    router.push({
+      pathname: "/",
+    });
+  }
+  useEffect(() => {
+    if (token) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [token]);
+  const handleMouseEnter = () => {
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsOpen(false);
+  };
+  // 비 로그인시 로그인, 로그인 이면 프로필 사진 보이게. 호버하면 마이페이지랑 로그아웃 버튼
   return (
-    <button id="basic-button" css={ButtonWrapCSS} onClick={onClickLogin}>
-      로그인
-    </button>
+    <>
+      {isLogin ? (
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <div css={profileimgCSS}>
+            <img src={"/assets/bazzi.jpg"} alt="프로필 사진" css={imgCSS} />
+          </div>
+          <div css={hoverwrapCSS(isOpen)}>
+            <button css={ButtonWrapCSS}>마이페이지</button>
+            <button css={ButtonWrapCSS} onClick={onClickLogout}>
+              로그아웃
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button id="basic-button" css={ButtonWrapCSS} onClick={onClickLogin}>
+          로그인
+        </button>
+      )}
+    </>
   );
 };
+const profileimgCSS = css`
+  border-radius: 100%;
+  background-color: var(--back-color-4);
+  width: 60%;
+  height: 60%;
+`;
+
+const imgCSS = css`
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+`;
+
+const hoverwrapCSS = (isOpen: boolean) => css`
+  display: ${isOpen ? "flex" : "none"};
+`;
 
 const ButtonWrapCSS = css`
   cursor: pointer;
