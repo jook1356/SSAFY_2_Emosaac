@@ -31,4 +31,7 @@ public class UserPredictedGradeModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="BOOK_NO")
     private Book book;
+
+    @Column(name = "PRIDICT_SCORE")
+    private double pridictScore; // 작품별 사용자의 예상 평점 저장
 }
