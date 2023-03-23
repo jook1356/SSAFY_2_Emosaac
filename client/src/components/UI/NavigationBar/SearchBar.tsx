@@ -42,6 +42,7 @@ export const SearchBar = (props: Props) => {
   function onChangeSearchInput(event: React.ChangeEvent<HTMLInputElement>) {
     const inputText = event.target.value;
     setSearchInput(inputText);
+    props.setIsSearchBoxOpen(true);
   }
   function onEnterKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
@@ -95,6 +96,7 @@ export const SearchBar = (props: Props) => {
             setSelectedCate={setSelectedCate}
             isDropDownOpen={isDropDownOpen}
             setIsDropDownOpen={setIsDropDownOpen}
+            setIsSearchBoxOpen={props.setIsSearchBoxOpen}
           />
         </>
       )}

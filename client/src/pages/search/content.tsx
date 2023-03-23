@@ -171,7 +171,7 @@ const booksWrapCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
     display: grid;
     ${isMobile && "grid-template-columns: repeat(3, 1fr);"}
     ${!isMobile && "grid-template-columns: repeat(5, 1fr);"}
-    column-gap: 30px;
+    column-gap: 20px;
     row-gap: 30px;
   `;
 };
