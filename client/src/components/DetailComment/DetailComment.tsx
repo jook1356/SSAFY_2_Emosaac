@@ -15,53 +15,16 @@ interface DetailCommentProps {
 const DetailComment = ({ bookId, modalHandler }: DetailCommentProps) => {
   const commentsWrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    getParentComments({ bookId }).then((res: returnCommentArrayType | null) => {
-      if (res !== null) {
-        setComments(() => res);
-        setOffset(() => 2);
-      }
-    });
-  }, []);
-
-  const refreshCommentsHandler = () => {
-    getParentComments({ bookId }).then((res: returnCommentArrayType | null) => {
-      if (res !== null) {
-        setComments(() => res);
-        setOffset(() => 2);
-      }
-    });
-  };
-
-  const getCommentsHandler = (criteria: "date" | "like") => {
-    getParentComments({ bookId, criteria, offset }).then(
-      (res: returnCommentArrayType | null) => {
-        if (res !== null) {
-          setComments((prev) => [...prev, ...res]);
-          setOffset((prev) => prev + 1);
-        }
-      }
-    );
-  };
-
   return (
     <div ref={commentsWrapperRef} css={modalWrapperCSS}>
-      <DetailCommentInput
-        action={"post"}
+      <button onClick={modalHandler}>닫기</button>
+      <DetailCommentView
         bookId={bookId}
         parentId={null}
-        refreshCommentsHandler={refreshCommentsHandler}
+        position={0}
+        criteria={"date"}
+        commentsWrapperRef={commentsWrapperRef}
       />
-      {comments ? (
-        <DetailCommentView
-          comments={comments}
-          getCommentsHandler={getCommentsHandler}
-          commentsWrapperRef={commentsWrapperRef}
-        />
-      ) : (
-        <DetailCommentEmpty />
-      )}
-      <button onClick={modalHandler}>닫기</button>
     </div>
   );
 };
