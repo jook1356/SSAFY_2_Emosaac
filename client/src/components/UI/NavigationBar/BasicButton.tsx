@@ -8,7 +8,7 @@ export const BasicButton = () => {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const token = localStorage.getItem("your_access_token_key");
+  const token = localStorage.getItem("access_token");
   function onClickLogin() {
     router.push({
       pathname: `/login`,
