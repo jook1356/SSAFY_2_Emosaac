@@ -9,38 +9,23 @@ function getToken() {
 }
 
 function defaultInstace() {
+  const token = getToken();
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     headers: {
       "Content-Type": "application/JSON;charset=utf-8",
+      Authorization: token,
     },
   });
-
-  instance.interceptors.request.use((config) => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = token;
-    }
-    return config;
-  });
-
   return instance;
 }
 
 function defaultFormDataInstance() {
+  const token = getToken();
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": "multipart/form-data", Authorization: token },
   });
-
-  instance.interceptors.request.use((config) => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = token;
-    }
-    return config;
-  });
-
   return instance;
 }
 
