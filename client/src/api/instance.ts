@@ -1,7 +1,15 @@
 import axios from "axios";
-const token =
-  "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4IiwiaWF0IjoxNjc5MzU5MDQwLCJleHAiOjE2ODAyMjMwNDB9.5rJDelPFgBQRZclfOF5KE7teD-xIKTGyMkPEw7BQRJtETqM36wUqOaEnmNN12cIwz1drC9SOo03gLshlqGhuLw";
+
+function getToken() {
+  if (typeof window !== "undefined") {
+    const information = localStorage.getItem("access_token");
+    return `Bearer ${information}`;
+  }
+  return "";
+}
+
 function defaultInstace() {
+  const token = getToken();
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     headers: {
@@ -11,7 +19,9 @@ function defaultInstace() {
   });
   return instance;
 }
+
 function defaultFormDataInstance() {
+  const token = getToken();
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     headers: { "Content-Type": "multipart/form-data", Authorization: token },

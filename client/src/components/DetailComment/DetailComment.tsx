@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from "react";
 import DetailCommentInput from "./DetailCommentInput";
 import { returnCommentArrayType } from "@/types/comments";
 import { getParentComments } from "@/api/comment/getParentComments";
-import { DetailCommentView, DetailCommentEmpty } from "./DetailCommentView";
+import DetailCommentView from "./DetailCommentView";
 
 interface DetailCommentProps {
   bookId: number;
@@ -13,8 +13,6 @@ interface DetailCommentProps {
 }
 
 const DetailComment = ({ bookId, modalHandler }: DetailCommentProps) => {
-  const [comments, setComments] = useState<returnCommentArrayType>([]);
-  const [offset, setOffset] = useState<number>(2);
   const commentsWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
