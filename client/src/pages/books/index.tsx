@@ -20,7 +20,8 @@ interface HomeProps {
 }
 
 export default function Home({highlightedBookData}: HomeProps) {
-  const parentRef = useRef<HTMLInputElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
+  const indexWrapperRef = useRef<HTMLDivElement>(null);
 
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
 
@@ -49,7 +50,7 @@ export default function Home({highlightedBookData}: HomeProps) {
   }
 
   return (
-    <div css={indexWrapperCSS}>
+    <div ref={indexWrapperRef} css={indexWrapperCSS}>
       <div css={bannerWrapperCSS} ref={parentRef}>
         <SwipeableGallery parentRef={parentRef} content={postData} />
       </div>
@@ -65,7 +66,7 @@ export default function Home({highlightedBookData}: HomeProps) {
       </div>
 
       <div css={highlightedCarouselWrapper}>
-        <HighlightedCarousel bookData={highlightedBookData} />
+        <HighlightedCarousel bookData={highlightedBookData} windowWrapperRef={indexWrapperRef} />
       </div>
       <div css={whiteSpace2CSS} />
 

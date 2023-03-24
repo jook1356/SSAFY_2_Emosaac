@@ -9,13 +9,13 @@ interface DetailCommentInputProps {
     action: string;
     bookId: number;
     parentId: number | null;
-    defaultValue?: string;
+    putContent?: string;
     commentId?: number;
     refreshCommentsHandler: Function;
     
 }
 
-const DetailCommentInput = ({ action, bookId, parentId, defaultValue, commentId, refreshCommentsHandler }: DetailCommentInputProps) => {
+const DetailCommentInput = ({ action, bookId, parentId, putContent, commentId, refreshCommentsHandler }: DetailCommentInputProps) => {
     const inputRef = useRef<HTMLInputElement>(null)
 
     const commentHandler = () => {
@@ -43,11 +43,15 @@ const DetailCommentInput = ({ action, bookId, parentId, defaultValue, commentId,
         }
     }
 
-
+    const onEnterHandler = (event: any) => {
+        if (event.key === "Enter") {
+            commentHandler()
+        }
+    }
 
     return (
         <div css={inputWrapperCSS}>
-            <input css={inputCSS} ref={inputRef} placeholder={`댓글을 입력해 주세요. ${parentId}`} defaultValue={defaultValue ? defaultValue : ``} />
+            <input css={inputCSS} ref={inputRef} placeholder={`댓글을 입력해 주세요. ${parentId}`} defaultValue={putContent ? putContent : ``} onKeyUp={onEnterHandler}/>
             <div onClick={commentHandler} css={confirmBtnCSS} >작성</div>
         </div>
         

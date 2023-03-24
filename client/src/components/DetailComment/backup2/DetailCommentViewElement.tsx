@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import { CommentType } from "@/types/comments";
+import { DetailCommentView } from "./DetailCommentView";
 import { returnCommentArrayType } from "@/types/comments";
 import { useState } from "react";
 import { getChildComments } from "@/api/comment/getChildComments";
@@ -9,7 +10,6 @@ import { deleteComment } from "@/api/comment/deleteComment";
 import { putLikeComment } from "@/api/comment/putLikeComment";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import { FaRegComment } from "react-icons/fa";
-import DetailCommentView from "./DetailCommentView";
 
 // export type CommentType = {
 //     "commentId": number;
@@ -31,40 +31,102 @@ const DetailCommentViewElement = ({
   bookId,
   comment,
   parentId,
-  refreshCommentsHandler,
+  refreshParentComments,
 }: {
   bookId: number;
   comment: CommentType;
   parentId: number | null;
-  refreshCommentsHandler: Function;
+  refreshParentComments: Function;
 }) => {
+  const [childComments, setChildComments] = useState<returnCommentArrayType>(
+    []
+  );
+  const [offset, setOffset] = useState<number>(2);
+  const [showChildComments, setShowChildComments] = useState<boolean>(false);
+  const [editComment, setEditComment] = useState<boolean>(false);
+  const [likeStatusSize, setLikeStatusSize] = useState<number>(
+    comment.likeStatusSize
+  );
+  const [likeState, setLikeState] = useState<boolean>(comment.likeState);
 
-  const [likeState, setLikeState] = useState<boolean>(false)
-  const [likeStatusSize, setLikeStatusSize] = useState<number>(0)
-  const [toggleEditComment, setToggleEditComment] = useState<boolean>(false)
-  const [toggleChildComments, setToggleChildComments] = useState<boolean>(false)
+  const refreshChildCommentsHandler = () => {
+    if (parentId !== null) {
+      getChildComments({ parentId }).then(
+        (res: returnCommentArrayType | null) => {
+          if (res !== null) {
+            setChildComments(() => res);
+            console.log("refreshChildCommentsHandler", parentId, res);
+            console.log("childComments", childComments);
+            setOffset(() => 2);
+          }
+        }
+      );
+    }
+  };
 
-  
+  const getChildCommentsHandler = (criteria: "date" | "like") => {
+    if (parentId !== null) {
+      getChildComments({ parentId, criteria, offset }).then(
+        (res: returnCommentArrayType | null) => {
+          if (res !== null) {
+            setChildComments((prev) => [...prev, ...res]);
+            console.log("getChildCommentsHandler", parentId, res);
+            setOffset((prev) => prev + 1);
+          }
+        }
+      );
+    }
+  };
 
-  const refreshCommentsReHandler = () => {
-    refreshCommentsHandler()
-    setToggleEditComment(() => false)
-  }
+  const refreshSelectHandler = () => {
+    // if (parentId === comment.commentId) {
+    //     refreshParentComments()
+    //     refreshChildCommentsHandler();
+    // } else {
+    //     refreshChildCommentsHandler();
+    //     refreshParentComments()
 
-  const toggleEditCommentHandler = () => {
-    setToggleEditComment((prev) => !prev)
-  }
-  
-  const toggleChildCommentsHandler = () => {
-    setToggleChildComments((prev) => !prev)
-  }
+    // }
+    refreshChildCommentsHandler();
+    refreshParentComments();
+    setEditComment(() => false);
+  };
+
+  const childCommentsRender = (
+    <div css={childCommentsWrapperCSS}>
+      <DetailCommentView
+        bookId={bookId}
+        comments={childComments}
+        getCommentsHandler={getChildCommentsHandler}
+        parentId={comment.commentId}
+        refreshParentComments={refreshParentComments}
+      />
+      <div css={childCommentInputWrapperCSS}>
+        <DetailCommentInput
+          action={"post"}
+          bookId={bookId}
+          parentId={comment.commentId}
+          commentId={comment.commentId}
+          refreshCommentsHandler={refreshChildCommentsHandler}
+        />
+      </div>
+    </div>
+  );
+
+  const toggleChildCommentHandler = () => {
+    refreshChildCommentsHandler();
+    setShowChildComments((prev) => !prev);
+  };
+
+  const showEditCommentHandler = () => {
+    setEditComment((prev) => !prev);
+  };
 
   const deleteCommentHandler = () => {
-    deleteComment({commentId: comment.commentId})
-    .then(() => {
-      refreshCommentsReHandler()
-    })
-  }
+    deleteComment({ commentId: comment.commentId }).then(() => {
+      refreshSelectHandler();
+    });
+  };
 
   const likeCommentHandler = () => {
     putLikeComment({ commentId: comment.commentId }).then((res) => {
@@ -74,7 +136,6 @@ const DetailCommentViewElement = ({
       }
     });
   };
-  
 
   const commentHeader = (
     <div css={commentInfoWrapperCSS}>
@@ -100,8 +161,8 @@ const DetailCommentViewElement = ({
           {likeStatusSize ? likeStatusSize : "좋아요"}
         </div>
       )}
-      {comment.depth === 0 && 
-        <div css={footerElementCSS} onClick={toggleChildCommentsHandler}>
+      {
+        <div css={footerElementCSS} onClick={toggleChildCommentHandler}>
           <FaRegComment css={footerIconCSS} />
           답글 보기
         </div>
@@ -114,38 +175,41 @@ const DetailCommentViewElement = ({
         )}
       {comment.writerInfo.userId !== "=== example" &&
         comment.isDelete === false && (
-          <div css={footerElementCSS} onClick={toggleEditCommentHandler}>
-            {toggleEditComment ? "취소" : "수정"}
+          <div css={footerElementCSS} onClick={showEditCommentHandler}>
+            {editComment ? "취소" : "수정"}
           </div>
         )}
     </div>
   );
 
-
-  
-
-  const editInput = (<DetailCommentInput action={'put'} defaultValue={comment.content} bookId={bookId} commentId={comment.commentId} parentId={parentId} refreshCommentsHandler={refreshCommentsReHandler}/>)
-  const commentContent = toggleEditComment ? (editInput) : comment.isDelete ? (<div css={deletedStringCSS}>삭제된 댓글입니다.</div>) : (`${comment.content}`);
-  
-  const childCommentsRender = (
-    <div css={childCommentsWrapperCSS({depth: comment.depth})}>
-      <DetailCommentView bookId={bookId} position={1} parentId={comment.commentId} criteria={'date'}/>
-    </div>
-    
-  )
-
+  const editInput = (
+    <DetailCommentInput
+      action={"put"}
+      commentId={comment.commentId}
+      bookId={bookId}
+      parentId={parentId}
+      putContent={comment.content}
+      refreshCommentsHandler={refreshSelectHandler}
+    />
+  );
+  const commentContent = editComment ? (
+    editInput
+  ) : comment.isDelete ? (
+    <div css={deletedStringCSS}>삭제된 댓글입니다.</div>
+  ) : (
+    `${comment.content}-${comment.commentId}`
+  );
 
   return (
     <div css={commentWrapperCSS}>
       {comment.isDelete === false && commentHeader}
 
       <div css={commentContentWrapperCSS}>
-        {commentContent}
         {/* {comment.content} */}
-       
+        {commentContent}
       </div>
       {commentFooter}
-      {toggleChildComments && childCommentsRender}
+      {showChildComments && childCommentsRender}
     </div>
   );
 };
@@ -193,11 +257,9 @@ const footerElementCSS = css`
   user-select: none;
 `;
 
-const childCommentsWrapperCSS = ({depth}: {depth: number}) => {
-  return css`
-    margin-left: ${depth === 0 ? '48px' : '0px'};
-  `;
-}
+const childCommentsWrapperCSS = css`
+  margin-left: 48px;
+`;
 
 const footerIconCSS = css`
   width: 20px;

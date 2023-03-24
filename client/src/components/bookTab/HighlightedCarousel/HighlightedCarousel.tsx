@@ -8,9 +8,10 @@ import { bookContentType } from "@/types/books";
 
 interface HighlightedCarousel {
   bookData: bookContentType[];
+  windowWrapperRef: any;
 }
 
-const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
+const HighlightedCarousel = ({ bookData, windowWrapperRef }: HighlightedCarousel) => {
   const [bookDataList, setBookDataList] = useState<bookContentType[]>([...bookData]);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const dummyNormalRef = useRef<HTMLInputElement>(null);
@@ -172,6 +173,8 @@ const HighlightedCarousel = ({ bookData }: HighlightedCarousel) => {
               minSpaceValue: cardLayout.minSpaceValue,
               normalRef: dummyNormalRef,
               carouselWrapperRef: carouselWrapperRef,
+              windowWrapperRef: windowWrapperRef,
+              
             })}
           >
             {renderBooks}
@@ -370,6 +373,7 @@ interface carouselInnerWrapperCSSProps {
   minSpaceValue: number;
   normalRef: any;
   carouselWrapperRef: any;
+  windowWrapperRef: any;
 }
 
 const carouselInnerWrapperCSS = ({
@@ -382,20 +386,18 @@ const carouselInnerWrapperCSS = ({
   minHighlightedWidthValue,
   normalRef,
   carouselWrapperRef,
+  windowWrapperRef,
 }: carouselInnerWrapperCSSProps) => {
   const calcWidth =
     normalRef?.current?.clientWidth < minWidthValue
       ? (minWidthValue + minSpaceValue) * 4 + minHighlightedWidthValue + "px"
       : (widthValue + spaceValue) * 4 + highlightedWidthValue + unit;
-
+  
   const calcLeft =
-    carouselWrapperRef?.current?.clientWidth > document.body.offsetWidth
+    carouselWrapperRef?.current?.clientWidth > windowWrapperRef?.current?.offsetWidth
       ? -(
-          carouselWrapperRef?.current?.clientWidth - document.body.offsetWidth
-        ) /
-          2 +
-        "px"
-      : "0px";
+          carouselWrapperRef?.current?.clientWidth - windowWrapperRef?.current?.offsetWidth
+        ) / 2 + "px" : "0px";
   return css`
     width: ${calcWidth};
     left: ${calcLeft};
