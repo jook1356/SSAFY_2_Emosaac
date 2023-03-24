@@ -19,12 +19,20 @@ test-job: # 임의로 지정한 JOB 이름
     - cd client
     - cp .env.production .env
     # - rm .env.local
-    - npm i
-    - sudo npm run build
+
+    # - npm i
+    # - sudo npm run build
+
     - sudo chown -R  gitlab-runner:gitlab-runner .next
     - pm2 list
+
     # - sudo npm run start
-    - pm2 start npm --name "emosaac" -w -i max -- start
-    - sudo npm run start
+    
+    # - pm2 start npm --name "emosaac" -w -i max -- start
+    # - sudo npm run start
+
+    # reload
+    - pm2 reload emosaac
+
   tags: 
     - nextjs # build-server 태그가 달린 runner에서 실행
