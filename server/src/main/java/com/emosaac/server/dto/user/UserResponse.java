@@ -26,7 +26,7 @@ public class UserResponse {
 
     private String imageUrl;
 
-    private Boolean gender;
+    private Integer gender;
     //나이
     private Integer age;
 
@@ -41,7 +41,7 @@ public class UserResponse {
         return new UserResponse(user.getUserId(), user.getNickName(), user.getEmail(), user.getUserName(), imgUrl, user.getGender(), user.getAge(), user.getFavoriteWebtoonGenre(), user.getFavoriteNovelGenre());
     }
 
-    public UserResponse(Long userId, String nickname, String email, String userName, String imageUrl, Boolean gender, Integer age) {
+    public UserResponse(Long userId, String nickname, String email, String userName, String imageUrl, Integer gender, Integer age) {
         this.userId = userId;
         this.nickname = nickname;
         this.email = email;

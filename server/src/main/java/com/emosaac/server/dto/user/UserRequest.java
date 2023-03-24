@@ -21,7 +21,7 @@ public class UserRequest {
     @Length(min = 2, max = 10, message = "2~10자의 닉네임만 가능합니다.")
     private String nickName;
     //성별
-    private Boolean gender;
+    private Integer gender;
     //나이
     private Integer age;
     //프로필 이미지
@@ -30,5 +30,8 @@ public class UserRequest {
     public static UserRequest of(UserRequestFile request, String imgUrl) {
         String tmpImg = imgUrl.replace("https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/","");
         return new UserRequest(request.getNickName(), request.getGender(), request.getAge(), tmpImg);
+    }
+    public static UserRequest of(UserRequestFile request) {
+        return new UserRequest(request.getNickName(), request.getGender(), request.getAge(), null);
     }
 }
