@@ -8,6 +8,7 @@ import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.GenreResponse;
+import com.emosaac.server.dto.genre.GenreResponseList;
 import com.emosaac.server.dto.genre.TotalResponse;
 import com.emosaac.server.dto.genre.UserResearchRequest;
 import com.emosaac.server.dto.user.UserGenreRequest;
@@ -50,23 +51,27 @@ public class GenreService {
     }
 
     @Transactional
-    public List<GenreResponse> postResearch(Long userId, UserResearchRequest request, int typeCode) { //나의 선호 장르에 반영해야함
+    public GenreResponseList postResearch(Long userId, UserResearchRequest request) { //나의 선호 장르에 반영해야함
 
         User user = commonService.getUser(userId);
-        String str = BookListToString(request);
-        if (typeCode == 0) {
-            user.setFavoriteWebtoonGenre(str); //선호 장르에 반영
-        } else if (typeCode == 1) {
-            user.setFavoriteNovelGenre(str); //선호 장르에 반영
-        }
-        return userService.stringToGenreList(str).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+        String strWebtoon = BookListToString(request.getWebtoonId());
+        String strNovel = BookListToString(request.getNovelId());
+
+        user.setFavoriteWebtoonGenre(strWebtoon); //선호 장르에 반영
+        user.setFavoriteNovelGenre(strNovel); //선호 장르에 반영
+
+        List<GenreResponse> webtoon = userService.stringToGenreList(strWebtoon).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+        List<GenreResponse> novel = userService.stringToGenreList(strNovel).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
+
+        return new GenreResponseList(webtoon, novel);
+
 
     }
 
-    public String BookListToString(UserResearchRequest request) {
+    public String BookListToString(Long[] request) {
         Map<Long, Double> map = new HashMap<>();
 
-        for (Long tmp : request.getBookId()) {
+        for (Long tmp : request) {
             Book book = commonService.getBook(tmp);
             Long genreId = book.getGenre().getGerneId();
             map.put(genreId, map.getOrDefault(genreId, 1.0) + 1);

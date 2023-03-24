@@ -15,5 +15,8 @@ import java.util.List;
 public class UserResearchRequest {
 
     @Size(min=5, max=5)
-    private Long[] bookId;
+    private Long[] webtoonId;
+
+    @Size(min=5, max=5)
+    private Long[] novelId;
 }

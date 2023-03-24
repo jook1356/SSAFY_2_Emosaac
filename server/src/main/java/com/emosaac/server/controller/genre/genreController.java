@@ -49,11 +49,10 @@ public class genreController {
     @PostMapping("/research")
     @ApiOperation(value = "설문조사 수행", notes = "선호 장르 리스트를 반환, 0: 웹툰/1:소설, 수행 결과는 /users/me api로 컬럼 갱신됐는지 확인")
     public ResponseEntity<CommonResponse> postResearch(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                                       @RequestBody @Valid UserResearchRequest request,
-                                                       @RequestParam(value = "typeCode") int typeCode) {
+                                                       @RequestBody @Valid UserResearchRequest request) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "설문조사 성공", genreService.postResearch(userPrincipal.getId(), request, typeCode)));
+                HttpStatus.CREATED, "설문조사 성공", genreService.postResearch(userPrincipal.getId(), request)));
     }
 
 
