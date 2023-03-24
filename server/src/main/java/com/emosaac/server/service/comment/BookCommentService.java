@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -83,14 +84,29 @@ public class BookCommentService {
         }
         return commentId;
     }
-    
-    // state 0 : 부모, 1 : 자식
-    public List<CommentResponse> findParentBookCommentList(Long bookId, String criteria, int offset, int size) {
-        return bookCommentQueryRepository.findParentCommentByBookId(bookId, criteria, PageRequest.of(offset - 1, size));
+
+    public List<CommentResponse> findParentBookCommentList(Long userId, Long bookId, String criteria, int offset, int size) {
+        List<CommentResponse> res = bookCommentQueryRepository.findParentCommentByBookId(bookId, criteria, PageRequest.of(offset - 1, size));
+        for(CommentResponse cr : res){
+            if(bookCommentQueryRepository.findBookCommentLikeState(cr.getCommentId(), userId).isEmpty()){
+                cr.updateLikeState(false);
+            }else {
+                cr.updateLikeState(true);
+            }
+        }
+        return res;
     }
 
-    public List<CommentResponse> findChildBookCommentList(Long parentId, String criteria, int offset, int size) {
-        return bookCommentQueryRepository.findChildCommentByBookId(parentId, criteria, PageRequest.of(offset - 1, size));
+    public List<CommentResponse> findChildBookCommentList(Long userId, Long parentId, String criteria, int offset, int size) {
+        List<CommentResponse> res = bookCommentQueryRepository.findChildCommentByBookId(parentId, criteria, PageRequest.of(offset - 1, size));
+        for(CommentResponse cr : res){
+            if(bookCommentQueryRepository.findBookCommentLikeState(cr.getCommentId(), userId).isEmpty()){
+                cr.updateLikeState(false);
+            }else {
+                cr.updateLikeState(true);
+            }
+        }
+        return res;
     }
     @Transactional
     public CommentLikeResponse toggleBookCommentLike(Long userId, Long bookCommentId) {

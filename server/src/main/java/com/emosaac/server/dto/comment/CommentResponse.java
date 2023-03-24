@@ -33,6 +33,7 @@ public class CommentResponse {
     private Boolean isDelete;
     private Boolean isChild = false; // 자식 가지고 있는지
     private Integer likeStatusSize;
+    private Boolean likeState;
 
 //    private List<CommentResponse> children = new ArrayList<>();
     @QueryProjection
@@ -74,6 +75,9 @@ public class CommentResponse {
         this.isDelete = comment.getIsDelete();
         likeStatusSize = comment.getTotalLikes();
 
+    }
+    public void updateLikeState(Boolean likeState){
+        this.likeState = likeState;
     }
 
     public static CommentResponse from(BookComment comment) {
