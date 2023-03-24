@@ -26,19 +26,19 @@ const OAuth2RedirectHandler = (props: any) => {
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
-      getMyInfo()
-        .then((userInfo) => {
-          if (userInfo) {
-            localStorage.setItem("userId", JSON.stringify(userInfo.userId));
-            localStorage.setItem("nickname", JSON.stringify(userInfo.nickname));
-            localStorage.setItem("imageUrl", JSON.stringify(userInfo.imageUrl));
-            localStorage.setItem("gender", JSON.stringify(userInfo.gender));
-            localStorage.setItem("age", JSON.stringify(userInfo.age));
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching user info:", error);
-        });
+      // getMyInfo()
+      //   .then((userInfo) => {
+      //     if (userInfo) {
+      //       localStorage.setItem("userId", JSON.stringify(userInfo.userId));
+      //       localStorage.setItem("nickname", JSON.stringify(userInfo.nickname));
+      //       localStorage.setItem("imageUrl", JSON.stringify(userInfo.imageUrl));
+      //       localStorage.setItem("gender", JSON.stringify(userInfo.gender));
+      //       localStorage.setItem("age", JSON.stringify(userInfo.age));
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching user info:", error);
+      //   });
       if (code === "200") {
         router
           .push({
