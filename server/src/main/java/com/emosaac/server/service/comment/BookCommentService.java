@@ -6,6 +6,7 @@ import com.emosaac.server.domain.book.BookComment;
 import com.emosaac.server.domain.book.BookCommentLike;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.dto.comment.CommentLikeResponse;
 import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.CommentSaveRequest;
 import com.emosaac.server.dto.comment.CommentUpdateRequest;
@@ -92,10 +93,10 @@ public class BookCommentService {
         return bookCommentQueryRepository.findChildCommentByBookId(parentId, criteria, PageRequest.of(offset - 1, size));
     }
     @Transactional
-    public Boolean toggleBookCommentLike(Long userId, Long bookCommentId) {
+    public CommentLikeResponse toggleBookCommentLike(Long userId, Long bookCommentId) {
         BookComment bookComment = bookCommentRepository.findByBookCommentId(bookCommentId);
         User user = commonService.getUser(userId);
         BookCommentLike bookCommentLike = BookCommentLike.builder().bookComment(bookComment).user(user).build();
-        return bookComment.toggleBookCommentLike(bookCommentLike);
+        return new CommentLikeResponse(bookComment.getCommentId(), bookComment.toggleBookCommentLike(bookCommentLike), bookComment.getTotalLikes());
     }
 }
