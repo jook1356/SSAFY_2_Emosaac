@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+// import { getMyInfo } from "@/api/user/getMyInfo";
 
-const ACCESS_TOKEN = "your_access_token_key";
+const ACCESS_TOKEN = "access_token";
 
 function getUrlParameter(name: string, search: string): string {
   name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -15,9 +16,8 @@ function getUrlParameter(name: string, search: string): string {
 
 const OAuth2RedirectHandler = (props: any) => {
   const router = useRouter();
-
   useEffect(() => {
-    console.log(props);
+    // console.log(props);
     // console.log(props.token);
     const token = getUrlParameter("token", window.location.search);
     const error = getUrlParameter("error", window.location.search);
@@ -25,6 +25,7 @@ const OAuth2RedirectHandler = (props: any) => {
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
+
       if (code === "200") {
         router
           .push({

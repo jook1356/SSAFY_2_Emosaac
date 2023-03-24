@@ -1,5 +1,5 @@
 import { returnSurveyArrayType } from "@/types/survey";
-import { defaultAxiosInstance } from "./../instance";
+import { defaultAxiosInstance } from "../instance";
 
 type SurveyType = {
   status: number;

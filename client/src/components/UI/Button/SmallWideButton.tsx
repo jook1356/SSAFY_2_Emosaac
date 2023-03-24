@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 
 interface ButtonProps {
   text: string;
-  onClick: any;
+  onClick: () => void;
 }
 
 export default function SmallWideButton({ text, onClick }: ButtonProps) {
