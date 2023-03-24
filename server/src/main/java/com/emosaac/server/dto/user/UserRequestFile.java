@@ -22,7 +22,7 @@ public class UserRequestFile {
     @Length(min = 2, max = 10, message = "2~10자의 닉네임만 가능합니다.")
     private String nickName;
     //성별
-    private Boolean gender;
+    private Integer gender;
     //나이
     private Integer age;
     //프로필 이미지

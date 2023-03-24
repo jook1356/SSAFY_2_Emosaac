@@ -58,7 +58,7 @@ public class User extends BaseEntity {
 
     @Column(name = "GENDER")
     @Nullable
-    private Boolean gender; //0:남/1:여
+    private Integer gender; //0:남/1:여
 
     @Column(name = "AGE")
     @Nullable

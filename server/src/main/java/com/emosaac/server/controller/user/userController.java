@@ -47,11 +47,15 @@ public class userController {
 
     private UserRequest filetoString(UserRequestFile request) throws IOException {
         String imgUrl= "";
-        System.out.println("request.getFile() "+ request.getFile().getOriginalFilename());
-        if (request.getFile().getOriginalFilename().length()!=0 || !request.getFile().isEmpty()) {
+        UserRequest userRequest;
+//        System.out.println("request.getFile() "+ request.getFile().getOriginalFilename());
+        if (request.getFile()== null){
+            userRequest = UserRequest.of(request);
+        }
+        else if (request.getFile()!= null || request.getFile().getOriginalFilename().length()!=0 || !request.getFile().isEmpty()) {
             imgUrl = s3Uploader.upload(request.getFile(), "static/user");
         }
-        UserRequest userRequest = UserRequest.of(request, imgUrl);
+        userRequest = UserRequest.of(request, imgUrl);
         return userRequest;
     }
 
