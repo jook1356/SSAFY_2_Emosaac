@@ -274,7 +274,7 @@ const thumbnailCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
 const contentCSS = ({isDeskTop}: {isDeskTop: boolean}) => {
   return css`
     width: 100%;
-    ${isDeskTop ? 'padding-left: 10vw' : 'padding: 36px;'};
+    ${isDeskTop ? 'padding-left: 10vw' : 'padding: 24px;'};
   `;
 }
 

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import ridi from "../../../assets/platform_ridi.webp";
 import naverSeries from "../../../assets/platform_naver_series.webp";
@@ -36,11 +36,16 @@ const BookCard = ({
   minWidth,
   minHeight,
 }: Props) => {
+
+  const [user, setUser] = useState<any>(null);
+  useEffect(() => {
+    setUser(() => navigator.userAgent);
+  }, []);
+
   const isMobile = () => {
-    var user = navigator.userAgent;
-    var is_mobile = false;
+    let is_mobile = false;
     if (
-      user.indexOf("iPhone") > -1 ||
+      (user !== undefined && user.length > 0 && user.indexOf("iPhone") > -1) ||
       user.indexOf("Android") > -1 ||
       user.indexOf("iPad") > -1 ||
       user.indexOf("iPod") > -1
@@ -49,6 +54,8 @@ const BookCard = ({
     }
     return is_mobile;
   };
+
+
   const router = useRouter()
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [modalToggler, setModalToggler] = useState<boolean>(false);
@@ -59,7 +66,7 @@ const BookCard = ({
   const showModal = () => {
     setTimeout(function () {
       setModalToggler(() => true);
-    }, 500);
+    }, 400);
     setIsMouseOn(() => true);
   };
 
@@ -103,7 +110,7 @@ const BookCard = ({
       }}
       onMouseLeave={hideModal}
     >
-      {isMobile() === false && modalToggler && modal}
+      {user !== null && isMobile() === false && modalToggler && modal}
 
       <div
         className={"bookcard-inner-wrapper"}

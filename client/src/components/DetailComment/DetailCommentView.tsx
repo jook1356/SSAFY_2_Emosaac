@@ -2,62 +2,170 @@
 import { jsx, css } from "@emotion/react";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { getParentComments } from "@/api/comment/getParentComments";
+import { getChildComments } from "@/api/comment/getChildComments";
 import { returnCommentArrayType } from "@/types/comments";
-import DetailCommentViewElement from "./DetailCommentViewElement";
 import { throttle } from "lodash";
+import DetailCommentInput from "./DetailCommentInput";
+import DetailCommentViewElement from "./DetailCommentViewElement";
 
+enum Position {
+    'PARENTS',
+    'CHILDREN'
+}
 
 interface DetailCommentViewProps {
     bookId: number;
-
+    parentId: number | null;
+    position: Position;
+    criteria: "date" | "like";
+    commentsWrapperRef?: any;
 }
 
-export const DetailCommentView = ({comments, getCommentsHandler, commentsWrapperRef}: {comments: returnCommentArrayType; getCommentsHandler: Function; commentsWrapperRef: any}) => {
-    
+
+const DetailCommentView = ({bookId, parentId, position, criteria, commentsWrapperRef}: DetailCommentViewProps) => {
+
+
+    const [comments, setComments] = useState<returnCommentArrayType>([])
+    const [offset, setOffset] = useState<number>(2)
     const [getComments, setGetComments] = useState<boolean>(false)
+
+
+    useEffect(() => {
+        refreshCommentsHandler()
+    }, [])
+
+    
+    const refreshCommentsHandler = () => {
+        if (position === 0) {
+            getParentComments({bookId, criteria})
+            .then((res: returnCommentArrayType | null) => {
+                if (res !== null) {
+                    setComments(() => res)
+                    setOffset(() => 2)
+                }
+            })
+        } else if (position === 1 && parentId !== null) {
+            getChildComments({parentId, criteria: 'date', })
+            .then((res: returnCommentArrayType | null) => {
+                if (res !== null) {
+                    setComments(() => res)
+                    setOffset(() => 2);
+                }
+            });
+        }
+    }
+
+
+    const getCommentsHandler = () => {
+        if (position === 0) {
+            getParentComments({bookId, criteria, offset})
+            .then((res: returnCommentArrayType | null) => {
+                if (res !== null) {
+                    setComments((prev) => [...prev, ...res])
+                    setOffset((prev) => prev + 1)
+                }
+            })
+        } else if (position === 1 && parentId !== null) {
+            getChildComments({ parentId, criteria: 'date', offset})
+            .then((res: returnCommentArrayType | null) => {
+                if (res !== null) {
+                    setComments((prev) => [...prev, ...res])
+                    setOffset((prev) => prev + 1)
+                }
+            });
+        }
+    }
+
+
+
+    
 
     useEffect(() => {
         if (getComments === true) {
-            getCommentsHandler('date')
+            getCommentsHandler()
             setGetComments(() => false)
         }
-    }, [getComments])
+    }, [getComments, comments])
 
-    const onWheelHandler = useMemo(
+    const setGetCommentsHandler = () => {
+        setGetComments(() => true)
+    }
+
+    const onWheelGetParentCommentsHandler = useMemo(
         () =>
             throttle((event) => {
-                console.log(commentsWrapperRef)
-                if (event.deltaY > 0) {
-                    if (commentsWrapperRef.current && (((commentsWrapperRef.current.scrollHeight - 10) < commentsWrapperRef.current.clientHeight) || commentsWrapperRef.current.scrollTop > commentsWrapperRef.current.scrollHeight - commentsWrapperRef.current.clientHeight - 100)) {
-                        setGetComments(() => true)
+                if (position === 0 && event.deltaY > 0) {
+                    if (commentsWrapperRef?.current && (((commentsWrapperRef.current.scrollHeight - 10) < commentsWrapperRef.current.clientHeight) || commentsWrapperRef.current.scrollTop > commentsWrapperRef.current.scrollHeight - commentsWrapperRef.current.clientHeight - 100)) {
+                        setGetCommentsHandler()
                     }
                 }
             }, 300),
         [comments]
     );
 
+    const onClickGetChildCommentsHandler = () => {
+        setGetCommentsHandler()
+    }
+
+
     const commentsRender = comments.map((el, idx) => {
         return (
-            <DetailCommentViewElement comment={el} />
-        )   
+            <div>
+                <DetailCommentViewElement bookId={bookId} comment={el} parentId={el.commentId} refreshCommentsHandler={refreshCommentsHandler} />
+            </div>
+        )
     })
-    return (
-        <div css={commentsWrapperCSS} onWheel={onWheelHandler}>
-            {commentsRender}
+
+    const showMoreChildComments = (
+        <div onClick={onClickGetChildCommentsHandler} css={childCommentsShowMoreCSS}>답글 더보기 ∨</div>
+    )
+
+    const inputRender = (
+        <DetailCommentInput action={'post'} bookId={bookId} parentId={parentId} refreshCommentsHandler={refreshCommentsHandler}/>
+    )
+
+    const noCommentsRender = (
+        <div css={noCommentsWrapperCSS}>
+            댓글을 작성해 주세요!
         </div>
     )
-}
 
-export const DetailCommentEmpty = () => {
     return (
-        <div>
-
+        <div ref={commentsWrapperRef} onWheel={onWheelGetParentCommentsHandler}>
+            {position === 0 && inputRender}
+            {comments.length !== 0 ? commentsRender : noCommentsRender}
+            {position === 1 && <div css={childCommentsInputWrapperCSS}>{inputRender}</div>}
+            {(position === 1 && comments.length !== 0) && showMoreChildComments}
         </div>
     )
+
 }
 
-const commentsWrapperCSS = css`
-    margin-top: 24px;
-    margin-bottom: 24px;
+
+const childCommentsShowMoreCSS = css`
+    width: 100%;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-color-4);
+    cursor: pointer;
+    user-select: none;
+
 `
 
+const childCommentsInputWrapperCSS = css`
+    margin-top: 16px;
+    margin-bottom: 16px;
+`
+
+const noCommentsWrapperCSS = css`
+    height: 64px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
+export default DetailCommentView

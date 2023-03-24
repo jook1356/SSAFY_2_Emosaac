@@ -5,7 +5,9 @@ import { useRef, useEffect, useState } from "react";
 import DetailCommentInput from "./DetailCommentInput";
 import { returnCommentArrayType } from "@/types/comments";
 import { getParentComments } from "@/api/comment/getParentComments";
-import { DetailCommentView, DetailCommentEmpty } from "./DetailCommentView";
+import DetailCommentView from "./DetailCommentView";
+
+
 
 interface DetailCommentProps {
     bookId: number;
@@ -14,50 +16,13 @@ interface DetailCommentProps {
 
 const DetailComment = ({bookId, modalHandler}: DetailCommentProps) => {
 
-    const [comments, setComments] = useState<returnCommentArrayType>([])
-    const [offset, setOffset] = useState<number>(2)
     const commentsWrapperRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        getParentComments({bookId})
-        .then((res: returnCommentArrayType | null) => {
-            if (res !== null) {
-                setComments(() => res)
-                setOffset(() => 2)
-            }
-        })
-    }, [])
-
-    const refreshCommentsHandler = () => {
-        getParentComments({bookId})
-        .then((res: returnCommentArrayType | null) => {
-            if (res !== null) {
-                setComments(() => res)
-                setOffset(() => 2)
-            }
-        })
-    }
-
-
-    
-    const getCommentsHandler = (criteria: 'date' | 'like') => {
-        
-            getParentComments({bookId, criteria, offset})
-            .then((res: returnCommentArrayType | null) => {
-                if (res !== null) {
-                    setComments((prev) => [...prev, ...res])
-                    setOffset((prev) => prev + 1)
-                }
-            })
-        
-        
-    }
 
     return (
         <div ref={commentsWrapperRef} css={modalWrapperCSS}>
-            <DetailCommentInput action={"post"} bookId={bookId} parentId={null} refreshCommentsHandler={refreshCommentsHandler}  />
-            {comments ? <DetailCommentView comments={comments} getCommentsHandler={getCommentsHandler} commentsWrapperRef={commentsWrapperRef}/> : <DetailCommentEmpty />}
             <button onClick={modalHandler}>닫기</button>
+            <DetailCommentView bookId={bookId} parentId={null} position={0} criteria={'date'} commentsWrapperRef={commentsWrapperRef} />
         </div>
     )
 }
