@@ -19,5 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path('recommand/', include('recommand.urls')),
     path('recommand/userbasedcf', include('userbasedcf.urls')),
+    path('recommand/pridict', include('userbasedpridict.urls')),
     path('admin/', admin.site.urls),
 ]
