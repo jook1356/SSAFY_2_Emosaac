@@ -20,6 +20,7 @@ import static com.emosaac.server.domain.book.QBookCommentLike.bookCommentLike;
 @Repository
 public class BookCommentQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
+    // 작품 당 부모 댓글 조회
     public List<CommentResponse> findParentCommentByBookId(Long bookId, String criteria, PageRequest pageRequest){
         return jpaQueryFactory.select(new QCommentResponse(bookComment))
                 .distinct().from(bookComment)
@@ -30,7 +31,15 @@ public class BookCommentQueryRepository {
                 .fetch();
 
     }
-
+    // 부모 댓글 갯수
+    public Long findParentCommentCount(Long bookId){
+        return jpaQueryFactory.select(bookComment.count())
+                .distinct().from(bookComment)
+                .where(bookComment.book.bookId.eq(bookId),
+                        bookComment.depth.eq(0))
+                .fetchOne();
+    }
+    // 작품에 사용자가 좋아요를 눌렀는 지 여부
     public Optional<BookCommentLike> findBookCommentLikeState(Long commentId, Long userId){
         return Optional.ofNullable(jpaQueryFactory.select(bookCommentLike)
                 .distinct().from(bookCommentLike)
@@ -39,7 +48,7 @@ public class BookCommentQueryRepository {
                 .fetchOne());
 
     }
-
+    // 부모 댓글마다 자식 댓글 조회
     public List<CommentResponse> findChildCommentByBookId(Long parentId, String criteria, PageRequest pageRequest){
         return jpaQueryFactory.select(new QCommentResponse(bookComment))
                 .distinct().from(bookComment)
@@ -47,7 +56,13 @@ public class BookCommentQueryRepository {
                 .orderBy(findCriteria(criteria))
                 .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
                 .fetch();
-
+    }
+    // 부모 댓글 당 자식 댓글 수
+    public Long findChildCommentCount(Long parentId){
+        return jpaQueryFactory.select(bookComment.count())
+                .distinct().from(bookComment)
+                .where(bookComment.parent.commentId.eq(parentId))
+                .fetchOne();
     }
 
     private OrderSpecifier<?> findCriteria(String criteria){ //정렬 조건

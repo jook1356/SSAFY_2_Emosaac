@@ -88,6 +88,7 @@ public class BookCommentService {
     public List<CommentResponse> findParentBookCommentList(Long userId, Long bookId, String criteria, int offset, int size) {
         List<CommentResponse> res = bookCommentQueryRepository.findParentCommentByBookId(bookId, criteria, PageRequest.of(offset - 1, size));
         for(CommentResponse cr : res){
+            cr.updateTotalCount(bookCommentQueryRepository.findParentCommentCount(bookId));
             if(bookCommentQueryRepository.findBookCommentLikeState(cr.getCommentId(), userId).isEmpty()){
                 cr.updateLikeState(false);
             }else {
@@ -100,6 +101,7 @@ public class BookCommentService {
     public List<CommentResponse> findChildBookCommentList(Long userId, Long parentId, String criteria, int offset, int size) {
         List<CommentResponse> res = bookCommentQueryRepository.findChildCommentByBookId(parentId, criteria, PageRequest.of(offset - 1, size));
         for(CommentResponse cr : res){
+            cr.updateTotalCount(bookCommentQueryRepository.findChildCommentCount(parentId));
             if(bookCommentQueryRepository.findBookCommentLikeState(cr.getCommentId(), userId).isEmpty()){
                 cr.updateLikeState(false);
             }else {

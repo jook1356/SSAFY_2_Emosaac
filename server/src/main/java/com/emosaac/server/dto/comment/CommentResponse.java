@@ -34,6 +34,7 @@ public class CommentResponse {
     private Boolean isChild = false; // 자식 가지고 있는지
     private Integer likeStatusSize;
     private Boolean likeState;
+    private Long totalCount;
 
 //    private List<CommentResponse> children = new ArrayList<>();
     @QueryProjection
@@ -79,7 +80,9 @@ public class CommentResponse {
     public void updateLikeState(Boolean likeState){
         this.likeState = likeState;
     }
-
+    public void updateTotalCount(Long totalCount){
+        this.totalCount = totalCount;
+    }
     public static CommentResponse from(BookComment comment) {
         return comment.getIsDelete() ?
                 new CommentResponse(comment, "삭제된 댓글입니다") : new CommentResponse(comment);
