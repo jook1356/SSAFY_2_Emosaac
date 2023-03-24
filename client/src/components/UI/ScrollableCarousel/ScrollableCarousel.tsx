@@ -3,6 +3,7 @@ import { jsx, css } from "@emotion/react";
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { throttle } from "lodash";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
+import { returnBookContentType } from "@/types/books";
 
 // import Test from "./Test";
 import BookCard from "../BookCard/BookCard";
@@ -104,9 +105,10 @@ const ScrollableCarousel = ({ API, identifier }: any) => {
           wrapperRef.current.clientWidth) ||
       bookListData.length - loadingTag.length - standard <= loadingTag.length
     ) {
-      API(bookListData.length, bookListData.length + quantityPerPage + 1).then(
-        (res: object[]) => {
-          setBookListData((prev) => [...prev, ...res]);
+      API({bookList: bookListData, size: bookListData.length + quantityPerPage + 1}).then(
+        (res: returnBookContentType) => {
+          console.log(res)
+          setBookListData((prev) => [...prev, ...res.content]);
         }
       );
     }

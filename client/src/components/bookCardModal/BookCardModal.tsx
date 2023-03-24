@@ -114,10 +114,10 @@ const BookCardModal = ({
           isOpened: isOpened,
         })}
       >
-        <div css={backgroundCSS({ imgUrl: bookData.img })}></div>
+        <div css={backgroundCSS({ imgUrl: bookData.thumbnail })}></div>
         <div css={imageWrapperCSS}>
           <img
-            src={bookData && bookData.img}
+            src={bookData && bookData.thumbnail}
             alt={bookData && bookData.title}
             css={imageCSS({
               modalToggler: contentToggler,

@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 interface ButtonProps {
   text: string;
   isClicked: boolean;
-  onClick: any;
+  onClick?: any;
 }
 const ToggleButton = ({ text, isClicked, onClick }: ButtonProps) => {
   return (

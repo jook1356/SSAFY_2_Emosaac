@@ -52,16 +52,20 @@ export const NavigationBar = () => {
   });
   function onClickSearchBar() {
     if (!isMobile) {
-      setIsSearchBoxOpen(!isSearchBoxOpen);
+      setIsSearchBoxOpen(true);
     }
   }
   function onClickSearchIcon() {
     setIsSearchBoxOpen(!isSearchBoxOpen);
   }
   function onClickSearchMobile() {
-    setIsSearchClicked(!isSearchClicked);
-    setIsSearchBoxOpen(!isSearchBoxOpen);
+    setIsSearchClicked(true);
   }
+  useEffect(() => {
+    if (!isSearchBoxOpen) {
+      setIsSearchClicked(true);
+    }
+  }, [isSearchBoxOpen]);
   useEffect(() => {
     const pathName = router.pathname.split("/")[1];
     switch (pathName) {

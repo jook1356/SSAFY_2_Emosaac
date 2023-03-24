@@ -12,8 +12,14 @@ import RowTitle from "@/components/bookTab/RowTitle/RowTitle";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 // import contentBannerDesktop from "/assets/content_banner_desktop_tablet.png"
 // import contentBannerMobile from "/assets/content_banner_mobile.png"
+import { getBooksByGenre } from "@/api/book/getBooksByGenre";
+import { bookContentType } from "@/types/books";
 
-export default function Home() {
+interface HomeProps {
+  highlightedBookData: bookContentType[]
+}
+
+export default function Home({highlightedBookData}: HomeProps) {
   const parentRef = useRef<HTMLInputElement>(null);
 
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
@@ -27,11 +33,20 @@ export default function Home() {
     ],
   };
 
-  const getBookData = recvBooks(0, 20).then((res: any) =>
-    setBookData(() => res)
-  );
+  // const getBookData = recvBooks(0, 20).then((res: any) =>
+  //   setBookData(() => res)
+  // );
   const [bookData, setBookData] = useState<object[]>([]);
   // ________________________________________________________________________________________________
+
+
+  
+
+  const getBooksByGenreAPI = ({bookList, size}: {bookList: bookContentType[]; size: number}) => {
+    const prevId = bookList.length ? bookList[bookList.length - 1].bookId : 0
+    const prevScore = bookList.length ? bookList[bookList.length - 1].score : 10
+    return getBooksByGenre({genreCode: 10, typeCode: 0, prevId: prevId, prevScore: prevScore, size: size })
+  }
 
   return (
     <div css={indexWrapperCSS}>
@@ -50,21 +65,21 @@ export default function Home() {
       </div>
 
       <div css={highlightedCarouselWrapper}>
-        {bookData.length !== 0 && <HighlightedCarousel bookData={bookData} />}
+        <HighlightedCarousel bookData={highlightedBookData} />
       </div>
       <div css={whiteSpace2CSS} />
 
       <div css={innerLayoutWrapperCSS({ isDeskTop, isTablet, isMobile })}>
         <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
-          <ScrollableCarousel API={recvBooks} identifier={"test1"} />
+          <ScrollableCarousel API={getBooksByGenreAPI} identifier={"test1"} />
         </div>
         <div css={whiteSpace1CSS} />
-        <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
+        {/* <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
           <ScrollableCarousel API={recvBooks} identifier={"test1"} />
         </div>
-        <div css={whiteSpace1CSS} />
+        <div css={whiteSpace1CSS} /> */}
       </div>
 
       <img
@@ -77,7 +92,7 @@ export default function Home() {
         css={bannerImage}
       />
 
-      <div css={innerLayoutWrapperCSS({ isDeskTop, isTablet, isMobile })}>
+      {/* <div css={innerLayoutWrapperCSS({ isDeskTop, isTablet, isMobile })}>
         <div css={whiteSpace1CSS} />
         <RowTitle beforeLabel="너만의" highlightedLabel=" EMOSAAC!" />
         <div css={bookCarouselWrapperCSS}>
@@ -89,10 +104,32 @@ export default function Home() {
           <ScrollableCarousel API={recvBooks} identifier={"test1"} />
         </div>
         <div css={whiteSpace1CSS} />
-      </div>
+      </div> */}
+
+
     </div>
   );
 }
+
+
+export const getServerSideProps = async (context: any) => {
+  // 임시 API
+  const data = await getBooksByGenre({genreCode: 11, typeCode: 0, prevId: 0, prevScore: 10, size: 20 })
+    .then((res) => {
+      if (res !== null) {
+        return res.content;
+      }
+    })
+    .catch((err) => {
+      console.log("pages/books/index.tsx => getBooksByGenre", err);
+    });
+
+  return await {
+    props: {
+      highlightedBookData: data,
+    },
+  };
+};
 
 const indexWrapperCSS = css`
   overflow: hidden;
