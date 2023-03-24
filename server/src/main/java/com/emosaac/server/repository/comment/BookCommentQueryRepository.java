@@ -1,6 +1,6 @@
 package com.emosaac.server.repository.comment;
 
-import com.emosaac.server.domain.book.BookComment;
+import com.emosaac.server.domain.book.BookCommentLike;
 import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.QCommentResponse;
 import com.querydsl.core.types.OrderSpecifier;
@@ -11,8 +11,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.emosaac.server.domain.book.QBookComment.bookComment;
+import static com.emosaac.server.domain.book.QBookCommentLike.bookCommentLike;
 
 @RequiredArgsConstructor
 @Repository
@@ -26,6 +28,15 @@ public class BookCommentQueryRepository {
                 .orderBy(findCriteria(criteria))
                 .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
                 .fetch();
+
+    }
+
+    public Optional<BookCommentLike> findBookCommentLikeState(Long commentId, Long userId){
+        return Optional.ofNullable(jpaQueryFactory.select(bookCommentLike)
+                .distinct().from(bookCommentLike)
+                .where(bookComment.commentId.eq(commentId),
+                        bookComment.user.userId.eq(userId))
+                .fetchOne());
 
     }
 
