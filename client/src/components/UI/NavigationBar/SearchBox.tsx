@@ -24,7 +24,7 @@ const SearchBox = (props: Props) => {
     props.setIsSearchBoxOpen(false);
   }
   useEffect(() => {
-    recvBooks(0, 4).then((res: any) => setBookData(() => res));
+    recvBooks(0, 3).then((res: any) => setBookData(() => res));
   }, []);
   return (
     <div css={searchWrapCSS}>

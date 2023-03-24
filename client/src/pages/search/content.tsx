@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { GetServerSideProps } from "next";
-import { getListByContent } from "../../api/search";
+import { useState, useEffect, useRef } from "react";
+import { getListByContent } from "@/api/search/getSearchBooksByContent";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 import BookCardSearch from "@/components/UI/BookCard/BookCardSearch";
+import { SearchListView } from "@/components/search/SearchListView";
 import ToggleButton from "@/components/UI/Button/ToggleButton";
 import batchim from "@/components/search/batchim";
 
@@ -23,7 +23,13 @@ const content = ({ type, content, data }: any) => {
   const router = useRouter();
   const [isDeskTop, isTablet, isMobile] = useIsResponsive();
   const [typeList, setTypeList] = useState([false, false, false]);
+  const [books, setBooks] = useState(data);
+  const [prevId, setPrevId] = useState(0);
+  const [prevScore, setPrevScore] = useState(10);
+  const [isPageEnd, setIsPageEnd] = useState(data === null);
+  const booksWrapRef = useRef<HTMLDivElement>(null);
   const josa = batchim(content);
+
   function onClickType(type: string) {
     switch (type) {
       case "total":
@@ -43,6 +49,19 @@ const content = ({ type, content, data }: any) => {
       },
     });
   }
+
+  function getSearchBooks(prevId: number, prevScore: number) {
+    const size = 14;
+
+    getListByContent({ type, content, prevId, prevScore, size }).then((res) => {
+      if (res !== null) {
+        setBooks((prev: any) => [...prev, ...res]);
+      } else {
+        setIsPageEnd(true);
+      }
+    });
+  }
+
   useEffect(() => {
     switch (type) {
       case "total":
@@ -54,7 +73,15 @@ const content = ({ type, content, data }: any) => {
       default:
         setTypeList([false, false, true]);
     }
+    if (books !== null) {
+      const prevData = books.slice(-1)[0];
+      console.log(prevData);
+      setPrevId(prevData.bookId);
+      setPrevScore(prevData.score);
+      // setPrevScore(10);
+    }
   }, []);
+
   return (
     <>
       <h2
@@ -63,6 +90,7 @@ const content = ({ type, content, data }: any) => {
         검색 결과
       </h2>
       <div
+        ref={booksWrapRef}
         css={[
           innerPaddingCSS({ isDeskTop, isTablet, isMobile }),
           searchResCSS({ isDeskTop, isTablet, isMobile }),
@@ -102,6 +130,14 @@ const content = ({ type, content, data }: any) => {
             />
           ))}
         </div>
+        <SearchListView
+          books={books}
+          getSearchBooks={getSearchBooks}
+          booksWrapRef={booksWrapRef}
+          prevId={prevId}
+          prevScore={prevScore}
+          isPageEnd={isPageEnd}
+        />
       </div>
     </>
   );
@@ -122,7 +158,7 @@ const innerCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   return css`
     ${isDeskTop && "margin: 20px 105px"}
     ${isTablet && "margin: 20px 50px"}
-    ${isMobile && "margin: 20px 20px"}
+      ${isMobile && "margin: 20px 20px"}
   `;
 };
 
@@ -130,7 +166,7 @@ const innerPaddingCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   return css`
     ${isDeskTop && "padding: 20px 105px"}
     ${isTablet && "padding: 20px 50px"}
-    ${isMobile && "padding: 20px 20px"}
+      ${isMobile && "padding: 20px 20px"}
   `;
 };
 
@@ -179,15 +215,15 @@ const booksWrapCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
 export const getServerSideProps = async (context: any) => {
   const type = context.query.type;
   const content = context.query.query;
-  const [prevId, prevScore, size] = [20493, 10, 14];
+  const [prevId, prevScore, size] = [0, 10, 14];
   if (typeof type == "string" && typeof content == "string") {
-    const data = await getListByContent(
+    const data = await getListByContent({
       type,
       content,
       prevId,
       prevScore,
-      size
-    ).then((res) => {
+      size,
+    }).then((res) => {
       return res;
     });
     return await {

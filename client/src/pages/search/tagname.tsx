@@ -3,7 +3,8 @@ import { css } from "@emotion/react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
-import { getListByTagName } from "../../api/search";
+// import { getListByTagName } from "../../api/search/search";
+import { getListByTagName } from "@/api/search/getSearchBooksByTagName";
 import { useIsResponsive } from "@/components/Responsive/useIsResponsive";
 import BookCardSearch from "@/components/UI/BookCard/BookCardSearch";
 import ToggleButton from "@/components/UI/Button/ToggleButton";
@@ -43,6 +44,7 @@ const tagName = ({ type, tagName, data }: any) => {
       },
     });
   }
+
   useEffect(() => {
     switch (type) {
       case "total":
@@ -55,12 +57,13 @@ const tagName = ({ type, tagName, data }: any) => {
         setTypeList([false, false, true]);
     }
   }, []);
+
   return (
     <>
       <h2
         css={[innerPaddingCSS({ isDeskTop, isTablet, isMobile }), headline2CSS]}
       >
-        태그 검색 결과
+        검색 결과
       </h2>
       <div
         css={[
@@ -68,7 +71,7 @@ const tagName = ({ type, tagName, data }: any) => {
           searchResCSS({ isDeskTop, isTablet, isMobile }),
         ]}
       >
-        <div css={searchContentCSS}>
+        <div css={searchTagNameCSS}>
           "#{tagName}"<span css={josaCSS}>{josa} 포함된 컨텐츠</span>
         </div>
         <div css={toggleWrapCSS}>
@@ -146,7 +149,7 @@ const searchResCSS = ({ isDeskTop, isTablet, isMobile }: IsResponsive) => {
   `;
 };
 
-const searchContentCSS = css`
+const searchTagNameCSS = css`
   height: 70px;
   display: flex;
   align-items: center;
@@ -181,13 +184,13 @@ export const getServerSideProps = async (context: any) => {
   const tagName = context.query.query;
   const [prevId, prevScore, size] = [20493, 10, 14];
   if (typeof type == "string" && typeof tagName == "string") {
-    const data = await getListByTagName(
+    const data = await getListByTagName({
       type,
       tagName,
       prevId,
       prevScore,
-      size
-    ).then((res) => {
+      size,
+    }).then((res) => {
       return res;
     });
     return await {
