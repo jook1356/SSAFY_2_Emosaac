@@ -25,7 +25,7 @@ public class USERBasedCFModel {
     private User user;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="BOOK_NO")
-    private Book book;
+    private String bookNoList;
+
+    private Integer typeCode;
 }
