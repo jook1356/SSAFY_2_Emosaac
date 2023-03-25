@@ -25,8 +25,17 @@ from recommand.models import Book
 
 from django.db import connection
 
+def UserSave():
+    #save test
+    User(
+        email = "dfsd",
+        user_name = "dsfsdf",
+        created_dt = datetime.now(),
+        modified_dt = datetime.now()
+    ).save()
 
-def userbasedcf():
+
+def UserListView():
     #user select test
     try:
         cursor = connection.cursor()
@@ -43,10 +52,8 @@ def userbasedcf():
     except:
         connection.rollback()
 
-    return
 
-def userbasedcf_save():
-    return
+
 
 def execute_algorithm():
     return
