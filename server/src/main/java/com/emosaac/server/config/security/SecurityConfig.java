@@ -102,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/blog/**")
                 .permitAll()
-                .antMatchers("/api/books/day", "/api/books/genre") //북 컨르롤러는 로그인하지 않아도 되도록
+                .antMatchers("/api/books/day/**", "/api/books/genre/**") //북 컨르롤러는 로그인하지 않아도 되도록
                 .permitAll()
                 .antMatchers("/api/recommand/best30", "/api/recommand/md", "/api/recommand/newbook") //북 컨르롤러는 로그인하지 않아도 되도록
                 .permitAll()
@@ -131,7 +131,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "https://i8d210.p.ssafy.io", "http://i8d210.p.ssafy.io:8081"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "https://j8d203.p.ssafy.io/", "http://j8d203.p.ssafy.io:8081"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedMethods(
                 Arrays.asList("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
