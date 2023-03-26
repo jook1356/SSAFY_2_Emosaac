@@ -3,13 +3,15 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render
 
-from userbasedcf import recommandWebtoon, recommandNovel, recommandNovelByAgeAndGender, recommandWebtoonByAgeAndGender
+from userbasedcf import recommandNovel, recommandWebtoon, recommandNovelByAgeAndGender_notuse, recommandWebtoonByAgeAndGender_notuse, \
+    totalWebtoonByAgeAndGender
 
 
 def index(request):
-    # recommandWebtoon.execute_algorithm()
     # recommandNovel.execute_algorithm()
-    recommandNovelByAgeAndGender.execute_algorithm()
-    recommandWebtoonByAgeAndGender.execute_algorithm()
+    recommandWebtoon.execute_algorithm()
+    # recommandNovelByAgeAndGender.execute_algorithm()
+    # recommandWebtoonByAgeAndGender.execute_algorithm()
+    # totalWebtoonByAgeAndGender.execute_algorithm()
 
     return render(request, 'hi')

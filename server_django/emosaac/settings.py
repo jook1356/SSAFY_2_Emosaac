@@ -41,7 +41,27 @@ INSTALLED_APPS = [
     'rest_framework',
     'userbasedcf',
     'userbasedpridict',
+    'django_crontab', #크론 설정
 ]
+
+CRONJOBS = [
+    # ('*/1 * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 1분마다  실행
+    # ('*/3 * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm'),  # 매 1분마다  실행
+    # ('*/3 * * * *', 'userbasedcf.recommandNovel.execute_algorithm'),  # 매 1분마다  실행
+    # ('*/3 * * * *', 'userbasedcf.totalNovelByAgeAndGender.execute_algorithm'),  # 매 1분마다  실행
+    # ('*/3 * * * *', 'userbasedcf.totalWebtoonByAgeAndGender.execute_algorithm')  # 매 1분마다  실행
+
+    ('* * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 분마다 실행
+    ('* * * * *', 'userbasedcf.recommandNovel.execute_algorithm()'),  # 매 분마다 실행
+    ('* * * * *', 'userbasedcf.totalNovelByAgeAndGender.execute_algorithm()'),
+    ('* * * * *', 'userbasedcf.totalWebtoonByAgeAndGender.execute_algorithm'),  # 매 분마다 실행
+    ('* * * * *', 'userbasedcf.parse.execute_algorithm'), # 매 분마다 실행
+    ('* * * * *', 'server_django.userbasedcf.parse.execute_algorithm'),  # 매 분마다 실행
+    ('* * * * *', 'server_django.recommand.parse.test'), # 매 분마다 실행
+    ('* * * * *', 'server_django.recommand.parse.test()')  # 매 분마다 실행
+
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -113,7 +133,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False  # False 로 설정해야 DB에 변경 된 TIME_ZONE 이 반영 됨
 
 
 # Static files (CSS, JavaScript, Images)

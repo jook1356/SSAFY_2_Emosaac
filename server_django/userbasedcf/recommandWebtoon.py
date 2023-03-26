@@ -19,8 +19,9 @@ django.setup()
 
 from django.db import connection
 
+# 나이, 성별 필터링 되어있음
 
-class UserBasedCFNovel:
+class UserBasedCFWebtoon:
     def __init__(self):
 
         self.cursor = connection.cursor()
@@ -32,28 +33,28 @@ class UserBasedCFNovel:
         self.users_result = pd.DataFrame(data=self.users, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=0"
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=0"
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.scores_result = pd.DataFrame(data=self.scores, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=0"
         self.cursor.execute(self.strSql)
         self.bookmarks = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.bookmarks_result = pd.DataFrame(self.bookmarks, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=0"
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -61,33 +62,6 @@ class UserBasedCFNovel:
 
         connection.commit()
         connection.close()
-
-    # def generateGroup(self):
-    #     # 같은 나이대, 같은 성별로 그룹을 형성 / 유저 정보로 유사도 검사
-    #
-    #     pivot_table = self.users_result.pivot_table(self.users_result, index=['user_id'], columns=["gender", 'age'])
-    #     print(pivot_table)
-    #     result = pivot_table.groupby(['user_id'], axis=1).sum('gender')
-    #     result.fillna(0, inplace=True)
-    #     print("////////////////////res")
-    #
-    #     # print(pivot_table)
-    #
-    #     print("////////////////////")
-    #
-    #     user_based_collab = cosine_similarity(result)
-    #
-    #     # 사용자 유사도 확인
-    #     user_based_collab = pd.DataFrame(user_based_collab, index=result.index, columns=result.index)
-    #
-    #     print(user_based_collab)
-    #
-    #     for target_user in user_based_collab.columns:
-    #         sim_users = user_based_collab.sort_values(by=target_user, ascending=False).index[1:11]
-    #         # print(sim_users[0:10])
-    #         # print(sim_users[0])
-    #         print("///////////")
-    #     pass
 
     def calcSimilarity(self):
 
@@ -108,26 +82,45 @@ class UserBasedCFNovel:
             users_books, self.reads_result, how='outer', on=["user_no", "book_no"]
         )
 
-        print(users_books)
+        # 테스트중
+        # 문제: 나이가 같거나 성별이 같아야한다는 필터링 조건을 넣으니 결과가 안나오는 문제 발생..
+        users_books = pd.merge(
+            users_books, self.users_result, how='left', left_on=["user_no"], right_on=["user_id"]
+        )
 
-        print("/************")
+        # print(users_books)
 
+        # Create pivot table with age and gender
         pivot_table = pd.pivot_table(
             users_books,
-            index=['user_no'],
+            index=['user_no', 'age', 'gender'],
             columns=['book_no'],
-            values=['values_x', 'values_y', 'score'],
+            values=['values_x', 'values_y', 'score', 'values'],
             aggfunc=sum,
         )
 
-        result = pivot_table.groupby(['book_no'], axis=1).sum()
-        result.fillna(0, inplace=True)
+        # print(pivot_table)
+        print("/************")
+        # pivot_table = pd.pivot_table(
+        #     users_books,
+        #     index=['user_no'],
+        #     columns=['book_no'],
+        #     values=['values_x', 'values_y', 'score' ,'values'],
+        #     aggfunc=sum,
+        # )
+
+        # result = pivot_table.groupby(['book_no'], axis=1).sum()
+        # result.fillna(0, inplace=True)
         # print(result)
+        print("???????????????????????????????????")
+        result = pivot_table.groupby(['book_no'], axis=1).mean()
+        result.fillna(0, inplace=True)
+        print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
-
-
+        print("////////please")
+        # print(user_similarity[(user_similarity.index.get_level_values('age') == 20)])
 
         user_based_book = {}
         for target_user in user_similarity.columns:
@@ -135,6 +128,11 @@ class UserBasedCFNovel:
             # target_user: 추천 받을 대상
             # sim_users: 추천 받을 대상과 유사한 유저
 
+            target_age = target_user[1]
+            target_gender = target_user[2]
+
+            # 나이와 성별 필터링 적용
+            user_similarity = user_similarity[(user_similarity.index.get_level_values('age') == target_age) | (user_similarity.index.get_level_values('gender') == target_gender)]
             sim_users = user_similarity.sort_values(by=target_user, ascending=False).index[1:11]
             # print(sim_users)
 
@@ -143,15 +141,15 @@ class UserBasedCFNovel:
 
             best = []
             for i in sim_users:
-                # users_books_filtered = users_books[users_books['gender'] == user_gender]
 
                 # 유사도가 높은 10명의 사용자들이 평가점수를 높게 주었던 item list(상위 10개)를 가져온다.
                 # user가 읽지 않은 아이템을 추천해야한다.
                 # 1) 이미 평점을 남긴 책: 데이터프레임에서 target_user열의 값이 0인 행을 찾은 후, i번째 열의 값을 선택
                 # 2) - 조회만 한 책: 데이터프레임에서 target_user열의 값이 0.5인 행을 찾은 후, i번째 열의 값을 선택
                 #    - 0.5는 조회에 기반한 점수인데, 단순 조회를 한것만으로 읽었다고 가정할수 없어 추천 목록에서 제외하지 않았음
+                # 0.5-> 0.125 : sum->mean
                 result_sorted = result_T.loc[:, i][
-                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.5))].sort_values(
+                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.125))].sort_values(
                     ascending=False)
                 best.append(result_sorted.index[:10].tolist())
 
@@ -173,7 +171,7 @@ class UserBasedCFNovel:
 
     def deleteOriginData(self):
         # 기존 데이터 지우기
-        UserBasedCfModel.objects.filter(type_cd=1).delete()
+        UserBasedCfModel.objects.filter(type_cd=0).delete()
 
     def save(self):
         user_based_book = self.calcSimilarity()
@@ -190,16 +188,32 @@ class UserBasedCFNovel:
                 book_str += str(book_no) + " "
 
             UserBasedCfModel(
-                user_no=User.objects.get(user_id=user_no),
+                user_no=User.objects.get(user_id=user_no[0]),
                 book_no_list=book_str,
-                type_cd=1,
+                type_cd=0,
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
+            
+            # //////////////필터 적용안된 경우//////////////
+            # UserBasedCfModel(
+            #     user_no=User.objects.get(user_id=user_no),
+            #     book_no_list=book_str,
+            #     type_cd=0,
+            #     created_dt=datetime.now(),
+            #     modified_dt=datetime.now()
+            # ).save()
+
+        # print(user_based_book)
 
 
 def execute_algorithm():
-    UserBasedCFNovel().save()
+    # UserBasedCFNovel().save()
+    print("---------------------------------------------------")
+
+    UserBasedCFWebtoon().save()
+    print("---------------------------------------------------")
+    # UserBasedCFWebtoon().generateGroup()
 
 
 if __name__ == "__main__":
