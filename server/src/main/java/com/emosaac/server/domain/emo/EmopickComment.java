@@ -2,8 +2,12 @@ package com.emosaac.server.domain.emo;
 
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.book.BookComment;
+import com.emosaac.server.domain.book.BookCommentLike;
 import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.comment.CommentUpdateRequest;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -49,9 +53,35 @@ public class EmopickComment extends BaseEntity {
 
     @ColumnDefault("false")
     private Boolean isDelete; //삭제여부
-
+    private Double likeScore;
     @Embedded
     private final EmoCommentLikeList emoCommentLikeList = new EmoCommentLikeList();
+
+    @Builder
+    public EmopickComment(User user, Emopick emopick, String content, EmopickComment parent, Integer depth) {
+        this.user = user;
+        this.emopick = emopick;
+        this.content = content;
+        this.parent = parent;
+        this.depth = depth;
+    }
+    public void setChild(EmopickComment emopickComment) {
+        this.children.add(emopickComment);
+    }
+    public void updateDeleteStatus() {
+        this.isDelete = true;
+        this.content = null;
+    }
+    public void update(CommentUpdateRequest request){
+        this.content = request.getContent();
+    }
+
+    public boolean toggleEmopickCommentLike(EmoCommentLike emoCommentLike) {
+        return emoCommentLikeList.toggleEmopickCommentLike(emoCommentLike);
+    }
+    public Integer getTotalLikes(){
+        return emoCommentLikeList.size();
+    }
 
 
 }

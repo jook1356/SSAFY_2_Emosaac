@@ -77,9 +77,18 @@ public class BookCommentService {
                 .orElseThrow(() -> new ResourceNotFoundException("BookComment", "commentId", commentId));
         validBookCommentUser(userId, bookComment.getUser().getUserId());
 
-        if(!bookComment.getChildren().isEmpty()){ // 자식 댓글이 있는 경우
+        if(bookComment.getParent() == null && !bookComment.getChildren().isEmpty()){ // 부모 댓글인데 자식 댓글이 있는 경우
+
             bookComment.updateDeleteStatus();
+        }else if(bookComment.getParent() != null){ // 자식 댓글 삭제할 경우
+            // 부모 댓글 삭제 & 자식이 없다면 부모 댓글도 삭제
+            BookComment parent = bookComment.getParent();
+            bookCommentRepository.deleteByCommentId(commentId);
+            if(parent.getIsDelete() && bookCommentRepository.findParentComment(parent.getCommentId()).isEmpty()){
+                bookCommentRepository.deleteByCommentId(parent.getCommentId());
+            }
         }else{
+
             bookCommentRepository.deleteByCommentId(commentId);
         }
         return commentId;
