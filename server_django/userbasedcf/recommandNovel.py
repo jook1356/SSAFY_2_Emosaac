@@ -1,3 +1,5 @@
+from statistics import mean
+
 import pandas as pd
 from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
@@ -62,33 +64,6 @@ class UserBasedCFNovel:
         connection.commit()
         connection.close()
 
-    # def generateGroup(self):
-    #     # 같은 나이대, 같은 성별로 그룹을 형성 / 유저 정보로 유사도 검사
-    #
-    #     pivot_table = self.users_result.pivot_table(self.users_result, index=['user_id'], columns=["gender", 'age'])
-    #     print(pivot_table)
-    #     result = pivot_table.groupby(['user_id'], axis=1).sum('gender')
-    #     result.fillna(0, inplace=True)
-    #     print("////////////////////res")
-    #
-    #     # print(pivot_table)
-    #
-    #     print("////////////////////")
-    #
-    #     user_based_collab = cosine_similarity(result)
-    #
-    #     # 사용자 유사도 확인
-    #     user_based_collab = pd.DataFrame(user_based_collab, index=result.index, columns=result.index)
-    #
-    #     print(user_based_collab)
-    #
-    #     for target_user in user_based_collab.columns:
-    #         sim_users = user_based_collab.sort_values(by=target_user, ascending=False).index[1:11]
-    #         # print(sim_users[0:10])
-    #         # print(sim_users[0])
-    #         print("///////////")
-    #     pass
-
     def calcSimilarity(self):
 
         # 조회, 북마크, 읽음, 평점기반으로 유사성 검사
@@ -119,8 +94,16 @@ class UserBasedCFNovel:
             values=['values_x', 'values_y', 'score'],
             aggfunc=sum,
         )
+        # 나중에 나이, 성별 필터도 적용할 것임
+        # pivot_table = pd.pivot_table(
+        #     users_books,
+        #     index=['user_no', 'age', 'gender'],
+        #     columns=['book_no'],
+        #     values=['values_x', 'values_y', 'score', 'values'],
+        #     aggfunc=sum,
+        # )
 
-        result = pivot_table.groupby(['book_no'], axis=1).sum()
+        result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         # print(result)
 
@@ -151,7 +134,7 @@ class UserBasedCFNovel:
                 # 2) - 조회만 한 책: 데이터프레임에서 target_user열의 값이 0.5인 행을 찾은 후, i번째 열의 값을 선택
                 #    - 0.5는 조회에 기반한 점수인데, 단순 조회를 한것만으로 읽었다고 가정할수 없어 추천 목록에서 제외하지 않았음
                 result_sorted = result_T.loc[:, i][
-                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.5))].sort_values(
+                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.125))].sort_values(
                     ascending=False)
                 best.append(result_sorted.index[:10].tolist())
 
@@ -189,13 +172,13 @@ class UserBasedCFNovel:
             for book_no in book_list:
                 book_str += str(book_no) + " "
 
-            UserBasedCfModel(
-                user_no=User.objects.get(user_id=user_no),
-                book_no_list=book_str,
-                type_cd=1,
-                created_dt=datetime.now(),
-                modified_dt=datetime.now()
-            ).save()
+            # UserBasedCfModel(
+            #     user_no=User.objects.get(user_id=user_no),
+            #     book_no_list=book_str,
+            #     type_cd=1,
+            #     created_dt=datetime.now(),
+            #     modified_dt=datetime.now()
+            # ).save()
 
 
 def execute_algorithm():

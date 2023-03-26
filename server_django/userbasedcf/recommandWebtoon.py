@@ -101,7 +101,6 @@ class UserBasedCFWebtoon:
 
         # print(pivot_table)
         print("/************")
-
         # pivot_table = pd.pivot_table(
         #     users_books,
         #     index=['user_no'],
@@ -110,9 +109,13 @@ class UserBasedCFWebtoon:
         #     aggfunc=sum,
         # )
 
-        result = pivot_table.groupby(['book_no'], axis=1).sum()
-        result.fillna(0, inplace=True)
+        # result = pivot_table.groupby(['book_no'], axis=1).sum()
+        # result.fillna(0, inplace=True)
         # print(result)
+        print("???????????????????????????????????")
+        result = pivot_table.groupby(['book_no'], axis=1).mean()
+        result.fillna(0, inplace=True)
+        print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
@@ -144,8 +147,9 @@ class UserBasedCFWebtoon:
                 # 1) 이미 평점을 남긴 책: 데이터프레임에서 target_user열의 값이 0인 행을 찾은 후, i번째 열의 값을 선택
                 # 2) - 조회만 한 책: 데이터프레임에서 target_user열의 값이 0.5인 행을 찾은 후, i번째 열의 값을 선택
                 #    - 0.5는 조회에 기반한 점수인데, 단순 조회를 한것만으로 읽었다고 가정할수 없어 추천 목록에서 제외하지 않았음
+                # 0.5-> 0.125 : sum->mean
                 result_sorted = result_T.loc[:, i][
-                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.5))].sort_values(
+                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.125))].sort_values(
                     ascending=False)
                 best.append(result_sorted.index[:10].tolist())
 
@@ -190,6 +194,8 @@ class UserBasedCFWebtoon:
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
+            
+            # //////////////필터 적용안된 경우//////////////
             # UserBasedCfModel(
             #     user_no=User.objects.get(user_id=user_no),
             #     book_no_list=book_str,

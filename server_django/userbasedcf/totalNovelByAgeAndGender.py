@@ -103,7 +103,7 @@ class totalWebtoonByAgeAndGender:
         # print(pivot_table)
         print("/************")
 
-        result = pivot_table.groupby(['book_no'], axis=1).sum()
+        result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         print(result)
 
@@ -118,7 +118,7 @@ class totalWebtoonByAgeAndGender:
 
     def deleteOriginData(self):
         # 기존 데이터 지우기
-        UserBasedCfByAgeGenderModel.objects.filter(type_cd=0).delete()
+        UserBasedCfByAgeGenderModel.objects.filter(type_cd=1).delete()
 
     def save(self):
         user_based_book = self.calcSimilarity()
@@ -131,14 +131,14 @@ class totalWebtoonByAgeAndGender:
             for book_no in book_list:
                 book_str += str(book_no) + " "
 
-            UserBasedCfByAgeGenderModel(
-                age=user[0],
-                gender=user[1],
-                book_no_list=book_str,
-                type_cd=1,
-                created_dt=datetime.now(),
-                modified_dt=datetime.now()
-            ).save()
+            # UserBasedCfByAgeGenderModel(
+            #     age=user[0],
+            #     gender=user[1],
+            #     book_no_list=book_str,
+            #     type_cd=1,
+            #     created_dt=datetime.now(),
+            #     modified_dt=datetime.now()
+            # ).save()
 
         print(user_based_book)
 

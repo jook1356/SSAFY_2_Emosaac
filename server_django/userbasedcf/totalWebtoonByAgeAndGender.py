@@ -103,7 +103,7 @@ class totalWebtoonByAgeAndGender:
         # print(pivot_table)
         print("/************")
 
-        result = pivot_table.groupby(['book_no'], axis=1).sum()
+        result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         print(result)
 

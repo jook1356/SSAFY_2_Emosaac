@@ -18,7 +18,7 @@ from userbasedcf.models import UserBasedCfByAgeGenderModel
 from django.db import connection
 
 # 사용 안함
-class UserBasedCFWebtoonByAgeAndGender:
+class UserBasedCFNovelByAgeAndGender:
     def __init__(self):
 
         self.cursor = connection.cursor()
@@ -31,7 +31,7 @@ class UserBasedCFWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT  hit.book_no, user.age, user.gender FROM hit " \
                       "join book on hit.book_no = book.book_no " \
-                      "join user on user.user_id = hit.user_no where book.type_cd=0"
+                      "join user on user.user_id = hit.user_no where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -41,7 +41,7 @@ class UserBasedCFWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT score.book_no, score.score, user.age, user.gender FROM score " \
                       "join book on score.book_no = book.book_no " \
-                      "join user on user.user_id = score.user_no  where book.type_cd=0"
+                      "join user on user.user_id = score.user_no  where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -50,7 +50,7 @@ class UserBasedCFWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT book_mark.book_no ,user.age, user.gender FROM book_mark " \
                       "join book on book_mark.book_no = book.book_no " \
-                      "join user on user.user_id = book_mark.user_no where book.type_cd=0"
+                      "join user on user.user_id = book_mark.user_no where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.bookmarks = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -59,7 +59,7 @@ class UserBasedCFWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT read_book.book_no, user.age, user.gender FROM read_book " \
                       "join book on read_book.book_no = book.book_no " \
-                      "join user on user.user_id = read_book.user_no  where book.type_cd=0"
+                      "join user on user.user_id = read_book.user_no  where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -103,12 +103,13 @@ class UserBasedCFWebtoonByAgeAndGender:
         # print(pivot_table)
         print("/************")
 
-        result = pivot_table.groupby(['book_no'], axis=1).sum()
+        result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
+        print("////////please")
 
         user_based_book = {}
         for target_user in user_similarity.columns:
@@ -132,7 +133,7 @@ class UserBasedCFWebtoonByAgeAndGender:
                 # 2) - 조회만 한 책: 데이터프레임에서 target_user열의 값이 0.5인 행을 찾은 후, i번째 열의 값을 선택
                 #    - 0.5는 조회에 기반한 점수인데, 단순 조회를 한것만으로 읽었다고 가정할수 없어 추천 목록에서 제외하지 않았음
                 result_sorted = result_T.loc[:, i][
-                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.5))].sort_values(
+                    ((result_T.loc[:, target_user] == 0.0) | (result_T.loc[:, target_user] == 0.125))].sort_values(
                     ascending=False)
                 best.append(result_sorted.index[:10].tolist())
 
@@ -154,7 +155,7 @@ class UserBasedCFWebtoonByAgeAndGender:
 
     def deleteOriginData(self):
         # 기존 데이터 지우기
-        UserBasedCfByAgeGenderModel.objects.filter(type_cd=0).delete()
+        UserBasedCfByAgeGenderModel.objects.filter(type_cd=1).delete()
 
     def save(self):
         user_based_book = self.calcSimilarity()
@@ -173,7 +174,7 @@ class UserBasedCFWebtoonByAgeAndGender:
                 age=user[0],
                 gender=user[1],
                 book_no_list=book_str,
-                type_cd=0,
+                type_cd=1,
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
@@ -182,8 +183,7 @@ class UserBasedCFWebtoonByAgeAndGender:
 
 
 def execute_algorithm():
-    UserBasedCFWebtoonByAgeAndGender().save()
-    print("---------------------------------------------------")
+    UserBasedCFNovelByAgeAndGender().save()
 
 
 if __name__ == "__main__":
