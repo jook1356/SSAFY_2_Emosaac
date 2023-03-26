@@ -41,7 +41,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'userbasedcf',
     'userbasedpridict',
+    'django_crontab', #크론 설정
 ]
+
+CRONJOBS = [
+    ('*/1 * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm'),  # 매 1분마다  실행
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
