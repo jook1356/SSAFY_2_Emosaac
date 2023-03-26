@@ -17,7 +17,7 @@ from userbasedcf.models import UserBasedCfByAgeGenderModel
 
 from django.db import connection
 
-
+# 사용 안함
 class UserBasedCFNovelByAgeAndGender:
     def __init__(self):
 
