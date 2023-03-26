@@ -2,8 +2,10 @@ package com.emosaac.server.domain.emo;
 
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.book.BookComment;
 import com.emosaac.server.domain.user.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -30,5 +32,13 @@ public class EmoCommentLike extends BaseEntity {
     @JoinColumn(name="user_no")
     private User user;
 
-    private Boolean likeStatus;
+
+    @Builder
+    public EmoCommentLike(EmopickComment emopickComment, User user){
+        this.emopickComment = emopickComment;
+        this.user = user;
+    }
+    public boolean ownedBy(Long userId) {
+        return this.user.getUserId().equals(userId);
+    }
 }

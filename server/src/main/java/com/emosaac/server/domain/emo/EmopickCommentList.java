@@ -17,4 +17,5 @@ public class EmopickCommentList {
     @OneToMany(mappedBy = "emopick", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<EmopickComment> commentList = new ArrayList<>();
 
+
 }

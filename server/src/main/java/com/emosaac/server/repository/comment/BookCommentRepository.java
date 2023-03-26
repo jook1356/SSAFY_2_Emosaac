@@ -25,4 +25,7 @@ public interface BookCommentRepository extends JpaRepository<BookComment, Long> 
 
     @Query("SELECT c FROM BookComment c WHERE c.book.bookId = :postId")
     List<BookComment> findCommentByBookId(@Param("postId")Long postId);
+
+    @Query("SELECT c FROM BookComment c WHERE c.parent.commentId = :parentId")
+    Optional<BookComment> findParentComment(@Param("parentId")Long parentId);
 }
