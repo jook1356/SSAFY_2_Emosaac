@@ -1,6 +1,7 @@
 package com.emosaac.server.service.user;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.emosaac.server.common.exception.ArgumentMismatchException;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.config.s3.S3Uploader;
 import com.emosaac.server.domain.book.Genre;
@@ -41,9 +42,9 @@ public class UserService {
 
         User originUser = commonService.getUser(userId);
 
-//        if (nickNameCheck(request.getNickName()) == true) {
-//            throw new ArgumentMismatchException("닉네임 중복입니다");
-//        }
+        if (nickNameCheck(request.getNickName(), userId) == true) {
+            throw new ArgumentMismatchException("닉네임 중복입니다");
+        }
 
         originUser.setUserInfo(request); //이미지 링크 수정 빼고 업데이트
 
@@ -81,9 +82,9 @@ public class UserService {
         }
     }
 
-    public boolean nickNameCheck(String nickName) {
+    public boolean nickNameCheck(String nickName, Long userId) {//본인 닉네임 빼고 중복된 닉네임 있는지 확인
         boolean flag = false;
-        if (userRepository.findByUserNickName(nickName).isPresent()) {
+        if (userRepository.findByUserNickName(nickName, userId).isPresent()) {
             flag = true;
         }
         return flag;
