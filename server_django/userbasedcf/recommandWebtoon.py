@@ -209,6 +209,7 @@ class UserBasedCFWebtoon:
 
 def execute_algorithm():
     # UserBasedCFNovel().save()
+    print("---------------------------------------------------")
 
     UserBasedCFWebtoon().save()
     print("---------------------------------------------------")
