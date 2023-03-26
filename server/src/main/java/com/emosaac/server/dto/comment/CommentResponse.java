@@ -1,6 +1,7 @@
 package com.emosaac.server.dto.comment;
 
 import com.emosaac.server.domain.book.BookComment;
+import com.emosaac.server.domain.emo.EmopickComment;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -86,6 +87,30 @@ public class CommentResponse {
     public static CommentResponse from(BookComment comment) {
         return comment.getIsDelete() ?
                 new CommentResponse(comment, "삭제된 댓글입니다") : new CommentResponse(comment);
+    }
+
+    @QueryProjection
+    public CommentResponse(EmopickComment comment) { //전체 조회
+
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        this.writerInfo = WriterInfo.from(comment.getUser());
+        this.commentId = comment.getCommentId();
+        this.content = comment.getContent();
+        this.depth = comment.getDepth();
+        this.createdDate = comment.getCreatedDate().format(myFormatObj);
+        if(comment.getModifiedDate()!=null) {
+            this.modifiedDate = comment.getModifiedDate().format(myFormatObj);
+        }
+        if( comment.getParent()!= null) {
+            this.parentWriterNickName = comment.getParent().getUser().getUserName();
+        }
+        this.isDelete = comment.getIsDelete();
+        if(comment.getChildren().size() != 0){
+            isChild = true;
+        }
+
+//        this.children = comment.getChildren().stream().map((c)-> new CommentResponse(c)).collect(Collectors.toList());;
     }
 
 }
