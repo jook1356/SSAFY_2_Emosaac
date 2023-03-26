@@ -21,7 +21,7 @@ from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBoo
 
 from django.db import connection
 
-# from surprise import SVD # SVD를 사용해 데이터를 학습
+from surprise import SVD # SVD를 사용해 데이터를 학습
 from surprise import SVDpp
 from surprise import KNNBasic
 from surprise import Reader
@@ -51,6 +51,10 @@ def DataView():
     # train_set, test_set = train_test_split(data, test_size=0.25, random_state=1004)
     # algo = SVD()
     # algo.fit(train_set)
+    #
+    train_set, test_set = train_test_split(data, test_size=0.25)
+    algo = SVD(n_factors=8, lr_all=0.005, reg_all=0.02, n_epochs=100)
+    algo.fit(train_set)
 
     #
     # sim_options = {'name': 'cosine', 'user_based': True}
@@ -58,10 +62,10 @@ def DataView():
     # algo.fit(train_set)
 
     #
-    train_set = data.build_full_trainset()
-    algo = SVDpp(n_factors=150, n_epochs=30, lr_all=0.005, reg_all=0.01, random_state=42)
-    # algo = SVDpp(n_factors=150, n_epochs=20, lr_all=0.005, reg_all=0.01, lr_bu=0.01, lr_bi=0.001, lr_pu=0.005, lr_qi=0.001, lr_yj=0.01, random_state=42)
-    algo.fit(train_set)
+    # train_set = data.build_full_trainset()
+    # algo = SVDpp(n_factors=150, n_epochs=30, lr_all=0.005, reg_all=0.01, random_state=42)
+    # # algo = SVDpp(n_factors=150, n_epochs=20, lr_all=0.005, reg_all=0.01, lr_bu=0.01, lr_bi=0.001, lr_pu=0.005, lr_qi=0.001, lr_yj=0.01, random_state=42)
+    # algo.fit(train_set)
 
     # param_grid = {'n_factors': [50, 100, 150],
     #               'n_epochs': [10, 20, 30],
