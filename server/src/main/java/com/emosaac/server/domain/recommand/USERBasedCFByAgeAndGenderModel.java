@@ -25,7 +25,7 @@ public class USERBasedCFByAgeAndGenderModel extends BaseEntity {
 
     @JsonManagedReference
     private String bookNoList;
-    
+
     @Column(name="TYPE_CD")
     private Integer typeCode;
 }
