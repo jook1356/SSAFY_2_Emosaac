@@ -13,13 +13,15 @@ import django
 
 django.setup()
 
-from userbasedcf.models import UserBasedCfByAgeGenderModel
+from userbasedcf.models import TotalByAgeAndGenderModel
 
 from django.db import connection
 
 
-class totalWebtoonByAgeAndGender:
-    def __init__(self):
+class totalBookByAgeAndGender():
+    def __init__(self, type_cd):
+
+        self.type_cd = type_cd
 
         self.cursor = connection.cursor()
         self.strSql = "SELECT age,gender FROM user"
@@ -31,7 +33,7 @@ class totalWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT  hit.book_no, user.age, user.gender FROM hit " \
                       "join book on hit.book_no = book.book_no " \
-                      "join user on user.user_id = hit.user_no where book.type_cd=0"
+                      "join user on user.user_id = hit.user_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -41,7 +43,7 @@ class totalWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT score.book_no, score.score, user.age, user.gender FROM score " \
                       "join book on score.book_no = book.book_no " \
-                      "join user on user.user_id = score.user_no  where book.type_cd=0"
+                      "join user on user.user_id = score.user_no  where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -50,7 +52,7 @@ class totalWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT book_mark.book_no ,user.age, user.gender FROM book_mark " \
                       "join book on book_mark.book_no = book.book_no " \
-                      "join user on user.user_id = book_mark.user_no where book.type_cd=0"
+                      "join user on user.user_id = book_mark.user_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.bookmarks = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -59,7 +61,7 @@ class totalWebtoonByAgeAndGender:
         self.cursor = connection.cursor()
         self.strSql = "SELECT read_book.book_no, user.age, user.gender FROM read_book " \
                       "join book on read_book.book_no = book.book_no " \
-                      "join user on user.user_id = read_book.user_no  where book.type_cd=0"
+                      "join user on user.user_id = read_book.user_no  where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -118,7 +120,7 @@ class totalWebtoonByAgeAndGender:
 
     def deleteOriginData(self):
         # 기존 데이터 지우기
-        UserBasedCfByAgeGenderModel.objects.filter(type_cd=0).delete()
+        TotalByAgeAndGenderModel.objects.filter(type_cd=self.type_cd).delete()
 
     def save(self):
         user_based_book = self.calcSimilarity()
@@ -131,11 +133,11 @@ class totalWebtoonByAgeAndGender:
             for book_no in book_list:
                 book_str += str(book_no) + " "
 
-            UserBasedCfByAgeGenderModel(
+            TotalByAgeAndGenderModel(
                 age=user[0],
                 gender=user[1],
                 book_no_list=book_str,
-                type_cd=0,
+                type_cd=self.type_cd,
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
@@ -143,8 +145,8 @@ class totalWebtoonByAgeAndGender:
         print(user_based_book)
 
 
-def execute_algorithm():
-    totalWebtoonByAgeAndGender().save()
+def execute_algorithm(type_cd):
+    totalBookByAgeAndGender(type_cd).save()
     print("---------------------------------------------------")
 
 

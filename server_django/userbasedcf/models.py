@@ -131,7 +131,7 @@ class User(models.Model):
         db_table = 'user'
 
 
-class UserBasedCfByAgeGenderModel(models.Model):
+class TotalByAgeAndGenderModel(models.Model):
     item_no = models.AutoField(primary_key=True)
     created_dt = models.DateTimeField()
     modified_dt = models.DateTimeField()
@@ -144,7 +144,7 @@ class UserBasedCfByAgeGenderModel(models.Model):
         app_label = 'userbasedcf'  # 추가
 
         managed = False
-        db_table = 'user_based_cf_by_age_gender_model'
+        db_table = 'total_by_age_gender_model'
 
 
 class UserBasedCfModel(models.Model):

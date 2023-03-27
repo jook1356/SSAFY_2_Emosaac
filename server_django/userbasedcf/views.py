@@ -3,33 +3,23 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render
 
-from userbasedcf import recommandNovel, recommandWebtoon, recommandNovelByAgeAndGender_notuse, \
-    recommandWebtoonByAgeAndGender_notuse, \
-    totalWebtoonByAgeAndGender, recommandWebtoonRequest, recommandNovelRequest
+from userbasedcf import recommandBook, totalBookByAgeAndGender, totalBookByAgeAndGender, recommandBookRequest
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-
-def index(request):
-    # recommandNovel.execute_algorithm()
-    # recommandWebtoon.execute_algorithm()
-
-    recommandWebtoonRequest.execute_algorithm(2)
-
-    # recommandNovelByAgeAndGender.execute_algorithm()
-    # recommandWebtoonByAgeAndGender.execute_algorithm()
-    # totalWebtoonByAgeAndGender.execute_algorithm()
-
-    return render(request, 'hi')
-
 
 # 요청(회원 가입시)
 class MyAPIView(APIView):
 
     def get(self, request, user_id, format=None):
 
-        resWebtoon = recommandWebtoonRequest.execute_algorithm(user_id)
-        resNovel = recommandNovelRequest.execute_algorithm(user_id)
+        # totalBookByAgeAndGender.execute_algorithm(0)
+        # totalBookByAgeAndGender.execute_algorithm(1)
+
+        print("--------------------------tmp")
+        print(user_id)
+        resWebtoon = recommandBookRequest.execute_algorithm(user_id, 0)
+        print("--------------------------resweb")
+        resNovel = recommandBookRequest.execute_algorithm(user_id, 1)
 
         data = {
             "userId": user_id,

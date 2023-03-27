@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from emosaac import my_settings
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -27,7 +27,6 @@ SECRET_KEY = my_settings.SECRET_KEY
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,35 +40,19 @@ INSTALLED_APPS = [
     'rest_framework',
     'userbasedcf',
     'userbasedpredict',
-    'django_crontab', #크론 설정
+    'django_crontab',  # 크론 설정
     'itembasedcf'
 
 ]
 
 CRONJOBS = [
-    # ('*/1 * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 1분마다  실행
-    # ('*/3 * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm'),  # 매 1분마다  실행
-    # ('*/3 * * * *', 'userbasedcf.recommandNovel.execute_algorithm'),  # 매 1분마다  실행
-    # ('*/3 * * * *', 'userbasedcf.totalNovelByAgeAndGender.execute_algorithm'),  # 매 1분마다  실행
-    # ('*/3 * * * *', 'userbasedcf.totalWebtoonByAgeAndGender.execute_algorithm')  # 매 1분마다  실행
-
-    ('* * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 분마다 실행
-    ('* * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 분마다 실행
-    ('* * * * *', 'userbasedcf.recommandWebtoon.UserBasedCFWebtoon'),  # 매 분마다 실행
-
-    ('* * * * *', 'userbasedcf.recommandNovel.execute_algorithm()'),  # 매 분마다 실행
-    ('* * * * *', 'userbasedcf.totalNovelByAgeAndGender.execute_algorithm()'),
-    ('* * * * *', 'userbasedcf.totalWebtoonByAgeAndGender.execute_algorithm'),  # 매 분마다 실행
-    ('* * * * *', 'userbasedcf.parse.execute_algorithm'), # 매 분마다 실행
-    ('* * * * *', 'userbasedcf.parse.execute_algorithm()'),  # 매 분마다 실행
-
-    ('* * * * *', 'server_django.userbasedcf.parse.execute_algorithm'),  # 매 분마다 실행
-    ('* * * * *', 'recommand.parse'), # 매 분마다 실행
-    ('* * * * *', 'recommand.parse.test()')  # 매 분마다 실행
+    ('*/2 * * * *', 'emosaac.cron.crontab_job', '>> BASE_DIR' + '/cron.log'),  # 매 분마다 실행
+    ('*/1 * * * *', 'emosaac.cron.crontab_job', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
+    ('* * * * *', 'recommand.parse.test'),  # 매 분마다 실행
 
 ]
 
-
+# CRONTAB_DJANGO_SETTINGS_MODULE = 'emosaac.settings.local_settings'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -100,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'emosaac.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -130,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -141,7 +122,6 @@ TIME_ZONE = 'Asia/Seoul'
 USE_I18N = True
 
 USE_TZ = False  # False 로 설정해야 DB에 변경 된 TIME_ZONE 이 반영 됨
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

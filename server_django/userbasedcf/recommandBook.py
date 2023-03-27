@@ -1,10 +1,11 @@
 import pandas as pd
 from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
-
 import warnings
-
+import sys
+sys.path.append('/path/to/server_django/userbasedcf')
 from userbasedcf.models import UserBasedCfModel, User
+
 
 warnings.filterwarnings(action='ignore')
 
@@ -21,8 +22,10 @@ from django.db import connection
 
 # 나이, 성별 필터링 되어있음-> 결과가 안나와서 필터링 뺏음...
 
-class UserBasedCFWebtoon:
-    def __init__(self):
+class UserBasedCFBook:
+    def __init__(self, type_cd):
+
+        self.type_cd = type_cd
 
         self.cursor = connection.cursor()
         self.strSql = "SELECT user_id ,age,gender,SUBSTRING_INDEX(favorite_webtoon_genre, '^', 1) as genre FROM user"
@@ -33,28 +36,28 @@ class UserBasedCFWebtoon:
         self.users_result = pd.DataFrame(data=self.users, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.scores_result = pd.DataFrame(data=self.scores, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.bookmarks = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.bookmarks_result = pd.DataFrame(self.bookmarks, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -112,7 +115,6 @@ class UserBasedCFWebtoon:
         # result = pivot_table.groupby(['book_no'], axis=1).sum()
         # result.fillna(0, inplace=True)
         # print(result)
-        print("???????????????????????????????????")
         result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         print(result)
@@ -174,7 +176,7 @@ class UserBasedCFWebtoon:
 
     def deleteOriginData(self):
         # 기존 데이터 지우기
-        UserBasedCfModel.objects.filter(type_cd=0).delete()
+        UserBasedCfModel.objects.filter(type_cd=self.type_cd).delete()
 
     def save(self):
         user_based_book = self.calcSimilarity()
@@ -193,7 +195,7 @@ class UserBasedCFWebtoon:
             UserBasedCfModel(
                 user_no=User.objects.get(user_id=user_no[0]),
                 book_no_list=book_str,
-                type_cd=0,
+                type_cd=self.type_cd,
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
@@ -210,9 +212,9 @@ class UserBasedCFWebtoon:
         # print(user_based_book)
 
 
-def execute_algorithm():
+def execute_algorithm(type_cd):
     print("---------------------------------------------------")
-    UserBasedCFWebtoon().save()
+    UserBasedCFBook(type_cd).save()
     print("---------------------------------------------------")
 
 

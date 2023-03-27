@@ -89,7 +89,7 @@ def execute_algorithm():
     UserBasedCF().save_list()
 
 def test():
-    print("?????????????")
+    print(1)
 
 if __name__ == "__main__":
     execute_algorithm()
