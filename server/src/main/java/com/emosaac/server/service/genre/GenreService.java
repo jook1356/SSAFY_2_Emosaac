@@ -4,6 +4,7 @@ import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.Genre;
+import com.emosaac.server.domain.book.Hit;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.dto.book.BookRequest;
@@ -15,6 +16,7 @@ import com.emosaac.server.dto.user.UserGenreRequest;
 import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.genre.GenreQueryRepository;
 import com.emosaac.server.repository.genre.GenreRepository;
+import com.emosaac.server.repository.hit.HitRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import com.emosaac.server.service.CommonService;
 import com.emosaac.server.service.user.UserService;
@@ -37,7 +39,7 @@ public class GenreService {
     private final CommonService commonService;
     private final Long[] webtoonGenreList = {10L, 11L, 12L, 13L, 14L, 15L, 16L};
     private final Long[] novelGenreList = {10L, 11L, 13L, 14L, 15L, 27L, 28L};
-
+    private final HitRepository hitRepository;
 
     public List<GenreResponse> getBookGenre(int typeCode) {
         return genreQueryRepository.findBookGenre(typeCode).stream().map(
@@ -54,6 +56,11 @@ public class GenreService {
     public GenreResponseList postResearch(Long userId, UserResearchRequest request) { //나의 선호 장르에 반영해야함
 
         User user = commonService.getUser(userId);
+
+        //선택한 책들을 조회 테이블에 추가(관심의 척도,,,)
+        postHits(user, request.getNovelId());
+        postHits(user, request.getWebtoonId());
+
         String strWebtoon = BookListToString(request.getWebtoonId());
         String strNovel = BookListToString(request.getNovelId());
 
@@ -66,6 +73,19 @@ public class GenreService {
         return new GenreResponseList(webtoon, novel);
 
 
+    }
+
+    @Transactional
+    void postHits(User user, Long[] request) {
+
+        for(Long bookId: request){
+            Book book = commonService.getBook(bookId);
+
+            if(!hitRepository.existsByBookIdAndUserId(bookId, user.getUserId()).isPresent()){
+                Hit hit = Hit.builder().book(book).user(user).build();
+                hitRepository.save(hit);
+            }
+        }
     }
 
     public String BookListToString(Long[] request) {
