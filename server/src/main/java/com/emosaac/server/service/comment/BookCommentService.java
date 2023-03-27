@@ -10,6 +10,7 @@ import com.emosaac.server.dto.comment.CommentLikeResponse;
 import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.CommentSaveRequest;
 import com.emosaac.server.dto.comment.CommentUpdateRequest;
+import com.emosaac.server.repository.comment.BookCommentLikeRepository;
 import com.emosaac.server.repository.comment.BookCommentQueryRepository;
 import com.emosaac.server.repository.comment.BookCommentRepository;
 import com.emosaac.server.service.CommonService;
@@ -30,9 +31,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookCommentService {
+    private final BookCommentLikeRepository bookCommentLikeRepository;
     private final CommonService commonService;
     private final BookCommentRepository bookCommentRepository;
     private final BookCommentQueryRepository bookCommentQueryRepository;
+
     @Transactional
     public Long createBookComment(Long userId, Long bookId, CommentSaveRequest request) {
         Book book = commonService.getBook(bookId);
@@ -79,17 +82,19 @@ public class BookCommentService {
         validBookCommentUser(userId, bookComment.getUser().getUserId());
 
         if(bookComment.getParent() == null && !bookComment.getChildren().isEmpty()){ // 부모 댓글인데 자식 댓글이 있는 경우
-
             bookComment.updateDeleteStatus();
         }else if(bookComment.getParent() != null){ // 자식 댓글 삭제할 경우
+            bookCommentLikeRepository.deleteByBookCommentId(commentId);
+            bookCommentRepository.deleteByCommentId(commentId);
             // 부모 댓글 삭제 & 자식이 없다면 부모 댓글도 삭제
             BookComment parent = bookComment.getParent();
             bookCommentRepository.deleteByCommentId(commentId);
             if(parent.getIsDelete() && bookCommentRepository.findParentComment(parent.getCommentId()).isEmpty()){
+                bookCommentLikeRepository.deleteByBookCommentId(parent.getCommentId());
                 bookCommentRepository.deleteByCommentId(parent.getCommentId());
             }
         }else{
-
+            bookCommentLikeRepository.deleteByBookCommentId(commentId);
             bookCommentRepository.deleteByCommentId(commentId);
         }
         return commentId;
