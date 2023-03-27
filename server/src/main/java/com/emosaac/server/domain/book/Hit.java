@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -36,6 +37,10 @@ public class Hit extends BaseEntity {
     public Hit(Book book, User user){
         this.book = book;
         this.user = user;
+    }
+
+    public void update(){
+        this.setModifiedDate(LocalDateTime.now());
     }
 
 }

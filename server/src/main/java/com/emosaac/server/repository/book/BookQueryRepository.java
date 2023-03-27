@@ -105,7 +105,7 @@ public class BookQueryRepository {
                 .where(
                         hit.user.userId.eq(userId)
                 )
-                .orderBy(hit.createdDate.desc())
+                .orderBy(hit.modifiedDate.desc())
                 .limit(4)
                 .fetch();
     }
