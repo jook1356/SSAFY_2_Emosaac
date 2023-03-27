@@ -9,5 +9,6 @@ def index(request):
     # ReadBookListView()
     # ScoreListView()
 
-    DataView()
+    DataView() # surprise
+
     return render(request, 'userbasedpridict')

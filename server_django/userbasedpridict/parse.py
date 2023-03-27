@@ -22,15 +22,20 @@ from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBoo
 from django.db import connection
 
 from surprise import SVD # SVD를 사용해 데이터를 학습
+from surprise import SVDpp
+from surprise import KNNBasic
 from surprise import Reader
 from surprise import Dataset
 from surprise.model_selection import train_test_split # 데이터를 학습용과 훈련용으로 분할
+
+from surprise.model_selection import GridSearchCV
+from surprise.dataset import DatasetAutoFolds
 
 def DataView():
     books = BookListView()
     scores = ScoreListView()
 
-    userId = 3
+    userId = 5
     unseen_books = get_unseen_surprise(scores, books, userId)
 
     reader = Reader(rating_scale=(0.1, 10.0))
@@ -38,12 +43,56 @@ def DataView():
     data = Dataset.load_from_df(scores, reader)
     train_set, test_set = train_test_split(data, test_size=0.25, random_state=1004)
 
-    algo = SVD()
+    # train_set = data.build_full_trainset()
+    # algo = SVD(n_epochs=20, n_factors=50, random_state=0)
+    # algo.fit(train_set)
+
+    #
+    # train_set, test_set = train_test_split(data, test_size=0.25, random_state=1004)
+    # algo = SVD()
+    # algo.fit(train_set)
+    #
+    train_set, test_set = train_test_split(data, test_size=0.25)
+    algo = SVD(n_factors=8, lr_all=0.005, reg_all=0.02, n_epochs=100)
     algo.fit(train_set)
-    pred = algo.test(test_set)
+
+    #
+    # sim_options = {'name': 'cosine', 'user_based': True}
+    # algo = KNNBasic(sim_options=sim_options)
+    # algo.fit(train_set)
+
+    #
+    # train_set = data.build_full_trainset()
+    # algo = SVDpp(n_factors=150, n_epochs=30, lr_all=0.005, reg_all=0.01, random_state=42)
+    # # algo = SVDpp(n_factors=150, n_epochs=20, lr_all=0.005, reg_all=0.01, lr_bu=0.01, lr_bi=0.001, lr_pu=0.005, lr_qi=0.001, lr_yj=0.01, random_state=42)
+    # algo.fit(train_set)
+
+    # param_grid = {'n_factors': [50, 100, 150],
+    #               'n_epochs': [10, 20, 30],
+    #               'lr_all': [0.001, 0.005, 0.01],
+    #               'reg_all': [0.01, 0.1, 1],
+    #               'lr_bu': [0.001, 0.005, 0.01],
+    #               'lr_bi': [0.001, 0.005, 0.01],
+    #               'lr_pu': [0.001, 0.005, 0.01],
+    #               'lr_qi': [0.001, 0.005, 0.01],
+    #               'lr_yj': [0.001, 0.005, 0.01]}
+    #
+    # # train_set = data.build_full_trainset()
+    # # svdpp_algo = SVDpp()
+    # algo = GridSearchCV(SVDpp, param_grid, measures=['rmse', 'mae'], cv=5)
+    # algo.fit(data)
+    # # print(algo.best_scores['rmse'])
+    # print(algo.best_params['rmse'])
+
+    # {'n_factors': 150, 'n_epochs': 20, 'lr_all': 0.005, 'reg_all': 0.01, 'lr_bu': 0.01, 'lr_bi': 0.001, 'lr_pu': 0.005, 'lr_qi': 0.001, 'lr_yj': 0.01}
+
+    # algo.fit(train_set)
+    # pred = algo.test(test_set)
 
     # accuracy.rmse(pred)
     # def recomm_book_by_surprise(algo, userId, unseen_books, books, top_n=10):
+
+
     recomm_book_by_surprise(algo, userId, unseen_books, books, 10)
 
     return
@@ -56,7 +105,7 @@ def BookListView():
         strSql = "SELECT book_no , title FROM book where type_cd = 0" # 웹툰0, 웹소설1
         cursor.execute(strSql)
         books = cursor.fetchall()
-        result = pd.DataFrame(books,  columns = ['book_id', 'title'])
+        result = pd.DataFrame(books, columns = ['book_id', 'title'])
 
         connection.commit()
         connection.close()
@@ -81,7 +130,7 @@ def ReadBookListView():
         connection.close()
 
         print("=========read book=========")
-        print(f"{result}")
+        # print(f"{result}")
 
     except:
         connection.rollback()
@@ -102,7 +151,7 @@ def ScoreListView():
         print("=========scores=========")
         # print(f"{result}")
 
-        execute_surprise(result)
+        # execute_surprise(result)
 
     except:
         connection.rollback()
@@ -170,7 +219,7 @@ def recomm_book_by_surprise(algo, userId, unseen_books, books, top_n):
     top_predictions = predictions[:top_n]
 
     # 책 아이디, 제목, 예측 평점 출력
-    print(f"Top-{top_n} 추천 책 리스트")
+    print(f"유저 {userId} Top-{top_n} 추천 책 리스트")
 
     for pred in top_predictions:
         book_id = int(pred.iid)

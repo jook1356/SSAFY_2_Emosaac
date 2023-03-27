@@ -1,12 +1,7 @@
-from statistics import mean
-
 import pandas as pd
 from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
-
 import warnings
-
-from userbasedcf.models import UserBasedCfModel, User
 
 warnings.filterwarnings(action='ignore')
 
@@ -18,44 +13,53 @@ import django
 
 django.setup()
 
+from userbasedcf.models import UserBasedCfByAgeGenderModel
 
 from django.db import connection
 
-# 나이, 성별 필터링 안되있음
-class UserBasedCFNovel:
+# 사용 안함
+class UserBasedCFNovelByAgeAndGender:
     def __init__(self):
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id ,age,gender,SUBSTRING_INDEX(favorite_webtoon_genre, '^', 1) as genre FROM user"
-        # self.strSql = "SELECT user_id ,age,gender FROM user"
+        self.strSql = "SELECT age,gender FROM user"
         self.cursor.execute(self.strSql)
         self.users = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.users_result = pd.DataFrame(data=self.users, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT  hit.book_no, user.age, user.gender FROM hit " \
+                      "join book on hit.book_no = book.book_no " \
+                      "join user on user.user_id = hit.user_no where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
+        # print(self.hits_result)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT score.book_no, score.score, user.age, user.gender FROM score " \
+                      "join book on score.book_no = book.book_no " \
+                      "join user on user.user_id = score.user_no  where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.scores_result = pd.DataFrame(data=self.scores, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT book_mark.book_no ,user.age, user.gender FROM book_mark " \
+                      "join book on book_mark.book_no = book.book_no " \
+                      "join user on user.user_id = book_mark.user_no where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.bookmarks = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.bookmarks_result = pd.DataFrame(self.bookmarks, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=1"
+        self.strSql = "SELECT read_book.book_no, user.age, user.gender FROM read_book " \
+                      "join book on read_book.book_no = book.book_no " \
+                      "join user on user.user_id = read_book.user_no  where book.type_cd=1"
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -66,51 +70,46 @@ class UserBasedCFNovel:
 
     def calcSimilarity(self):
 
-        # 조회, 북마크, 읽음, 평점기반으로 유사성 검사
+        # 조회, 북마크, 읽음 처리 기반으로 유사성 검사
+        self.reads_result['values'] = 1
         self.hits_result['values'] = 0.5
         self.bookmarks_result['values'] = 1
-        self.reads_result['values'] = 1
+        # 스코어를 1로 줘야할지/ 점수 그대로 넣어야 할지 문제...
+        self.scores_result['score'] = 1
 
         users_books = pd.merge(
-            self.hits_result, self.bookmarks_result, how='outer', on=["user_no", "book_no"]
+            self.hits_result, self.bookmarks_result, how='outer', on=["age", "gender", "book_no"]
         )
 
         users_books = pd.merge(
-            users_books, self.scores_result, how='outer', on=["user_no", "book_no"]
+            users_books, self.reads_result, how='outer', on=["age", "gender", "book_no"]
         )
 
         users_books = pd.merge(
-            users_books, self.reads_result, how='outer', on=["user_no", "book_no"]
+            users_books, self.scores_result, how='outer', on=["age", "gender", "book_no"]
         )
 
-        # print(users_books)
+        print(users_books)
 
-        print("/************")
-
+        # Create pivot table with age and gender
         pivot_table = pd.pivot_table(
             users_books,
-            index=['user_no'],
+            index=['age', 'gender'],
             columns=['book_no'],
-            values=['values_x', 'values_y', 'score'],
+            values=['values_x', 'values_y', 'values', 'score'],
             aggfunc=sum,
         )
-        # 나중에 나이, 성별 필터도 적용할 것임
-        # pivot_table = pd.pivot_table(
-        #     users_books,
-        #     index=['user_no', 'age', 'gender'],
-        #     columns=['book_no'],
-        #     values=['values_x', 'values_y', 'score', 'values'],
-        #     aggfunc=sum,
-        # )
+
+        # print(pivot_table)
+        print("/************")
 
         result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
-        # print(result)
+        print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
-
-
+        print("////////please")
 
         user_based_book = {}
         for target_user in user_similarity.columns:
@@ -156,34 +155,35 @@ class UserBasedCFNovel:
 
     def deleteOriginData(self):
         # 기존 데이터 지우기
-        UserBasedCfModel.objects.filter(type_cd=1).delete()
+        UserBasedCfByAgeGenderModel.objects.filter(type_cd=1).delete()
 
     def save(self):
         user_based_book = self.calcSimilarity()
-        print(user_based_book)
 
         # 기존 데이터 지우기
         self.deleteOriginData()
 
-        for user_no, book_list in user_based_book.items():
+        for user, book_list in user_based_book.items():
             book_list.reverse()
             book_str = ""
 
             for book_no in book_list:
                 book_str += str(book_no) + " "
 
-            # UserBasedCfModel(
-            #     user_no=User.objects.get(user_id=user_no),
-            #     book_no_list=book_str,
-            #     type_cd=1,
-            #     created_dt=datetime.now(),
-            #     modified_dt=datetime.now()
-            # ).save()
+            UserBasedCfByAgeGenderModel(
+                age=user[0],
+                gender=user[1],
+                book_no_list=book_str,
+                type_cd=1,
+                created_dt=datetime.now(),
+                modified_dt=datetime.now()
+            ).save()
+
+        print(user_based_book)
 
 
 def execute_algorithm():
-    UserBasedCFNovel().save()
-    print("/////////////////////////////////////////////////////////////////")
+    UserBasedCFNovelByAgeAndGender().save()
 
 
 if __name__ == "__main__":
