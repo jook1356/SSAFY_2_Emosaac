@@ -59,7 +59,7 @@ public class UserService {
         //이미지 널이면 디폴트 이미지 처리
         if(newImg==null || newImg.equals("")){
             originUser.updateImageUrl(baseImg);
-            deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
+//            deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
         }else{
             originUser.updateImageUrl(newImg);
             if(!newImg.equals(originImg)){
@@ -73,7 +73,7 @@ public class UserService {
 
     private void deleteS3Image(String originImg, String baseImg){
 
-        if(!originImg.equals(baseImg)) {
+        if(!(originImg != null) && !originImg.equals(baseImg)) {
             try {
                 s3Uploader.delete(originImg);
             } catch (AmazonS3Exception e) {
