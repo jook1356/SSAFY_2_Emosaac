@@ -2,6 +2,8 @@ package com.emosaac.server.controller.user;
 
 import com.emosaac.server.common.CommonResponse;
 import com.emosaac.server.config.s3.S3Uploader;
+import com.emosaac.server.dto.genre.GenreResponseList;
+import com.emosaac.server.dto.recommand.UserBaseCfDto;
 import com.emosaac.server.dto.user.UserGenreRequest;
 import com.emosaac.server.dto.user.UserRequestFile;
 import com.emosaac.server.dto.user.UserRequest;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -27,10 +30,11 @@ public class userController {
 
     private final UserService userService;
     private final S3Uploader s3Uploader;
+    RestTemplate restTemplate = new RestTemplate();
+
     @GetMapping("/me")
     @ApiOperation(value = "로그인 유저 조회", notes = "현재 로그인한 유저 정보를 반환한다.")
     public ResponseEntity<CommonResponse> getCurrentUser(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
-
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "유저 정보 조회 성공", userService.getUser(userPrincipal.getId())));

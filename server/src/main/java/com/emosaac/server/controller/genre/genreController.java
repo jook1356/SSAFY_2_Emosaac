@@ -4,6 +4,7 @@ import com.emosaac.server.common.CommonResponse;
 import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.GenreResponseList;
 import com.emosaac.server.dto.genre.UserResearchRequest;
+import com.emosaac.server.dto.recommand.UserBaseCfDto;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.genre.GenreService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -24,6 +26,7 @@ import javax.validation.Valid;
 public class genreController {
 
     private final GenreService genreService;
+    RestTemplate restTemplate = new RestTemplate();
 
     ////<---장르 조회
     @GetMapping()
@@ -55,6 +58,8 @@ public class genreController {
         GenreResponseList genreResponseList = genreService.postResearch(userPrincipal.getId(), request);
         
         //장고로 요청
+//        String url = "http://127.0.0.1:8000/recommand/cf/"+userPrincipal.getId();
+//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
 
         
         return ResponseEntity.ok().body(CommonResponse.of(
