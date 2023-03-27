@@ -198,6 +198,7 @@ class Hit(models.Model):
 class ItemBasedcfmodel(models.Model):
     item_no = models.AutoField(primary_key=True)
     book_no = models.ForeignKey(Book, models.DO_NOTHING, db_column='book_no', blank=True, null=True)
+    recommend_book_no_list = models.TextField(blank=True, null=True)
 
     class Meta:
         app_label = 'recommand'  # 추가
