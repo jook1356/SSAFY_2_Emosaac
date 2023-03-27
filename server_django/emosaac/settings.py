@@ -54,13 +54,18 @@ CRONJOBS = [
     # ('*/3 * * * *', 'userbasedcf.totalWebtoonByAgeAndGender.execute_algorithm')  # 매 1분마다  실행
 
     ('* * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 분마다 실행
+    ('* * * * *', 'userbasedcf.recommandWebtoon.execute_algorithm()'),  # 매 분마다 실행
+    ('* * * * *', 'userbasedcf.recommandWebtoon.UserBasedCFWebtoon'),  # 매 분마다 실행
+
     ('* * * * *', 'userbasedcf.recommandNovel.execute_algorithm()'),  # 매 분마다 실행
     ('* * * * *', 'userbasedcf.totalNovelByAgeAndGender.execute_algorithm()'),
     ('* * * * *', 'userbasedcf.totalWebtoonByAgeAndGender.execute_algorithm'),  # 매 분마다 실행
     ('* * * * *', 'userbasedcf.parse.execute_algorithm'), # 매 분마다 실행
+    ('* * * * *', 'userbasedcf.parse.execute_algorithm()'),  # 매 분마다 실행
+
     ('* * * * *', 'server_django.userbasedcf.parse.execute_algorithm'),  # 매 분마다 실행
-    ('* * * * *', 'server_django.recommand.parse.test'), # 매 분마다 실행
-    ('* * * * *', 'server_django.recommand.parse.test()')  # 매 분마다 실행
+    ('* * * * *', 'recommand.parse'), # 매 분마다 실행
+    ('* * * * *', 'recommand.parse.test()')  # 매 분마다 실행
 
 ]
 
