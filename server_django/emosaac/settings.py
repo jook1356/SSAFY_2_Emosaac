@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'userbasedcf',
-    'userbasedpridict',
+    'userbasedpredict',
     'django_crontab', #크론 설정
+    'itembasedcf'
+
 ]
 
 CRONJOBS = [

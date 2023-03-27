@@ -19,6 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('recommand/', include('recommand.urls')),
     path('recommand/userbasedcf', include('userbasedcf.urls')),
-    path('recommand/pridict', include('userbasedpridict.urls')),
+    path('recommand/predict', include('userbasedpredict.urls')),
+    path('recommand/itembasedcf', include('itembasedcf.urls')),
     path('admin/', admin.site.urls),
 ]
