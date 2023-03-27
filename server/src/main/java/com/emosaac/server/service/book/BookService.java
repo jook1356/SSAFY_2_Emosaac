@@ -118,6 +118,7 @@ public class BookService {
             book.setAvgScore();
             return curScore.getScore();
         }
+        toggleReadByBook(bookId, userId); // 평점 등록 시, 자동 읽음 처리
 
         Score newScore = Score.builder().book(book).user(user).score(score).build();
         double result = book.setScore(newScore);
