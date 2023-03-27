@@ -31,7 +31,7 @@ from surprise.model_selection import train_test_split # 데이터를 학습용�
 from surprise.model_selection import GridSearchCV
 from surprise.dataset import DatasetAutoFolds
 
-def DataView():
+def svdModel():
     books = BookListView()
     scores = ScoreListView()
 
@@ -96,7 +96,6 @@ def DataView():
     recomm_book_by_surprise(algo, userId, unseen_books, books, 10)
 
     return
-
 
 def BookListView():
     # user select test
@@ -230,27 +229,3 @@ def recomm_book_by_surprise(algo, userId, unseen_books, books, top_n):
 
 if __name__ == "__main__":
     execute_surprise()
-
-# ratings_arr.dot(item_sim_arr) : 평점 * 책 유사도
-# ratings_arr : 사용자 u의 아이템 i와 가장 유사도가 높은 Top_N개 아이템에 대한 실제 평점 벡터
-# item_sim_arr : 아이템 i와 가장 유사도가 높은 Top_N개 아이템의 유사도 벡터
-
-# 개인화된 예측 평점
-# 평점 value와 유사도 value만 뽑아서 대입
-
-# 개인별로 계산된 예측 평점
-# ratings_pred_matrix
-
-    # trainset, testset = train_test_split(scores, train_size=.25, random_state=0)
-    # algo = SVD(n_factors=50, random_state=0)
-
-    # data = Dataset.load_from_df(scores)
-    # algo = SVD(n_factors=50, random_state=0)
-    # algo.fit(data)
-    #
-    # # algo.fit(trainset)
-    # # predictions = algo.test(testset)
-    # # accuracy.rmse(predictions)
-    #
-    # print(predictions)
-    # print(accuracy.rmse(predictions))
