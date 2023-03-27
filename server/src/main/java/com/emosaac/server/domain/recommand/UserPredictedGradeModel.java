@@ -32,6 +32,6 @@ public class UserPredictedGradeModel {
     @JoinColumn(name ="BOOK_NO")
     private Book book;
 
-    @Column(name = "PRIDICT_SCORE")
-    private double pridictScore; // 작품별 사용자의 예상 평점 저장
+    @Column(name = "PREDICT_SCORE")
+    private double predictScore; // 작품별 사용자의 예상 평점 저장
 }
