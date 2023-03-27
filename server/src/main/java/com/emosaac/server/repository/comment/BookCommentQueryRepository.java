@@ -3,13 +3,14 @@ package com.emosaac.server.repository.comment;
 import com.emosaac.server.domain.book.BookCommentLike;
 import com.emosaac.server.dto.comment.CommentResponse;
 import com.emosaac.server.dto.comment.QCommentResponse;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +44,8 @@ public class BookCommentQueryRepository {
     public Optional<BookCommentLike> findBookCommentLikeState(Long commentId, Long userId){
         return Optional.ofNullable(jpaQueryFactory.select(bookCommentLike)
                 .distinct().from(bookCommentLike)
-                .where(bookComment.commentId.eq(commentId),
-                        bookComment.user.userId.eq(userId))
+                .where(bookCommentLike.bookComment.commentId.eq(commentId),
+                        bookCommentLike.user.userId.eq(userId))
                 .fetchOne());
 
     }
@@ -65,13 +66,15 @@ public class BookCommentQueryRepository {
                 .fetchOne();
     }
 
-    private OrderSpecifier<?> findCriteria(String criteria){ //정렬 조건
+    private OrderSpecifier[] findCriteria(String criteria){ //정렬 조건
+        List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
         if(criteria.contains("date")){
-            return bookComment.createdDate.desc();
+            orderSpecifiers.add(new OrderSpecifier(Order.DESC, bookComment.createdDate));
         } else if(criteria.contains("like")){
-            return bookComment.likeScore.desc();
+            orderSpecifiers.add(new OrderSpecifier(Order.DESC, bookComment.likeScore));
+            orderSpecifiers.add(new OrderSpecifier(Order.DESC, bookComment.createdDate));
         }
-        return bookComment.createdDate.desc();
+        return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
     }
 
 }

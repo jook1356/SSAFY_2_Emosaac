@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -98,7 +99,8 @@ public class BookCommentService {
         List<CommentResponse> res = bookCommentQueryRepository.findParentCommentByBookId(bookId, criteria, PageRequest.of(offset - 1, size));
         for(CommentResponse cr : res){
             cr.updateTotalCount(bookCommentQueryRepository.findParentCommentCount(bookId));
-            if(bookCommentQueryRepository.findBookCommentLikeState(cr.getCommentId(), userId).isEmpty()){
+
+            if( bookCommentQueryRepository.findBookCommentLikeState(cr.getCommentId(), userId).isEmpty()){
                 cr.updateLikeState(false);
             }else {
                 cr.updateLikeState(true);

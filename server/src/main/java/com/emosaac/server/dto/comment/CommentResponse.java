@@ -59,6 +59,7 @@ public class CommentResponse {
             isChild = true;
         }
         likeStatusSize = comment.getTotalLikes();
+
 //        this.children = comment.getChildren().stream().map((c)-> new CommentResponse(c)).collect(Collectors.toList());;
     }
     public CommentResponse(BookComment comment, String content) { //삭제 처리된 댓글 결과
