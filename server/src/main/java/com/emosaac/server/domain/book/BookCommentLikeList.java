@@ -46,4 +46,10 @@ public class BookCommentLikeList {
         bookCommentLikeList.remove(removalTarget);
     }
 
+
+    public void clear() {
+        bookCommentLikeList.clear();
+    }
+
+
 }

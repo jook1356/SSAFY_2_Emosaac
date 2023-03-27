@@ -88,4 +88,7 @@ public class BookComment extends BaseEntity {
     public Integer getTotalLikes(){
         return bookCommentLikeList.size();
     }
+    public void deleteLikeList(){
+        this.bookCommentLikeList.clear();
+    }
 }
