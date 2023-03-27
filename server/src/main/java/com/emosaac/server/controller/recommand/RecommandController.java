@@ -83,14 +83,14 @@ public class RecommandController {
     @ApiOperation(value = "예측 점수가 높은 작품 추천", notes = "나와 비슷한 작품을 읽은 다른 사용자의 평점을 활용해 나의 평점을 예측, 높은 평점 작품을 추천한다.")
     @GetMapping("/prediction")
     public ResponseEntity<CommonResponse> findPredictiList(@RequestParam (value = "typeCode") int typeCd,
-                                                           @RequestParam(required=false, defaultValue = "date") String criteria,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                           @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
+                                                           @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                           @RequestParam(value = "prevScore", required = false, defaultValue = "10")Double prevScore,
                                                            @ApiIgnore @CurrentUser UserPrincipal user) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "예측 점수가 높은 작품 조회 성공", recommandService.findPredictiList(typeCd, size, criteria, id, user.getId()))
+                HttpStatus.OK, "예측 점수가 높은 작품 조회 성공", recommandService.findPredictList(typeCd, size, prevScore, prevId, user.getId()))
         );
     }
 
