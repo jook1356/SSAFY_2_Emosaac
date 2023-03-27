@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'userbasedcf',
     'userbasedpredict',
     'django_crontab', #크론 설정
+    'itembasedcf'
+
 ]
 
 CRONJOBS = [
