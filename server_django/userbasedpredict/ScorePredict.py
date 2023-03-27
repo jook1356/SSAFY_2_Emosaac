@@ -7,6 +7,8 @@ from django.db import connection
 import operator
 import warnings
 
+import math
+
 
 warnings.filterwarnings(action='ignore')
 
@@ -25,11 +27,13 @@ from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBoo
 # 북마크 + 내 평점으로 하기
 
 class UserPredictedGrade:
-    def __init__(self):
+    def __init__(self, type_cd):
+
+        self.type_cd = type_cd
 
         # 북 리스트
         self.cursor = connection.cursor()
-        self.strSql = "SELECT book_no , title FROM book where type_cd = 0"
+        self.strSql = "SELECT book_no , title FROM book where type_cd = " + str(self.type_cd)
         self.cursor.execute(self.strSql)
         self.books = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -43,25 +47,25 @@ class UserPredictedGrade:
         cols = [column[0] for column in self.cursor.description]
         self.readBook_result = pd.DataFrame(data=self.reads, columns=cols)
 
+        # 조회수 리스트
+        self.cursor = connection.cursor()
+        self.strSql = "select user_no, book_no, book.score as score from hit join book using(book_no) where type_cd = " + str(self.type_cd)
+        self.cursor.execute(self.strSql)
+        self.scores = self.cursor.fetchall()
+        cols = [column[0] for column in self.cursor.description]
+        self.hit_score_list = pd.DataFrame(data=self.scores, columns=cols)
+
         # 평점 리스트
         self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, score.score from score join book using(book_no) where book.type_cd = 0"
+        self.strSql = "select user_no, book_no, score.score as score " \
+                      "from score join book using(book_no) where book.type_cd = " + str(self.type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.score_result = pd.DataFrame(data=self.scores, columns=cols)
         self.user_score_list = self.score_result
 
-        # 북마크 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, book.score as score from book_mark join book using(book_no) " \
-                      "where type_cd = 0 "
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.bookmark_score_list = pd.DataFrame(data=self.scores, columns=cols)
-
-        self.merged_df = pd.merge(self.bookmark_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
+        self.merged_df = pd.merge(self.hit_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
         self.merged_df['score'] = self.merged_df['score_y'].fillna(self.merged_df['score_x'])
         self.merged_df.drop(['score_x', 'score_y'], axis=1, inplace=True)
 
@@ -143,30 +147,23 @@ class UserPredictedGrade:
     def save_list(self):
         user_predicted_book_dic = self.make_predicted_dic()
 
-        UserPredictedGradeModel.objects.all().delete()
+        # UserPredictedGradeModel.objects.all().delete()
 
         for user_no, book_isbn_list in user_predicted_book_dic.items():
 
             for book in book_isbn_list:
-                if book['score'] == 0:
+                if book['score'] == 0 or math.isnan(book['score']):
                     continue
+                # print(book['book_no'], book['score'])
                 UserPredictedGradeModel(
                     user_no=User.objects.get(user_id=user_no),
                     book_no=Book.objects.get(book_no=book['book_no']),
                     predict_score = book['score']
                 ).save()
 
-            # book_isbn_list.reverse()
-            # for book_no, score in book_isbn_list:
-            #     UserPredictedGradeModel(
-            #         user_no=User.objects.get(user_id=user_no),
-            #         book_no=Book.objects.get(book_no=book_no),
-            #         predict_score = score
-            #     ).save()
 
-
-def execute_algorithm():
-    UserPredictedGrade().save_list()
+def execute_algorithm(type_cd):
+    UserPredictedGrade(type_cd).save_list()
 
 
 if __name__ == "__main__":

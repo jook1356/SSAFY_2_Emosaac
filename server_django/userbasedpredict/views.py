@@ -1,18 +1,14 @@
 from django.shortcuts import render
 
 # Create your views here.
-from userbasedpredict.parse import BookListView, ScoreListView, ReadBookListView, svdModel
-from userbasedpredict import ScorePredict, RequestToonPredictByNewUser, RequestNovelPredictByNewUser
+from userbasedpredict import ScorePredict, RequestPredictByNewUser
+from recommand.models import UserPredictedGradeModel
 
 def index(request):
-    # BookListView()
-    # ReadBookListView()
-    # ScoreListView()
-
-    # svdModel() # surprise
-###################################################
-    # ScorePredict.execute_algorithm()
-    RequestToonPredictByNewUser.execute_algorithm(3)
+    UserPredictedGradeModel.objects.all().delete()
+    ScorePredict.execute_algorithm(0)
+    ScorePredict.execute_algorithm(1)
+    # RequestPredictByNewUser.execute_algorithm(2, 1) # user_id, type_cd : 유저 회원가입 시 사용하는 페이지
 
     return render(request, 'userbasedpredict')
 
