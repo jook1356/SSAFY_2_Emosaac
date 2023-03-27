@@ -7,6 +7,8 @@ from django.db import connection
 import operator
 import warnings
 
+import math
+
 
 warnings.filterwarnings(action='ignore')
 
@@ -21,13 +23,14 @@ django.setup()
 from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBook
 
 class UserPredictedGrade:
-    def __init__(self, user_id):
+    def __init__(self, user_id, type_cd):
 
         self.user_id = user_id
+        self.type_cd = type_cd
 
         # 북 리스트
         self.cursor = connection.cursor()
-        self.strSql = "SELECT book_no , title FROM book where type_cd = 0"
+        self.strSql = "SELECT book_no , title FROM book where type_cd = " + str(self.type_cd)
         self.cursor.execute(self.strSql)
         self.books = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -35,7 +38,7 @@ class UserPredictedGrade:
 
         # # 읽은 책 리스트
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_no FROM read_book where user_no = " + str(user_id)
+        self.strSql = "SELECT user_no, book_no FROM read_book where user_no = " + str(self.user_id)
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -44,7 +47,7 @@ class UserPredictedGrade:
         # 선호장르에 기반한 평균 평점 리스트
         self.cursor = connection.cursor()
         self.strSql = "select user_no, book_no, book.score as score from hit join book using(book_no) " \
-                      "where type_cd = 0 and user_no = " + str(user_id)
+                      "where type_cd = " + str(self.type_cd) + " and user_no = " + str(self.user_id)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -52,7 +55,8 @@ class UserPredictedGrade:
 
         # 평점 리스트
         self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, score.score as score from score join book using(book_no) where book.type_cd = 0"
+        self.strSql = "select user_no, book_no, score.score as score " \
+                      "from score join book using(book_no) where book.type_cd = " + str(self.type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -151,7 +155,7 @@ class UserPredictedGrade:
         for user_no, book_isbn_list in user_predicted_book_dic.items():
 
             for book in book_isbn_list:
-                if book['score'] == 0:
+                if book['score'] == 0 or math.isnan(book['score']):
                     continue
                 UserPredictedGradeModel(
                     user_no=User.objects.get(user_id=user_no),
@@ -163,11 +167,9 @@ class UserPredictedGrade:
         return book_str
 
 
-def execute_algorithm(user_id):
-    res = UserPredictedGrade(user_id).save_list()
+def execute_algorithm(user_id, type_cd):
+    res = UserPredictedGrade(user_id, type_cd).save_list()
     return res
-    # UserPredictedGrade().save_list()
-
 
 if __name__ == "__main__":
     execute_algorithm()
