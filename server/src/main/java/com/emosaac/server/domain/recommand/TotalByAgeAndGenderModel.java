@@ -11,8 +11,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name="USER_BASED_CF_BY_AGE_GENDER_MODEL")
-public class USERBasedCFByAgeAndGenderModel extends BaseEntity {
+@Table(name="TOTAL_BY_AGE_GENDER_MODEL")
+public class TotalByAgeAndGenderModel extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -58,10 +58,9 @@ public class genreController {
         GenreResponseList genreResponseList = genreService.postResearch(userPrincipal.getId(), request);
         
         //장고로 요청
-//        String url = "http://127.0.0.1:8000/recommand/cf/"+userPrincipal.getId();
-//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
+        String url = "http://127.0.0.1:8000/recommand/cf/"+userPrincipal.getId();
+        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
 
-        
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "설문조사 성공", genreResponseList));
     }
