@@ -65,7 +65,7 @@ public class userController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "닉네임이 중복인가(중복이면 true)", userService.nickNameCheck(nickName)));
+                HttpStatus.OK, "닉네임이 중복인가(중복이면 true)", userService.nickNameCheck(nickName, userPrincipal.getId())));
     }
 
     @GetMapping("/{userId}")
