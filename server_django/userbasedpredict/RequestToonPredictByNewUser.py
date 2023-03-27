@@ -20,12 +20,10 @@ django.setup()
 
 from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBook
 
-# 여기는 디비를 지웠다가 다시 생성하므로 배치에 사용합니다.
-
-# 북마크 + 내 평점으로 하기
-
 class UserPredictedGrade:
-    def __init__(self):
+    def __init__(self, user_id):
+
+        self.user_id = user_id
 
         # 북 리스트
         self.cursor = connection.cursor()
@@ -35,33 +33,38 @@ class UserPredictedGrade:
         cols = [column[0] for column in self.cursor.description]
         self.book_result = pd.DataFrame(data=self.books, columns=cols)
 
-        # 읽은 책 리스트
+        # # 읽은 책 리스트
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_no FROM read_book"
+        self.strSql = "SELECT user_no, book_no FROM read_book where user_no = " + str(user_id)
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.readBook_result = pd.DataFrame(data=self.reads, columns=cols)
 
+        # 선호장르에 기반한 평균 평점 리스트
+        self.cursor = connection.cursor()
+        self.strSql = "select user_no, book_no, book.score as score from hit join book using(book_no) " \
+                      "where type_cd = 0 and user_no = " + str(user_id)
+        self.cursor.execute(self.strSql)
+        self.scores = self.cursor.fetchall()
+        cols = [column[0] for column in self.cursor.description]
+        self.hit_score_list = pd.DataFrame(data=self.scores, columns=cols)
+
         # 평점 리스트
         self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, score.score from score join book using(book_no) where book.type_cd = 0"
+        self.strSql = "select user_no, book_no, score.score as score from score join book using(book_no) where book.type_cd = 0"
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.score_result = pd.DataFrame(data=self.scores, columns=cols)
         self.user_score_list = self.score_result
 
-        # 북마크 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, book.score as score from book_mark join book using(book_no) " \
-                      "where type_cd = 0 "
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.bookmark_score_list = pd.DataFrame(data=self.scores, columns=cols)
+        # hit_score_list에서 user_no와 book_no가 score_result에 존재하는 행들만 선택
+        mask = (self.hit_score_list['user_no'].isin(self.score_result['user_no'])) & \
+               (self.hit_score_list['book_no'].isin(self.score_result['book_no']))
 
-        self.merged_df = pd.merge(self.bookmark_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
+        # hit_score_list에서 선택된 행들과 score_result를 조인하여 score 값을 조정한 후 합침
+        self.merged_df = pd.merge(self.hit_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
         self.merged_df['score'] = self.merged_df['score_y'].fillna(self.merged_df['score_x'])
         self.merged_df.drop(['score_x', 'score_y'], axis=1, inplace=True)
 
@@ -96,7 +99,6 @@ class UserPredictedGrade:
 
     # def. User "000"이(가) 읽은 도서 리스트
     def get_user_book_list(self, user_id):
-        # bg_user = self.score_result.loc[self.score_result['user_no'] == user_id]
         bg_user = self.user_score_list.loc[self.user_score_list['user_no'] == user_id]
         # print(bg_user)
         bg_user_book = bg_user['book_no']
@@ -112,38 +114,39 @@ class UserPredictedGrade:
         rating_df_T = self.rating_df.transpose()
         predict_rating_np = self.predict_rating_topsim(rating_df_T.values, self.book_sim_df.values, n=5)
 
+
         # 예상 평점 np를 dataframe으로 변환
         predict_rating_df = pd.DataFrame(data=predict_rating_np, index=rating_df_T.index, columns=rating_df_T.columns)
+
+        # print(predict_rating_df)
 
         # 결과 딕셔너리 생성
         user_book_dic = {}
 
-        # 사용자 한명한명에 대해 리스트 저장하기
-        for target_user in user_list:
-            # 해당 사용자의 예상 평점을 높은 순서대로 가져오기
-            user_predict_rating_df = predict_rating_df.loc[target_user, :].sort_values(ascending=False)
-            # 예상 평점 df를 list로 변환
-            user_predict_rating_list = user_predict_rating_df.index.tolist()
-            # 사용자가 읽은 도서 리스트 받아오기
-            target_user_book_list = self.get_user_book_list(target_user)
+        # 해당 사용자의 예상 평점을 높은 순서대로 가져오기
+        user_predict_rating_df = predict_rating_df.loc[self.user_id, :].sort_values(ascending=False)
+        print(user_predict_rating_df)
+        # 예상 평점 df를 list로 변환
+        user_predict_rating_list = user_predict_rating_df.index.tolist()
+        # 사용자가 읽은 도서 리스트 받아오기
+        target_user_book_list = self.get_user_book_list(self.user_id)
 
-            # 예상 평점 리스트에서 사용자가 이미 읽은 도서 제거
-            # not_read_rating_list = [i for i in user_predict_rating_list if i not in target_user_book_list][:20]
+        # 예상 평점 리스트에서 사용자가 이미 읽은 도서 제거
 
-            not_read_score_list = []
-            for book_no, score in user_predict_rating_df.items():
-                if book_no not in target_user_book_list and len(not_read_score_list) < 30:
-                    not_read_score_list.append({'book_no': book_no, 'score': score})
+        not_read_score_list = []
+        for book_no, score in user_predict_rating_df.items():
+            if book_no not in target_user_book_list and len(not_read_score_list) < 30:
+                not_read_score_list.append({'book_no': book_no, 'score': score})
 
-            # Result) 모든 User에 대한 상위 예상 평점 도서 리스트 추천
-            user_book_dic[target_user] = not_read_score_list
+        # Result) 모든 User에 대한 상위 예상 평점 도서 리스트 추천
+        user_book_dic[self.user_id] = not_read_score_list
 
         return user_book_dic
 
     def save_list(self):
         user_predicted_book_dic = self.make_predicted_dic()
 
-        UserPredictedGradeModel.objects.all().delete()
+        book_str = ""
 
         for user_no, book_isbn_list in user_predicted_book_dic.items():
 
@@ -155,18 +158,15 @@ class UserPredictedGrade:
                     book_no=Book.objects.get(book_no=book['book_no']),
                     predict_score = book['score']
                 ).save()
+                book_str += str(book['book_no']) + " "
 
-            # book_isbn_list.reverse()
-            # for book_no, score in book_isbn_list:
-            #     UserPredictedGradeModel(
-            #         user_no=User.objects.get(user_id=user_no),
-            #         book_no=Book.objects.get(book_no=book_no),
-            #         predict_score = score
-            #     ).save()
+        return book_str
 
 
-def execute_algorithm():
-    UserPredictedGrade().save_list()
+def execute_algorithm(user_id):
+    res = UserPredictedGrade(user_id).save_list()
+    return res
+    # UserPredictedGrade().save_list()
 
 
 if __name__ == "__main__":
