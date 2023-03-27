@@ -2,6 +2,7 @@ package com.emosaac.server.controller.genre;
 
 import com.emosaac.server.common.CommonResponse;
 import com.emosaac.server.dto.book.BookRequest;
+import com.emosaac.server.dto.genre.GenreResponseList;
 import com.emosaac.server.dto.genre.UserResearchRequest;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
@@ -51,8 +52,13 @@ public class genreController {
     public ResponseEntity<CommonResponse> postResearch(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                        @RequestBody @Valid UserResearchRequest request) {
 
+        GenreResponseList genreResponseList = genreService.postResearch(userPrincipal.getId(), request);
+        
+        //장고로 요청
+
+        
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "설문조사 성공", genreService.postResearch(userPrincipal.getId(), request)));
+                HttpStatus.CREATED, "설문조사 성공", genreResponseList));
     }
 
 
