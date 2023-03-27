@@ -22,14 +22,12 @@ from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBoo
 
 # 여기는 디비를 지웠다가 다시 생성하므로 배치에 사용합니다.
 
-# 북마크 + 내 평점으로 하기
-
 class UserPredictedGrade:
     def __init__(self):
 
         # 북 리스트
         self.cursor = connection.cursor()
-        self.strSql = "SELECT book_no , title FROM book where type_cd = 0"
+        self.strSql = "SELECT book_no , title FROM book where type_cd = 1"
         self.cursor.execute(self.strSql)
         self.books = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -45,27 +43,11 @@ class UserPredictedGrade:
 
         # 평점 리스트
         self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, score.score from score join book using(book_no) where book.type_cd = 0"
+        self.strSql = "select user_no, book_no, score.score from score join book using(book_no) where book.type_cd = 1"
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.score_result = pd.DataFrame(data=self.scores, columns=cols)
-        self.user_score_list = self.score_result
-
-        # 북마크 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, book.score as score from book_mark join book using(book_no) " \
-                      "where type_cd = 0 "
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.bookmark_score_list = pd.DataFrame(data=self.scores, columns=cols)
-
-        self.merged_df = pd.merge(self.bookmark_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
-        self.merged_df['score'] = self.merged_df['score_y'].fillna(self.merged_df['score_x'])
-        self.merged_df.drop(['score_x', 'score_y'], axis=1, inplace=True)
-
-        self.score_result = self.merged_df
 
         connection.commit()
         connection.close()
@@ -96,8 +78,7 @@ class UserPredictedGrade:
 
     # def. User "000"이(가) 읽은 도서 리스트
     def get_user_book_list(self, user_id):
-        # bg_user = self.score_result.loc[self.score_result['user_no'] == user_id]
-        bg_user = self.user_score_list.loc[self.user_score_list['user_no'] == user_id]
+        bg_user = self.score_result.loc[self.score_result['user_no'] == user_id]
         # print(bg_user)
         bg_user_book = bg_user['book_no']
         user_book_list = bg_user_book.tolist()
@@ -148,8 +129,6 @@ class UserPredictedGrade:
         for user_no, book_isbn_list in user_predicted_book_dic.items():
 
             for book in book_isbn_list:
-                if book['score'] == 0:
-                    continue
                 UserPredictedGradeModel(
                     user_no=User.objects.get(user_id=user_no),
                     book_no=Book.objects.get(book_no=book['book_no']),
