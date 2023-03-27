@@ -59,6 +59,9 @@ public class BookService {
             System.out.println("hihi");
             Hit hit = Hit.builder().book(book).user(user).build();
             hitRepository.save(hit);
+        }else{
+            Hit hit = hitRepository.findByBookIdAndUserId(bookId, userId);
+            hit.update();
         }
 
         Boolean bookmarkStatus = false;
