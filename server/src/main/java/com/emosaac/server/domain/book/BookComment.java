@@ -73,13 +73,16 @@ public class BookComment extends BaseEntity {
         this.content = request.getContent();
     }
 
+
     public void updateDeleteStatus() {
         this.isDelete = true;
         this.content = null;
     }
 
     public boolean toggleBookCommentLike(BookCommentLike bookCommentLike) {
-        return bookCommentLikeList.toggleBookCommentLike(bookCommentLike);
+        boolean res = bookCommentLikeList.toggleBookCommentLike(bookCommentLike);
+        this.likeScore = getTotalLikes().doubleValue();
+        return res;
     }
 
     public Integer getTotalLikes(){
