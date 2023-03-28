@@ -167,13 +167,13 @@ class UserBasedCFBookRequest:
                 book_str += str(book_no) + " "
 
             # //////////////필터 적용안된 경우//////////////
-            # UserBasedCfModel(
-            #     user_no=User.objects.get(user_id=user_no),
-            #     book_no_list=book_str,
-            #     type_cd=0,
-            #     created_dt=datetime.now(),
-            #     modified_dt=datetime.now()
-            # ).save()
+            UserBasedCfModel(
+                user_no=User.objects.get(user_id=user_no),
+                book_no_list=book_str,
+                type_cd=0,
+                created_dt=datetime.now(),
+                modified_dt=datetime.now()
+            ).save()
 
             return book_str
         # print(user_based_book)

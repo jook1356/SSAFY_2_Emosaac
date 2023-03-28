@@ -46,8 +46,8 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('0 0 * * *', 'emosaac.cron.crontab_job', '>> BASE_DIR' + '/cron.log'),  # 매일 00:00 에 실행
-    # ('*/1 * * * *', 'emosaac.cron.crontab_job', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
+    ('0 0 * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '), #매일 정각
+    ('0 0 * * *', 'emosaac.cron.crontab_job_age_gen', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
     # ('* * * * *', 'recommand.parse.test'),  # 매 분마다 실행
 
 ]
