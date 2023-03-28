@@ -1,9 +1,8 @@
 # ./Dockerfile
 FROM python:3
 ENV PYTHONUNBUFFERED 1
-
 # 가상환경 생성
-RUN python3 -m venv /opt/venv
+RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # cron 설정
@@ -22,6 +21,8 @@ RUN ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 COPY . .
 
 ## Install packages
+RUN apt-get install -y python3-dev python3-pip
+RUN pip3 install Django
 RUN pip install --upgrade pip
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
