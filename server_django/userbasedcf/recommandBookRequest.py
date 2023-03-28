@@ -21,9 +21,10 @@ from django.db import connection
 
 # 나이, 성별 필터링 안되어있음
 
-class UserBasedCFWebtoonRequest:
-    def __init__(self, user_id):
+class UserBasedCFBookRequest:
+    def __init__(self, user_id, type_cd):
 
+        self.type_cd = type_cd
         self.user_id = user_id
 
         self.cursor = connection.cursor()
@@ -35,28 +36,31 @@ class UserBasedCFWebtoonRequest:
         self.users_result = pd.DataFrame(data=self.users, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=" + str(type_cd)
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=" + str(
+            type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.scores_result = pd.DataFrame(data=self.scores, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=" + str(
+            type_cd)
         self.cursor.execute(self.strSql)
         self.bookmarks = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.bookmarks_result = pd.DataFrame(self.bookmarks, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=0"
+        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=" + str(
+            type_cd)
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -84,30 +88,13 @@ class UserBasedCFWebtoonRequest:
             users_books, self.reads_result, how='outer', on=["user_no", "book_no"]
         )
 
-        # 테스트중
-        # 문제: 나이가 같거나 성별이 같아야한다는 필터링 조건을 넣으니 결과가 안나오는 문제 발생..
-        users_books = pd.merge(
-            users_books, self.users_result, how='left', left_on=["user_no"], right_on=["user_id"]
-        )
-
-        # print(users_books)
-
-        # Create pivot table with age and gender
-        # pivot_table = pd.pivot_table(
-        #     users_books,
-        #     index=['user_no', 'age', 'gender'],
-        #     columns=['book_no'],
-        #     values=['values_x', 'values_y', 'score', 'values'],
-        #     aggfunc=sum,
-        # )
-
         # print(pivot_table)
         print("/************")
         pivot_table = pd.pivot_table(
             users_books,
             index=['user_no'],
             columns=['book_no'],
-            values=['values_x', 'values_y', 'score' ,'values'],
+            values=['values_x', 'values_y', 'score', 'values'],
             aggfunc=sum,
         )
 
@@ -147,7 +134,7 @@ class UserBasedCFWebtoonRequest:
             # 0.5-> 0.125 : sum->mean
             result_sorted = result_T.loc[:, i][
                 ((result_T.loc[:, self.user_id] == 0) | (result_T.loc[:, self.user_id] == 0.125) | (
-                            result_T.loc[:, self.user_id] == 0.000))].sort_values(
+                        result_T.loc[:, self.user_id] == 0.000))].sort_values(
                 ascending=False)
             best.append(result_sorted.index[:10].tolist())
 
@@ -192,9 +179,9 @@ class UserBasedCFWebtoonRequest:
         # print(user_based_book)
 
 
-def execute_algorithm(user_id):
+def execute_algorithm(user_id, type_cd):
     print("--------------------webtoonRequest-------------------------------")
-    res = UserBasedCFWebtoonRequest(user_id).save()
+    res = UserBasedCFBookRequest(user_id, type_cd).save()
     return res
     print("---------------------------------------------------")
 
