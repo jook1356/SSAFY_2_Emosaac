@@ -4,6 +4,7 @@ ENV PYTHONUNBUFFERED 1
 # 가상환경 생성
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+RUN mkdir /usr/src/app
 
 # cron 설정
 RUN apt-get update
