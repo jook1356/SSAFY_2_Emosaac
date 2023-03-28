@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final GenreRepository genreRepository;
-    private final String baseImg = "static/user/06f9a0b1-0b17-4e61-bb31-fc2435cb8d9cng1.png";
+    private final String baseImg = "static/user/d5be5034-79c6-4ef7-861a-0f119247c9c6age.png";
     private final S3Uploader s3Uploader;
     private final CommonService commonService;
 
