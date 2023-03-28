@@ -1,9 +1,9 @@
 # ./Dockerfile
 FROM python:3
-ENV PYTHONUNBUFFERED 1
-# 가상환경 생성
-RUN python -m venv /opt/venv
-RUN . /opt/venv/bin/activate
+# ENV PYTHONUNBUFFERED 1
+# # 가상환경 생성
+# RUN python -m venv /opt/venv
+# RUN . /opt/venv/bin/activate
 
 
 
