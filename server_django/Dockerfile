@@ -1,0 +1,36 @@
+# ./Dockerfile
+FROM python:3
+ENV PYTHONUNBUFFERED 1
+
+# 가상환경 생성
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# cron 설정
+RUN apt-get update
+RUN apt-get -y install cron
+RUN apt-get -y install vim
+
+WORKDIR /usr/src/app
+
+RUN touch /var/log/cron.log
+
+# 컨테이너 작업경로(requirements.txt, manage.py 위치)
+RUN rm -rf /etc/localtime
+RUN ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+COPY . .
+
+## Install packages
+RUN pip install --upgrade pip
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+# cron 설정
+RUN service cron start
+RUN service cron status
+RUN python manage.py crontab add
+
+## Run the application on the port 8080
+EXPOSE 8000
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
