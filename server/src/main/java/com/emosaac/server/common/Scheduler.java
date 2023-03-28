@@ -25,6 +25,7 @@ public class Scheduler {
 
 //    @Scheduled(cron = "0/1 * * * * ?")
 
+    //일단 배치 작업 안함
     @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
     @Transactional
     public void getTotalGenre() { //스케줄러 처리 필요
