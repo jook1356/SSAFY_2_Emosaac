@@ -4,9 +4,11 @@ from datetime import datetime
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
 from django.db import connection
 import operator
 import warnings
+from scipy.sparse import hstack
 
 warnings.filterwarnings(action='ignore')
 
@@ -25,16 +27,17 @@ from django.db import connection
 def book_list_view():
     try:
         cursor = connection.cursor()
-        strSql = "SELECT book_no, title, tag  FROM book where type_cd = 0"
+        strSql = "SELECT book_no, title, tag, story  FROM book where type_cd = 1"
         cursor.execute(strSql)
         books = cursor.fetchall()
-        result = pd.DataFrame(books,  columns = ['book_id', 'title', 'tag'])
+        result = pd.DataFrame(books,  columns = ['book_id', 'title', 'tag', 'story'])
 
         connection.commit()
         connection.close()
 
-    except:
+    except Book.DoseNotExist:
         connection.rollback()
+
 
     return result
 
@@ -45,13 +48,12 @@ def get_recommendations(idx):
     vect = CountVectorizer()  # Counter Vectorizer 객체 생성
     countvect = vect.fit_transform(book_list['tag'])  # 작품수 X 테그수수
 
-    countvect.toarray()
-    vect.vocabulary_
-    sorted(vect.vocabulary_)
+    tfidf = TfidfVectorizer()
+    tfidf_matrix = tfidf.fit_transform(book_list['story'])
 
-    countvect_df = pd.DataFrame(countvect.toarray(), columns=sorted(vect.vocabulary_))
+    vector = hstack([tfidf_matrix, countvect])
 
-    cosine_sim = cosine_similarity(countvect_df, countvect_df)
+    cosine_sim = cosine_similarity(vector, vector)
 
     # 해당 작품과 모든 작품과의 유사도를 가져온다.
     sim_scores = list(enumerate(cosine_sim[idx]))
@@ -76,14 +78,18 @@ def item_based_cf(book_no):
         li.append(result[i] + 1)
     for i in li:
         res += str(i) + " "
-    print(res + "AA")
+    print(res)
     return res
 
 def save(book_no):
     item_based_book = item_based_cf(book_no)
-
+    # try:
+    # book =  Book.objects.get(book_no = book_no)
+    # except Book.DoesNotExist:
+    #     return
     ItemBasedcfmodel(
         book_no = Book.objects.get(book_no = book_no),
-        recommend_book_no_list = item_based_book
+        book_no_list = item_based_book,
+        type_cd = 1
     ).save()
 
