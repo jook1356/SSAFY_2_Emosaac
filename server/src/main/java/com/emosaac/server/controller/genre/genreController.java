@@ -147,18 +147,16 @@ public class genreController {
                                                             @RequestParam(value = "typeCode") int typeCd,
                                                             @RequestParam(value = "order") int order,
                                                             @ApiIgnore @RequestParam(value = "isLike", defaultValue = "0") int isLike,
-                                                            @RequestParam(required = false, defaultValue = "")
-                                                            String criteria,
                                                             @RequestParam(value = "size", required = false, defaultValue = "10")
                                                             int size,
-                                                            @RequestParam(value = "prevId", required = false, defaultValue = "20493")
+                                                            @RequestParam(value = "prevId", required = false, defaultValue = "0")
                                                             Long prevId,
                                                             @RequestParam(value = "prevScore", required = false, defaultValue = "10")
                                                             Double prevScore) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "장르별 선호 책 조회 성공",
-                genreService.getTotalLikeGenreBook(userPrincipal.getId(), BookRequest.of(typeCd, criteria, size, prevId, prevScore, isLike, order))));
+                genreService.getTotalLikeGenreBook(userPrincipal.getId(), BookRequest.of(typeCd, size, prevId, prevScore, isLike, order))));
     }
 
 }

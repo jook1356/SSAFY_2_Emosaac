@@ -54,6 +54,21 @@ public class BookRequest {
         this.order = order;
     }
 
+    public BookRequest(int typeCd, int size, Long prevId, Double prevScore, int isLike, int order) {
+        this.typeCd = typeCd;
+        this.size = size;
+        this.prevId = prevId;
+        this.prevScore = prevScore;
+        this.isLike = isLike;
+        this.order = order;
+    }
+
+    public static BookRequest of(int typeCd, int size, Long prevId, Double prevScore, int isLike, int  order) {
+        return new BookRequest(typeCd, size, prevId, prevScore, isLike, order);
+    }
+
+
+
     public static BookRequest of(int typeCd, String criteria, int size, Long prevId, Double prevScore, Long genreCode) {
         return new BookRequest(typeCd, criteria,size, prevId, prevScore, genreCode);
     }
