@@ -114,6 +114,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String code = "";
         if(flag){
+            code = "200";
         }else{
             code = "201";
         }
