@@ -129,7 +129,7 @@ class UserPredictedGrade:
 
         # 해당 사용자의 예상 평점을 높은 순서대로 가져오기
         user_predict_rating_df = predict_rating_df.loc[self.user_id, :].sort_values(ascending=False)
-        print(user_predict_rating_df)
+        # print(user_predict_rating_df)
         # 예상 평점 df를 list로 변환
         user_predict_rating_list = user_predict_rating_df.index.tolist()
         # 사용자가 읽은 도서 리스트 받아오기
@@ -157,10 +157,16 @@ class UserPredictedGrade:
             for book in book_isbn_list:
                 if book['score'] == 0 or math.isnan(book['score']):
                     continue
+
+                if book['score'] <  5 : # 추후 8로 변경 예정
+                    break
+
                 UserPredictedGradeModel(
                     user_no=User.objects.get(user_id=user_no),
                     book_no=Book.objects.get(book_no=book['book_no']),
-                    predict_score = book['score']
+                    predict_score = round(book['score'],2),
+                    created_dt=datetime.now(),
+                    modified_dt=datetime.now()
                 ).save()
                 book_str += str(book['book_no']) + " "
 

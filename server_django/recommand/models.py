@@ -309,6 +309,8 @@ class UserPredictedGradeModel(models.Model):
     book_no = models.ForeignKey(Book, models.DO_NOTHING, db_column='book_no', blank=True, null=True)
     user_no = models.ForeignKey(User, models.DO_NOTHING, db_column='user_no', blank=True, null=True)
     predict_score = models.FloatField(blank=True, null=True)
+    created_dt = models.DateTimeField()
+    modified_dt = models.DateTimeField()
 
     class Meta:
         app_label = 'recommand'  # 추가
