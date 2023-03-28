@@ -56,7 +56,6 @@ public class BookService {
         book.setAvgScore();
 
         if(!hitRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
-            System.out.println("hihi");
             Hit hit = Hit.builder().book(book).user(user).build();
             hitRepository.save(hit);
         }else{
