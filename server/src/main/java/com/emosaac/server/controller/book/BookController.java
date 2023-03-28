@@ -55,6 +55,11 @@ public class BookController {
     public ResponseEntity<CommonResponse> findDetailByWebtoon(@PathVariable Long bookId,
                                                               @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
+        if(userPrincipal == null){
+            return ResponseEntity.ok().body(CommonResponse.of(
+                    HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByNoneUser(bookId)
+            ));
+        }
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByBook(bookId, userPrincipal.getId())

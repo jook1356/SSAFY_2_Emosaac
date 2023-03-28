@@ -81,6 +81,16 @@ public class BookService {
         return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
     }
 
+    public BookDetailResponse findDetailByNoneUser(Long bookId) {
+        Book book = commonService.getBook(bookId);
+
+        Boolean bookmarkStatus = false;
+        Boolean readStatus = false;
+        double score = 0.0;
+
+        return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
+    }
+
     @Transactional
     public Boolean toggleBookmarkByBook(Long bookId, Long userId) {
         Book book = commonService.getBook(bookId);

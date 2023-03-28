@@ -46,7 +46,7 @@ public class BookDetailResponse {
         this.hit = book.getHit();
         this.day = book.getDay();
 
-        this.avgScore = book.getScore();
+        this.avgScore = Double.parseDouble(String.format("%.2f", book.getScore()));
 
         this.bookmark = bookmarkStatus;
         this.read = readStatus;
