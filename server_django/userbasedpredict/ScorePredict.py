@@ -154,11 +154,15 @@ class UserPredictedGrade:
             for book in book_isbn_list:
                 if book['score'] == 0 or math.isnan(book['score']):
                     continue
+                if book['score'] < 5 : # 추후 8로 변경 예정
+                    break
                 # print(book['book_no'], book['score'])
                 UserPredictedGradeModel(
                     user_no=User.objects.get(user_id=user_no),
                     book_no=Book.objects.get(book_no=book['book_no']),
-                    predict_score = book['score']
+                    predict_score = round(book['score'],2),
+                    created_dt=datetime.now(),
+                    modified_dt=datetime.now()
                 ).save()
 
 
