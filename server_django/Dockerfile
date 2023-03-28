@@ -2,9 +2,12 @@
 FROM python:3
 ENV PYTHONUNBUFFERED 1
 # 가상환경 생성
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+RUN sudo python3 -m venv /opt/venv
 RUN source /opt/venv/bin/activate
+# RUN python -m venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+
+# RUN source /opt/venv/bin/activate
 RUN mkdir /usr/src/app
 
 # cron 설정
