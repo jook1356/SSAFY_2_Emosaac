@@ -1,8 +1,11 @@
 package com.emosaac.server.service.recommand;
 
 import com.emosaac.server.common.SlicedResponse;
+import com.emosaac.server.domain.book.ReadBook;
+import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookListResponse;
+import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.dto.recommand.PredictedBookResponse;
 import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.recommand.RecommandQueryRepository;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -29,7 +33,7 @@ public class RecommandService {
     private final RecommandQueryRepository recommandQueryRepository;
     private final UserBasedCfRepository userBasedCfRepository;
     private final TotalByAgeAndGenderModelRepository totalByAgeAndGenderModelRepository;
-
+    private final BookQueryRepository bookQueryRepository;
     public SlicedResponse<BookListResponse> findBestList(int size, Long prevId, Double prevScore, int hit, int typeCd) {
         Slice<BookListResponse> page = recommandQueryRepository.findBestList(hit, typeCd, prevId, prevScore, PageRequest.ofSize(size));
         return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
@@ -53,8 +57,14 @@ public class RecommandService {
         return res;
     }
 
-    public Object findItemList(int typeCd, int size, String criteria, Long id, Long userId) {
-        return null;
+    public List<BookListResponse> findItemList(int typeCd, Long bookId, Long userId) {
+        if(bookId == 0){ // 제일 최근 본 작품과 유사한 작품 추천
+            Optional <ReadBook> readBook =bookQueryRepository.findBookRecent(userId);
+            if(readBook.isPresent()){
+                bookId = readBook.get().getReadId();
+            }
+        }
+        return findBookStrListNotRead10(recommandQueryRepository.findItemList(typeCd, bookId), userId);
     }
 
     public SlicedResponse<PredictedBookResponse> findPredictList(int typeCd, int size, Double prevScore, Long prevId, Long userId) {
@@ -78,6 +88,21 @@ public class RecommandService {
         for (String bookIdStr : str.split(" ")) {
             BookListResponse book = new BookListResponse(commonService.getBook(Long.parseLong(bookIdStr)));
             res.add(book);
+        }
+        return res;
+
+    }
+
+    public List<BookListResponse> findBookStrListNotRead10(String str, Long userId) {
+        List<BookListResponse> res = new ArrayList<>();
+
+        for (String bookIdStr : str.split(" ")) {
+            // 안 읽은 작품 찾기
+            Optional<BookListResponse> book = bookQueryRepository.findBookRead(Long.parseLong(bookIdStr), userId);
+            if(book.isEmpty()){
+                res.add(new BookListResponse(commonService.getBook(Long.parseLong(bookIdStr))));
+            }
+            if(res.size() == 10) break;
         }
         return res;
 

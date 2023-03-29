@@ -1,6 +1,7 @@
 package com.emosaac.server.repository.book;
 
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.dto.book.*;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QHit.hit;
+import static com.emosaac.server.domain.book.QReadBook.readBook;
 
 @RequiredArgsConstructor
 @Repository
@@ -130,7 +132,26 @@ public class BookQueryRepository {
 
         return book.bookId.desc();
     }
+    public Optional<ReadBook> findBookRecent(Long userId){
+        return Optional.ofNullable(jpaQueryFactory.select(readBook)
+                .from(readBook)
+                .where(
+                        readBook.user.userId.eq(userId)
+                )
+                .orderBy(readBook.modifiedDate.desc())
+                .limit(1)
+                .fetchOne());
+    }
 
+    public Optional<BookListResponse> findBookRead(Long bookId, Long userId) {
+        return Optional.ofNullable(jpaQueryFactory.select(new QBookListResponse(readBook.book))
+                .from(readBook)
+                .where(
+                        readBook.book.bookId.eq(bookId),
+                        readBook.user.userId.eq(userId)
+                )
+                .fetchOne());
+    }
     /*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
     private Predicate filterGenreCd(Long genreCode) {
 //        if(criteria.contains("로맨스")){
