@@ -80,13 +80,13 @@ dependencies {
 
 	//ocr
 //	implementation 'net.sourceforge.tess4j:tess4j:5.0.0'
-	implementation 'net.sourceforge.tess4j:tess4j:5.0.0'
-
+//	implementation 'net.sourceforge.tess4j:tess4j:5.0.0'
+//
 //	implementation 'org.bytedeco:tesseract-platform:5.0.1-1.5.7'
-  	implementation 'org.openpnp:opencv:4.5.1-2'
+//  	implementation 'org.openpnp:opencv:4.5.1-2'
 //	implementation 'net.imagej:imagej:2.1.0'
-	implementation 'net.imagej:ij:1.53t'
-	implementation 'org.boofcv:boofcv-core:0.41'
+//	implementation 'net.imagej:ij:1.53t'
+//	implementation 'org.boofcv:boofcv-core:0.41'
 //	implementation 'net.imagej:imagej:3.6.0'
 
 
