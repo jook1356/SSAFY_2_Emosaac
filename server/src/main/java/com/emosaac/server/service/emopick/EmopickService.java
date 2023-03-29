@@ -228,8 +228,9 @@ public class EmopickService {
 
         validEmopickUser(userId, emopick.getUser().getUserId());
 
-        emopick.clearUser();
+        emopickDetailRepository.deleteByEmopickId(emopick.getEmopickId());
 
+        emopick.clearUser();
         emopickRepository.deleteById(emopickId);
         return emopickId;
     }
