@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final GenreRepository genreRepository;
-    private final String baseImg = "static/user/06f9a0b1-0b17-4e61-bb31-fc2435cb8d9cng1.png";
+    private final String baseImg = "static/user/d5be5034-79c6-4ef7-861a-0f119247c9c6age.png";
     private final S3Uploader s3Uploader;
     private final CommonService commonService;
 
@@ -59,7 +59,7 @@ public class UserService {
         //이미지 널이면 디폴트 이미지 처리
         if(newImg==null || newImg.equals("")){
             originUser.updateImageUrl(baseImg);
-            deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
+//            deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
         }else{
             originUser.updateImageUrl(newImg);
             if(!newImg.equals(originImg)){
@@ -73,7 +73,7 @@ public class UserService {
 
     private void deleteS3Image(String originImg, String baseImg){
 
-        if(!originImg.equals(baseImg)) {
+        if(!(originImg != null) && !originImg.equals(baseImg)) {
             try {
                 s3Uploader.delete(originImg);
             } catch (AmazonS3Exception e) {

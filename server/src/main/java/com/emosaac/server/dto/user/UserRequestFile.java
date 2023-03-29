@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 public class UserRequestFile {
 
     //닉네임
-    @NotBlank(message = "빈문자열을 허용하지 않습니다.")
+    @NotNull(message = "빈문자열을 허용하지 않습니다.")
     @Length(min = 2, max = 10, message = "2~10자의 닉네임만 가능합니다.")
     private String nickName;
     //성별

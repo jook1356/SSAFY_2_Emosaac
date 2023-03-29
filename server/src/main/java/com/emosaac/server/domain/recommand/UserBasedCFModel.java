@@ -1,7 +1,6 @@
 package com.emosaac.server.domain.recommand;
 
 import com.emosaac.server.domain.BaseEntity;
-import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name="USER_BASED_CF_MODEL")
-public class USERBasedCFModel extends BaseEntity {
+public class UserBasedCFModel extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

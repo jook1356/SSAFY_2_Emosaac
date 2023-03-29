@@ -94,17 +94,25 @@ public class RecommandController {
         );
     }
 
-    @ApiOperation(value = "성별/연령대 추천", notes = "나와 유사한 사용자를 활용해 관심있을 작품을 추천한다.")
-    @GetMapping("/user")
+    @ApiOperation(value = "나의 성별/연령대별 인기 순위(나이, 성별별 통계)", notes = "나의 나이대와 성별별로 (조회수, 북마크 등을 기반으로)인기 순위를 보여준다")
+    @GetMapping("/user/ageAndGen")
     public ResponseEntity<CommonResponse> findUserList(@RequestParam (value = "typeCode") int typeCd,
-                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
-                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                       @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
                                                        @ApiIgnore @CurrentUser UserPrincipal user) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "성별/연령대 추천 조회 성공", recommandService.findUserList(typeCd, size, criteria, id, user.getId()))
+                HttpStatus.OK, "성별/연령대 추천 조회 성공", recommandService.findAgeAndGenderList(typeCd, user.getId()))
+        );
+    }
+
+    @ApiOperation(value = "조회,북마크,조회수 등(나의 취향)으로 추천", notes = "나와 취향이 유사한 사용자를 활용해 관심있을 작품을 추천한다.")
+    @GetMapping("/user")
+    public ResponseEntity<CommonResponse> findAgeAndGenderList(@RequestParam (value = "typeCode") int typeCd,
+                                                               @ApiIgnore @CurrentUser UserPrincipal user) {
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "나의 취향별 추천 조회 성공", recommandService.findUserList(typeCd, user.getId()))
         );
     }
 }

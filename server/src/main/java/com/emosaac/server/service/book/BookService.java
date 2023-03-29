@@ -56,7 +56,6 @@ public class BookService {
         book.setAvgScore();
 
         if(!hitRepository.existsByBookIdAndUserId(bookId, userId).isPresent()){
-            System.out.println("hihi");
             Hit hit = Hit.builder().book(book).user(user).build();
             hitRepository.save(hit);
         }else{
@@ -77,6 +76,16 @@ public class BookService {
         Score myScore = scoreQueryRepository.findScoreByBookIdAndUserId(bookId, userId);
         double score = 0.0;
         if(myScore != null) score = myScore.getScore();
+
+        return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
+    }
+
+    public BookDetailResponse findDetailByNoneUser(Long bookId) {
+        Book book = commonService.getBook(bookId);
+
+        Boolean bookmarkStatus = false;
+        Boolean readStatus = false;
+        double score = 0.0;
 
         return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
     }

@@ -50,14 +50,14 @@ public class GenreQueryRepository {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(
-                        request.getTypeCd()),
+                                request.getTypeCd()),
                         book.genre.gerneId.eq(request.getGenreCode()),
                         cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
                         book.notIn(
                                 JPAExpressions
                                         .select(readBook.book).from(readBook)
                                         .where(readBook.user.eq(user))
-                                        )
+                        )
                 )
                 .limit(page.getPageSize() + 1)
                 .orderBy(book.score.desc(), book.bookId.desc())
@@ -100,9 +100,10 @@ public class GenreQueryRepository {
                 .where(readBook.book.type.eq(typeCode),
                         readBook.user.userId.eq(userId),
                         readBook.book.genre.gerneId.eq(genre)
-                        )
+                )
                 .fetchFirst();
     }
+
     //선호 장르
     public List<Genre> findBookGenreisLike(int typeCode, Long[] likeList) {
         return jpaQueryFactory.select(genre)
@@ -114,12 +115,12 @@ public class GenreQueryRepository {
                 .fetch();
     }
 
-    //비선호 장르별 책
-   public Slice<BookListResponse> findBookLikeGenre(Long userId, BookRequest request, PageRequest page, Long unlikeGenre) {
+    //선호/비선호 장르별 책
+    public Slice<BookListResponse> findBookLikeGenre(Long userId, BookRequest request, PageRequest page, Long likeGenre) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(request.getTypeCd()),
-                        book.genre.gerneId.eq(unlikeGenre),
+                        book.genre.gerneId.eq(likeGenre),
                         cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
                         book.notIn(
                                 JPAExpressions
@@ -141,9 +142,9 @@ public class GenreQueryRepository {
     }
 
     //선호/비선호 장르별 책 하나만
-   public List<BookListResponse> findBookLikeRandom(Long userId, int typeCd, int like,
-                                                    Long[] top2List) {
-        return  jpaQueryFactory.select(new QBookListResponse(book))
+    public List<BookListResponse> findBookLikeRandom(Long userId, int typeCd, int like,
+                                                     Long[] top2List) {
+        return jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(typeCd),
                         book.genre.gerneId.in(top2List),
@@ -162,23 +163,29 @@ public class GenreQueryRepository {
 
     /////////////<-----조건
 
+    private BooleanExpression ltBookId(Long cursorId) {
+        return cursorId == 0 ? null : book.bookId.lt(cursorId);
+    }
+
 
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
-        return (book.score.eq(cursorScore).and(book.bookId.lt(cursorId))).or(book.score.lt(cursorScore));
+        return (book.score.eq(cursorScore)
+                .and(ltBookId(cursorId)))
+//                .and(book.bookId.lt(cursorId)))
+                .or(book.score.lt(cursorScore));
     }
 
     private BooleanExpression filterGenreCd(int typeCode) {
-        if(typeCode == 1){
+        if (typeCode == 1) {
             return Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1).eq("2").
                     or(genre.gerneId.ne(12L).
                             and(genre.gerneId.ne(16L)));
-        } else if(typeCode == 0){ //웹툰
+        } else if (typeCode == 0) { //웹툰
             return Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1).eq("1");
         }
         return null; // 장르 코드로 사용할 때
 
     }
-
 
 
 }

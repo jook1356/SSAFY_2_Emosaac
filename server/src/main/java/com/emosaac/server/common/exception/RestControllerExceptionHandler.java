@@ -3,6 +3,7 @@ package com.emosaac.server.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
@@ -57,10 +60,18 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorResponse>> handleValidationExceptions(BindingResult bindingResult) {
         List<ErrorResponse> list = new ArrayList<>();
-//        bindingResult.getAllErrors().forEach(c -> errors.put(((FieldError)c).getField() , c.getDefaultMessage()));
         bindingResult.getAllErrors().forEach(c ->list.add(new ErrorResponse(false, c.getDefaultMessage(), ((FieldError)c).getField())));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
     }
+
+    //UserRequestFile validation에서는 MethodArgumentNotValidException이 아닌 BindException가 났다..
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<List<ErrorResponse>> handleBindException(BindingResult bindingResult) {
+        List<ErrorResponse> list = new ArrayList<>();
+        bindingResult.getAllErrors().forEach(c ->list.add(new ErrorResponse(false, c.getDefaultMessage(), ((FieldError)c).getField())));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
+    }
+
 
     //파일 용량 제한
     @ExceptionHandler(MaxUploadSizeExceededException.class)
