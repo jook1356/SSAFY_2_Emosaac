@@ -261,7 +261,6 @@ public class GenreService {
 
         Long[] likeList = getLikeList(0, tmpList);
 
-
         Slice<BookListResponse> page = genreQueryRepository.findBookLikeGenre(userId, request, PageRequest.ofSize(request.getSize()), likeList[request.getOrder() - 1]);
         return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
 
