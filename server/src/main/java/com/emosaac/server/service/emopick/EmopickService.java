@@ -43,8 +43,6 @@ public class EmopickService {
     private final EmopickQueryRepository emopickQueryRepository;
     private final EmoLikeRepository emoLikeRepository;
     private final EmopickDetailRepository emopickDetailRepository;
-    private final BookRepository bookRepository;
-    private final BookQueryRepository bookQueryRepository;
     private final CommonService commonService;
 
     public SlicedResponse<EmopickListResponse> findEmopickListByUser(int size, Long prevId, Long userId) {
@@ -101,16 +99,6 @@ public class EmopickService {
 
         // type이 1인거 가져오기
         novel = emopickQueryRepository.findEmopickDetailByEmopickId(emopickId, 1);
-
-//        if (emopick.getWebtoonSeq() != "") {
-//            String[] webtoonId = emopick.getWebtoonSeq().split("_");
-//            webtoon = getList(emopick, webtoonId);
-//        }
-//
-//        if (emopick.getWebtoonSeq() != "") {
-//            String[] novelId = emopick.getNovelSeq().split("_");
-//            novel = getList(emopick, novelId);
-//        }
 
         Boolean emoLikeStatus = false;
         if(emoLikeRepository.existsByEmopickIdAndUserId(emopickId, userId).isPresent())
@@ -196,20 +184,6 @@ public class EmopickService {
     }
 
     ///////////////////////
-//    private List<BookReveiwResponse> getList(Emopick emopick, String[] bookId) {
-//        List<BookReveiwResponse> result = new ArrayList<>();
-//
-//        for (String id : bookId) {
-//            if (id.equals("")) break;
-//            Book book = commonService.getBook(Long.valueOf(id));
-//
-//            BookReveiwResponse bookReveiwResponse = new BookReveiwResponse(book, emopick.getEmopickList().get(book.getBookId()));
-//
-//            result.add(bookReveiwResponse);
-//        }
-//
-//        return result;
-//    }
 
     public void validEmopickUser(Long currentUser, Long emopickUser) {
 
