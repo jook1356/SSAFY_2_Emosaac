@@ -24,7 +24,7 @@ from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBoo
 
 # 여기는 디비를 지웠다가 다시 생성하므로 배치에 사용합니다.
 
-# 북마크 + 내 평점으로 하기
+# 조회수 + 내 평점으로 하기
 
 class UserPredictedGrade:
     def __init__(self, type_cd):
@@ -102,7 +102,7 @@ class UserPredictedGrade:
     def get_user_book_list(self, user_id):
         # bg_user = self.score_result.loc[self.score_result['user_no'] == user_id]
         bg_user = self.user_score_list.loc[self.user_score_list['user_no'] == user_id]
-        # print(bg_user)
+
         bg_user_book = bg_user['book_no']
         user_book_list = bg_user_book.tolist()
 
@@ -136,7 +136,8 @@ class UserPredictedGrade:
 
             not_read_score_list = []
             for book_no, score in user_predict_rating_df.items():
-                if book_no not in target_user_book_list and len(not_read_score_list) < 30:
+                # if book_no not in target_user_book_list and len(not_read_score_list) < 30:
+                if book_no not in target_user_book_list:
                     not_read_score_list.append({'book_no': book_no, 'score': score})
 
             # Result) 모든 User에 대한 상위 예상 평점 도서 리스트 추천
