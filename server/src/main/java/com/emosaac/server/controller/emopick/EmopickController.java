@@ -69,6 +69,16 @@ public class EmopickController {
         ));
     }
 
+    @ApiOperation(value = "내가 작성한 이모픽 리스트 조회", notes = "내가 작성한 이모픽 리스트를 조회한다.")
+    @GetMapping("/me")
+    public ResponseEntity<CommonResponse> findEmopickListByUser(@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                                @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                                @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "내가 작성한 이모픽 조회 완료", emopickService.findEmopickListByUser(size, prevId, userPrincipal.getId())
+        ));
+    }
+
     //////////////
     @ApiOperation(value = "이모픽 좋아요", notes = "유저가 이모픽을 좋아요 설정한다.")
     @PutMapping("/{emopickId}/like")
