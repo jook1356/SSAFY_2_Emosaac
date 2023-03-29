@@ -70,9 +70,6 @@ public class Book {
     private String regist; //1화 등록 날짜
 
     @Embedded
-    private final BookCommentList commentList = new BookCommentList();
-
-    @Embedded
     private final BookmarkList bookmarkList = new BookmarkList();
 
     @Embedded
