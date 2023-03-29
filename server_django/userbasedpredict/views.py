@@ -22,8 +22,8 @@ class MyAPIView(APIView):
 
         print("-------------START : Predict by Signup-------------")
 
-        resWebtoon = RequestToonPredictByNewUser.execute_algorithm(user_id, 0)
-        resNovel = RequestNovelPredictByNewUser.execute_algorithm(user_id, 1)
+        resWebtoon = RequestPredictByNewUser.execute_algorithm(user_id, 0)
+        resNovel = RequestPredictByNewUser.execute_algorithm(user_id, 1)
 
         data = {
             "userId": user_id,
