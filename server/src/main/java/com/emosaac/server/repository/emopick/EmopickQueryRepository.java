@@ -1,10 +1,7 @@
 package com.emosaac.server.repository.emopick;
 
 import com.emosaac.server.domain.emo.EmopickDetail;
-import com.emosaac.server.dto.emopick.EmopickListResponse;
-import com.emosaac.server.dto.emopick.QEmopickListResponse;
-import com.emosaac.server.dto.emopick.QThumbnailListResponse;
-import com.emosaac.server.dto.emopick.ThumbnailListResponse;
+import com.emosaac.server.dto.emopick.*;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -79,4 +76,14 @@ public class EmopickQueryRepository {
         return cursorId == 0 ? null : emopick.EmopickId.lt(cursorId);
     }
 
+    public List<BookReveiwResponse> findEmopickDetailByEmopickId(Long emopickId, int type) {
+        return jpaQueryFactory.select(new QBookReveiwResponse(book, emopickDetail))
+                .from(book).join(emopickDetail).on(book.bookId.eq(emopickDetail.book.bookId))
+                .where(
+                        emopickDetail.emopick.EmopickId.eq(emopickId),
+                        emopickDetail.type.eq(type)
+                )
+                .orderBy(emopickDetail.createdDate.asc())
+                .fetch();
+    }
 }

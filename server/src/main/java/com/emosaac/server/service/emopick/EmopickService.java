@@ -49,7 +49,6 @@ public class EmopickService {
 
     public SlicedResponse<EmopickListResponse> findEmopickListByUser(int size, Long prevId, Long userId) {
 
-//        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickListByUser(PageRequest.ofSize(size), prevId, userId);
         Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickListByUser(PageRequest.ofSize(size), prevId, userId);
 
         for (EmopickListResponse emoList : page.getContent()){
@@ -97,15 +96,21 @@ public class EmopickService {
         List<BookReveiwResponse> webtoon = new ArrayList<>();
         List<BookReveiwResponse> novel = new ArrayList<>();
 
-        if (emopick.getWebtoonSeq() != "") {
-            String[] webtoonId = emopick.getWebtoonSeq().split("_");
-            webtoon = getList(emopick, webtoonId);
-        }
+        // type이 0인거 가져오기
+        webtoon = emopickQueryRepository.findEmopickDetailByEmopickId(emopickId, 0);
 
-        if (emopick.getWebtoonSeq() != "") {
-            String[] novelId = emopick.getNovelSeq().split("_");
-            novel = getList(emopick, novelId);
-        }
+        // type이 1인거 가져오기
+        novel = emopickQueryRepository.findEmopickDetailByEmopickId(emopickId, 1);
+
+//        if (emopick.getWebtoonSeq() != "") {
+//            String[] webtoonId = emopick.getWebtoonSeq().split("_");
+//            webtoon = getList(emopick, webtoonId);
+//        }
+//
+//        if (emopick.getWebtoonSeq() != "") {
+//            String[] novelId = emopick.getNovelSeq().split("_");
+//            novel = getList(emopick, novelId);
+//        }
 
         Boolean emoLikeStatus = false;
         if(emoLikeRepository.existsByEmopickIdAndUserId(emopickId, userId).isPresent())
@@ -119,23 +124,6 @@ public class EmopickService {
     // 이모픽 등록
     @Transactional
     public Long createEmopickByUser(EmopickSaveRequest request, Long userId) {
-//        User user = commonService.getUser(userId);
-//        Emopick emopick = emopickRepository.save(request.of(user));
-//
-//        String webtoonIdStr = "";
-//        String novelIdStr = "";
-//
-//        // 웹툰 리스트
-//        if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
-//            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
-//
-//        // 노블 리스트
-//        if (request.getNovelList() != null || !request.getNovelList().isEmpty())
-//            novelIdStr = setIdStr(emopick, request.getNovelList());
-//
-//        emopick.setSeq(webtoonIdStr, novelIdStr);
-//
-//        return emopick.getEmopickId();
 
         User user = commonService.getUser(userId);
         Emopick emopick = emopickRepository.save(request.of(user));
@@ -157,17 +145,6 @@ public class EmopickService {
         }
     }
 
-    private String setIdStr(Emopick emopick, Map<Long, String> bookList){
-        String result = "";
-
-        for (Entry<Long, String> emo : bookList.entrySet()) {
-            emopick.addEmopick(emo.getKey(), emo.getValue());
-            result += emo.getKey().toString() + "_";
-        }
-
-        return result;
-    }
-
     // 이모픽 수정
     @Transactional
     public Long updateEmopickByUser(Long emopickId, EmopickSaveRequest request, Long userId) {
@@ -176,19 +153,6 @@ public class EmopickService {
         validEmopickUser(userId, emopick.getUser().getUserId());
 
         emopick.update(request);
-
-//        String webtoonIdStr = "";
-//        String novelIdStr = "";
-//
-//        // 웹툰 리스트
-//        if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
-//            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
-//
-//        // 노블 리스트
-//        if (request.getNovelList() != null || !request.getNovelList().isEmpty())
-//            novelIdStr = setIdStr(emopick, request.getNovelList());
-//
-//        emopick.setSeq(webtoonIdStr, novelIdStr);
 
         if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
             updateEmopickDetail(emopick, request.getWebtoonList(), 0);
@@ -232,20 +196,20 @@ public class EmopickService {
     }
 
     ///////////////////////
-    private List<BookReveiwResponse> getList(Emopick emopick, String[] bookId) {
-        List<BookReveiwResponse> result = new ArrayList<>();
-
-        for (String id : bookId) {
-            if (id.equals("")) break;
-            Book book = commonService.getBook(Long.valueOf(id));
-
-            BookReveiwResponse bookReveiwResponse = new BookReveiwResponse(book, emopick.getEmopickList().get(book.getBookId()));
-
-            result.add(bookReveiwResponse);
-        }
-
-        return result;
-    }
+//    private List<BookReveiwResponse> getList(Emopick emopick, String[] bookId) {
+//        List<BookReveiwResponse> result = new ArrayList<>();
+//
+//        for (String id : bookId) {
+//            if (id.equals("")) break;
+//            Book book = commonService.getBook(Long.valueOf(id));
+//
+//            BookReveiwResponse bookReveiwResponse = new BookReveiwResponse(book, emopick.getEmopickList().get(book.getBookId()));
+//
+//            result.add(bookReveiwResponse);
+//        }
+//
+//        return result;
+//    }
 
     public void validEmopickUser(Long currentUser, Long emopickUser) {
 
