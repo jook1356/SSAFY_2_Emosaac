@@ -24,4 +24,10 @@ public class ItemBasedCFModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="BOOK_NO")
     private Book book;
+
+    @JsonManagedReference
+    private String bookNoList;
+
+    @Column(name="TYPE_CD")
+    private Integer typeCode;
 }

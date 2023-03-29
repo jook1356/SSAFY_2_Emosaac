@@ -45,8 +45,6 @@ public class EmopickService {
     private final EmopickQueryRepository emopickQueryRepository;
     private final EmoLikeRepository emoLikeRepository;
     private final CommonService commonService;
-    private final EmopickCommentRepository emopickCommentRepository;
-    private final EmopickCommentQueryRepository emopickCommentQueryRepository;
 
     // 이모픽 리스트 조회
     public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
@@ -194,93 +192,93 @@ public class EmopickService {
     }
 
     // 댓글
-    public List<CommentResponse> findParentEmopickCommentList(Long userId, Long emopickId, String criteria, int offset, int size) {
-        List<CommentResponse> res = emopickCommentQueryRepository.findParentCommentByEmopickId(emopickId, criteria, PageRequest.of(offset - 1, size));
-        for(CommentResponse cr : res){
-            cr.updateTotalCount(emopickCommentQueryRepository.findParentCommentCount(emopickId));
-            if(emopickCommentQueryRepository.findEmopickCommentLikeState(cr.getCommentId(), userId).isEmpty()){
-                cr.updateLikeState(false);
-            }else {
-                cr.updateLikeState(true);
-            }
-        }
-        return res;
-    }
-
-    public List<CommentResponse> findChildEmopickCommentList(Long userId, Long parentId, String criteria, int offset, int size) {
-        List<CommentResponse> res = emopickCommentQueryRepository.findChildCommentByParentId(parentId, criteria, PageRequest.of(offset - 1, size));
-        for(CommentResponse cr : res){
-            cr.updateTotalCount( emopickCommentQueryRepository.findChildCommentCount(parentId));
-            if( emopickCommentQueryRepository.findEmopickCommentLikeState(cr.getCommentId(), userId).isEmpty()){
-                cr.updateLikeState(false);
-            }else {
-                cr.updateLikeState(true);
-            }
-        }
-        return res;
-    }
-    @Transactional
-    public Long createEmopickComment(Long userId, Long emopickId, CommentSaveRequest request) {
-        Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
-        User user = commonService.getUser(userId);
-
-        EmopickComment emopickComment = null;
-        if(request.getParentId() != null){
-            EmopickComment parent = emopickCommentRepository.findComment(request.getParentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("ParentComment", "parentId", request.getParentId()));
-            emopickComment =  emopickCommentRepository.save(request.of(user, emopick, parent,1));
-            parent.setChild(emopickComment);
-        }
-        else{
-            emopickComment = emopickCommentRepository.save(request.of(user, emopick, 0));
-        }
-        return emopickComment.getCommentId();
-    }
-    @Transactional
-    public Object updateEmopickComment(Long userId, Long commentId, CommentUpdateRequest request) {
-        EmopickComment emopickComment = emopickCommentRepository.findComment(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("EmopickComment", "commentId", commentId));
-
-        validEmopickCommentUser(userId, emopickComment.getUser().getUserId());
-        emopickComment.update(request);
-        return emopickComment.getCommentId();
-    }
-    @Transactional
-    public Object deleteEmopickComment(Long userId, Long commentId) {
-        EmopickComment emopickComment = emopickCommentRepository.findComment(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("EmopickComment", "commentId", commentId));
-        validEmopickCommentUser(userId, emopickComment.getUser().getUserId());
-
-        if(emopickComment.getParent() == null && !emopickComment.getChildren().isEmpty()){ // 부모 댓글인데 자식 댓글이 있는 경우
-
-            emopickComment.updateDeleteStatus();
-        }else if(emopickComment.getParent() != null){ // 자식 댓글 삭제할 경우
-            // 부모 댓글 삭제 & 자식이 없다면 부모 댓글도 삭제
-            EmopickComment parent = emopickComment.getParent();
-            emopickCommentRepository.deleteByCommentId(commentId);
-            if(parent.getIsDelete() && emopickCommentRepository.findParentComment(parent.getCommentId()).isEmpty()){
-                emopickCommentRepository.deleteByCommentId(parent.getCommentId());
-            }
-        }else{
-            emopickCommentRepository.deleteByCommentId(commentId);
-        }
-        return commentId;
-    }
-    public void validEmopickCommentUser(Long currentUser, Long CommentUser) {
-
-        if (currentUser == CommentUser || currentUser.equals(CommentUser)) {
-            return;
-        } else {
-            throw new ResourceForbiddenException("본인이 작성한 글이 아닙니다");
-        }
-    }
-
-    @Transactional
-    public CommentLikeResponse toggleBookCommentLike(Long userId, Long commentId) {
-        EmopickComment emopickComment = emopickCommentRepository.findComment(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("EmopickComment", "commentId", commentId));
-        User user = commonService.getUser(userId);
-        EmoCommentLike emoCommentLike = EmoCommentLike.builder().emopickComment(emopickComment).user(user).build();
-        return new CommentLikeResponse(emopickComment.getCommentId(), emopickComment.toggleEmopickCommentLike(emoCommentLike), emopickComment.getTotalLikes());
-    }
+//    public List<CommentResponse> findParentEmopickCommentList(Long userId, Long emopickId, String criteria, int offset, int size) {
+//        List<CommentResponse> res = emopickCommentQueryRepository.findParentCommentByEmopickId(emopickId, criteria, PageRequest.of(offset - 1, size));
+//        for(CommentResponse cr : res){
+//            cr.updateTotalCount(emopickCommentQueryRepository.findParentCommentCount(emopickId));
+//            if(emopickCommentQueryRepository.findEmopickCommentLikeState(cr.getCommentId(), userId).isEmpty()){
+//                cr.updateLikeState(false);
+//            }else {
+//                cr.updateLikeState(true);
+//            }
+//        }
+//        return res;
+//    }
+//
+//    public List<CommentResponse> findChildEmopickCommentList(Long userId, Long parentId, String criteria, int offset, int size) {
+//        List<CommentResponse> res = emopickCommentQueryRepository.findChildCommentByParentId(parentId, criteria, PageRequest.of(offset - 1, size));
+//        for(CommentResponse cr : res){
+//            cr.updateTotalCount( emopickCommentQueryRepository.findChildCommentCount(parentId));
+//            if( emopickCommentQueryRepository.findEmopickCommentLikeState(cr.getCommentId(), userId).isEmpty()){
+//                cr.updateLikeState(false);
+//            }else {
+//                cr.updateLikeState(true);
+//            }
+//        }
+//        return res;
+//    }
+//    @Transactional
+//    public Long createEmopickComment(Long userId, Long emopickId, CommentSaveRequest request) {
+//        Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
+//        User user = commonService.getUser(userId);
+//
+//        EmopickComment emopickComment = null;
+//        if(request.getParentId() != null){
+//            EmopickComment parent = emopickCommentRepository.findComment(request.getParentId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("ParentComment", "parentId", request.getParentId()));
+//            emopickComment =  emopickCommentRepository.save(request.of(user, emopick, parent,1));
+//            parent.setChild(emopickComment);
+//        }
+//        else{
+//            emopickComment = emopickCommentRepository.save(request.of(user, emopick, 0));
+//        }
+//        return emopickComment.getCommentId();
+//    }
+//    @Transactional
+//    public Object updateEmopickComment(Long userId, Long commentId, CommentUpdateRequest request) {
+//        EmopickComment emopickComment = emopickCommentRepository.findComment(commentId)
+//                .orElseThrow(() -> new ResourceNotFoundException("EmopickComment", "commentId", commentId));
+//
+//        validEmopickCommentUser(userId, emopickComment.getUser().getUserId());
+//        emopickComment.update(request);
+//        return emopickComment.getCommentId();
+//    }
+//    @Transactional
+//    public Object deleteEmopickComment(Long userId, Long commentId) {
+//        EmopickComment emopickComment = emopickCommentRepository.findComment(commentId)
+//                .orElseThrow(() -> new ResourceNotFoundException("EmopickComment", "commentId", commentId));
+//        validEmopickCommentUser(userId, emopickComment.getUser().getUserId());
+//
+//        if(emopickComment.getParent() == null && !emopickComment.getChildren().isEmpty()){ // 부모 댓글인데 자식 댓글이 있는 경우
+//
+//            emopickComment.updateDeleteStatus();
+//        }else if(emopickComment.getParent() != null){ // 자식 댓글 삭제할 경우
+//            // 부모 댓글 삭제 & 자식이 없다면 부모 댓글도 삭제
+//            EmopickComment parent = emopickComment.getParent();
+//            emopickCommentRepository.deleteByCommentId(commentId);
+//            if(parent.getIsDelete() && emopickCommentRepository.findParentComment(parent.getCommentId()).isEmpty()){
+//                emopickCommentRepository.deleteByCommentId(parent.getCommentId());
+//            }
+//        }else{
+//            emopickCommentRepository.deleteByCommentId(commentId);
+//        }
+//        return commentId;
+//    }
+//    public void validEmopickCommentUser(Long currentUser, Long CommentUser) {
+//
+//        if (currentUser == CommentUser || currentUser.equals(CommentUser)) {
+//            return;
+//        } else {
+//            throw new ResourceForbiddenException("본인이 작성한 글이 아닙니다");
+//        }
+//    }
+//
+//    @Transactional
+//    public CommentLikeResponse toggleBookCommentLike(Long userId, Long commentId) {
+//        EmopickComment emopickComment = emopickCommentRepository.findComment(commentId)
+//                .orElseThrow(() -> new ResourceNotFoundException("EmopickComment", "commentId", commentId));
+//        User user = commonService.getUser(userId);
+//        EmoCommentLike emoCommentLike = EmoCommentLike.builder().emopickComment(emopickComment).user(user).build();
+//        return new CommentLikeResponse(emopickComment.getCommentId(), emopickComment.toggleEmopickCommentLike(emoCommentLike), emopickComment.getTotalLikes());
+//    }
 }
