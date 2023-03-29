@@ -3,6 +3,7 @@ package com.emosaac.server.service.recommand;
 import com.emosaac.server.common.SlicedResponse;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookListResponse;
+import com.emosaac.server.dto.recommand.PredictedBookResponse;
 import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.recommand.RecommandQueryRepository;
 import com.emosaac.server.repository.recommand.TotalByAgeAndGenderModelRepository;
@@ -56,11 +57,11 @@ public class RecommandService {
         return null;
     }
 
-    public SlicedResponse<BookListResponse> findPredictList(int typeCd, int size, Double prevScore, Long prevId, Long userId) {
+    public SlicedResponse<PredictedBookResponse> findPredictList(int typeCd, int size, Double prevScore, Long prevId, Long userId) {
 
         User user = commonService.getUser(userId);
 
-        Slice<BookListResponse> page = recommandQueryRepository.findPredictList(typeCd, PageRequest.ofSize(size), prevId, prevScore, user.getUserId());
+        Slice<PredictedBookResponse> page = recommandQueryRepository.findPredictList(typeCd, PageRequest.ofSize(size), prevId, prevScore, user.getUserId());
         return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 

@@ -4,6 +4,8 @@ import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.book.QBookListResponse;
+import com.emosaac.server.dto.recommand.PredictedBookResponse;
+import com.emosaac.server.dto.recommand.QPredictedBookResponse;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -74,16 +76,16 @@ public class RecommandQueryRepository {
                 .or(book.regist.lt(regist));
     }
 
-    public Slice<BookListResponse> findPredictList(int typeCd, PageRequest page, Long prevId, Double prevScore, Long userId) {
-        List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
+    public Slice<PredictedBookResponse> findPredictList(int typeCd, PageRequest page, Long prevId, Double prevScore, Long userId) {
+        List<PredictedBookResponse> content = jpaQueryFactory.select(new QPredictedBookResponse(book, userPredictedGradeModel.predictScore))
                 .from(book).join(userPredictedGradeModel).on(book.bookId.eq(userPredictedGradeModel.book.bookId))
                 .where(
                         book.type.eq(typeCd),
                         userPredictedGradeModel.user.userId.eq(userId),
                         cursorIdAndCursorScore(prevId, prevScore)
                 )
+                .orderBy(userPredictedGradeModel.predictScore.desc(),book.bookId.desc())
                 .limit(page.getPageSize()+1)
-                .orderBy(book.score.desc(),book.bookId.desc())
                 .fetch();
 
         boolean hasNext = false;
@@ -100,10 +102,10 @@ public class RecommandQueryRepository {
     }
 
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
-        return (book.score.eq(cursorScore)
+        return (userPredictedGradeModel.predictScore.eq(cursorScore)
                 .and(ltBookId(cursorId)))
 //                .and(book.bookId.lt(cursorId)))
-                .or(book.score.lt(cursorScore));
+                .or(userPredictedGradeModel.predictScore.lt(cursorScore));
     }
 
 }
