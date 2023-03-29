@@ -1,15 +1,11 @@
 package com.emosaac.server.repository.recommand;
 
-import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookListResponse;
-import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.book.QBookListResponse;
 import com.emosaac.server.dto.recommand.PredictedBookResponse;
 import com.emosaac.server.dto.recommand.QPredictedBookResponse;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +16,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.emosaac.server.domain.book.QBook.book;
-import static com.emosaac.server.domain.book.QGenre.genre;
-import static com.emosaac.server.domain.book.QReadBook.readBook;
 import static com.emosaac.server.domain.recommand.QItemBasedCFModel.itemBasedCFModel;
 import static com.emosaac.server.domain.recommand.QUserPredictedGradeModel.userPredictedGradeModel;
 
@@ -84,19 +78,6 @@ public class RecommandQueryRepository {
                 .fetchOne();
     }
 
-    private BooleanExpression ltBookId(Long cursorId) {
-        return cursorId == 0 ? null : book.bookId.lt(cursorId);
-    }
-
-    private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
-        return (book.score.eq(cursorScore)
-                .and(ltBookId(cursorId)))
-//                .and(book.bookId.lt(cursorId)))
-                .or(book.score.lt(cursorScore));
-    }
-
-    
-
     public Slice<PredictedBookResponse> findPredictList(int typeCd, PageRequest page, Long prevId, Double prevScore, Long userId) {
         List<PredictedBookResponse> content = jpaQueryFactory.select(new QPredictedBookResponse(book, userPredictedGradeModel.predictScore))
                 .from(book).join(userPredictedGradeModel).on(book.bookId.eq(userPredictedGradeModel.book.bookId))
@@ -126,7 +107,6 @@ public class RecommandQueryRepository {
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (userPredictedGradeModel.predictScore.eq(cursorScore)
                 .and(ltBookId(cursorId)))
-//                .and(book.bookId.lt(cursorId)))
                 .or(userPredictedGradeModel.predictScore.lt(cursorScore));
     }
 
