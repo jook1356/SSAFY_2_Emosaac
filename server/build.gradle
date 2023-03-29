@@ -78,16 +78,8 @@ dependencies {
 	// map json 매핑용
 	implementation 'com.vladmihalcea:hibernate-types-55:2.20.0'
 
-	//ocr
-//	implementation 'net.sourceforge.tess4j:tess4j:5.0.0'
-//	implementation 'net.sourceforge.tess4j:tess4j:5.0.0'
-//
-//	implementation 'org.bytedeco:tesseract-platform:5.0.1-1.5.7'
-//  	implementation 'org.openpnp:opencv:4.5.1-2'
-//	implementation 'net.imagej:imagej:2.1.0'
-//	implementation 'net.imagej:ij:1.53t'
-//	implementation 'org.boofcv:boofcv-core:0.41'
-//	implementation 'net.imagej:imagej:3.6.0'
+	implementation 'com.google.cloud:google-cloud-vision:3.11.0'
+
 
 
 }
@@ -125,6 +117,11 @@ task copyPrivate(type: Copy) {
 	copy {
 		from '../emosaac2'
 		include "application.properties"
+		into 'src/main/resources'
+	}
+	copy {
+		from '../emosaac2'
+		include "woven-name-382111-f4f2ed422bd9.json"
 		into 'src/main/resources'
 	}
 }

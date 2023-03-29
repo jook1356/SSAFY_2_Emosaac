@@ -1,9 +1,10 @@
 package com.emosaac.server.controller;
 
 import com.emosaac.server.common.CommonResponse;
+import com.emosaac.server.config.s3.S3Uploader;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
-import com.emosaac.server.service.OcrService1;
+import com.emosaac.server.service.OcrService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,14 @@ import java.io.IOException;
 @Api(tags = {"OCR 컨트롤러"})
 public class OcrController {
 
-//    private final OcrService_old ocrService;
-//    private final OcrService1 ocrService1;
-//
-//
-//    @PostMapping()
-//    @ApiOperation(value = "OCR인식할 사진 등록", notes = "사진을 등록하면 문자열 반환")
-//    public ResponseEntity<CommonResponse> getCurrentUser(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestParam("file") MultipartFile multipartFile) throws IOException {
-//
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, "ocr 텍스트 조회 성공", ocrService1.postFile(userPrincipal.getId(), multipartFile)));
-//    }
+    private final OcrService ocrService;
+
+    @PostMapping()
+    @ApiOperation(value = "OCR인식할 사진 등록", notes = "사진을 등록하면 문자열 반환")
+    public ResponseEntity<CommonResponse> getCurrentUser(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestParam("file") MultipartFile multipartFile) throws IOException {
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "ocr 텍스트 조회 성공", ocrService.detectTextGcs(multipartFile)));
+    }
 
 }
