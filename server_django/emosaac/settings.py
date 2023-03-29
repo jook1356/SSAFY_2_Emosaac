@@ -26,7 +26,9 @@ SECRET_KEY = my_settings.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "j8d203.p.ssafy.io"
+]
 
 # Application definition
 
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
 CRONJOBS = [
     ('0 0 * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '), #매일 정각
     ('0 0 * * *', 'emosaac.cron.crontab_job_age_gen', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
-    # ('* * * * *', 'recommand.parse.test'),  # 매 분마다 실행
+    ('* * * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),  # 매 분마다 실행
 
 ]
 
