@@ -50,44 +50,10 @@ public class EmopickService {
     public SlicedResponse<EmopickListResponse> findEmopickListByUser(int size, Long prevId, Long userId) {
 
 //        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickListByUser(PageRequest.ofSize(size), prevId, userId);
-//
-//        List<ImageinEmopickListResponse> result = new ArrayList<>();
-//
-////        for (EmopickListResponse emoList : page.getContent()){
-//////            String bookSeqs = "";
-//////            if(emoList.getWebtoonSeq() != null)
-//////                bookSeqs += emoList.getWebtoonSeq();
-//////            if(emoList.getNovelSeq() != null)
-//////                bookSeqs += emoList.getNovelSeq();
-////
-//////            String[] books = bookSeqs.split("_");
-////            List<String> thumbnails = bookQueryRepository.findThumbnail(Long.valueOf(emoList.getEmopickId()));
-////
-////            result.add(new ImageinEmopickListResponse(emoList, thumbnails));
-////        }
-//
-//
-//        return new SlicedResponse<>(result, page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
-        return null;
-    }
+        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickListByUser(PageRequest.ofSize(size), prevId, userId);
 
-    // 이모픽 리스트 조회 + 썸네일 n 개도 함께
-    public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
-
-
-        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.ofSize(size), prevId);
-
-//        List<ImageinEmopickListResponse> result = new ArrayList<>();
-//        String thumbnails = "";
-//
         for (EmopickListResponse emoList : page.getContent()){
-//            String bookSeqs = "";
-//            if(emoList.getWebtoonSeq() != null)
-//                bookSeqs += emoList.getWebtoonSeq();
-//            if(emoList.getNovelSeq() != null)
-//                bookSeqs += emoList.getNovelSeq();
 
-//            String[] books = bookSeqs.split("_");
             List<ThumbnailListResponse> thumbnails = emopickQueryRepository.findThumbnail(Long.valueOf(emoList.getEmopickId()));
 
             String str = "";
@@ -99,7 +65,26 @@ public class EmopickService {
             emoList.setThumbnails(str);
         }
 
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+    }
 
+    // 이모픽 리스트 조회 + 썸네일 n 개도 함께
+    public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
+
+        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.ofSize(size), prevId);
+
+        for (EmopickListResponse emoList : page.getContent()){
+
+            List<ThumbnailListResponse> thumbnails = emopickQueryRepository.findThumbnail(Long.valueOf(emoList.getEmopickId()));
+
+            String str = "";
+
+            for (ThumbnailListResponse thumbnail : thumbnails){
+                str += thumbnail.getThumbnail() + " ";
+            }
+
+            emoList.setThumbnails(str);
+        }
 
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
 
