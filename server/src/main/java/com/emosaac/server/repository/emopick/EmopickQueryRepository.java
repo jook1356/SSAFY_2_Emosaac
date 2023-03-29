@@ -40,6 +40,6 @@ public class EmopickQueryRepository {
     }
 
     private BooleanExpression ltEmopickId(Long cursorId) {
-        return cursorId == null ? null : emopick.EmopickId.lt(cursorId);
+        return cursorId == 0 ? null : emopick.EmopickId.lt(cursorId);
     }
 }

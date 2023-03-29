@@ -152,6 +152,15 @@ public class BookQueryRepository {
                 )
                 .fetchOne());
     }
+
+    public String findThumbnail(Long bookId){
+        return jpaQueryFactory.select(book.thumbnail)
+                .from(book)
+                .where(
+                        book.bookId.eq(bookId)
+                ).fetchOne();
+    }
+
     /*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
     private Predicate filterGenreCd(Long genreCode) {
 //        if(criteria.contains("로맨스")){

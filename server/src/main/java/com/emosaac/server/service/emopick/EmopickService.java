@@ -19,6 +19,7 @@ import com.emosaac.server.dto.comment.CommentSaveRequest;
 import com.emosaac.server.dto.comment.CommentUpdateRequest;
 import com.emosaac.server.dto.emopick.*;
 import com.emosaac.server.repository.book.BookQueryRepository;
+import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.emopick.*;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
@@ -44,17 +45,37 @@ public class EmopickService {
     private final EmopickRepository emopickRepository;
     private final EmopickQueryRepository emopickQueryRepository;
     private final EmoLikeRepository emoLikeRepository;
+    private final BookRepository bookRepository;
+    private final BookQueryRepository bookQueryRepository;
     private final CommonService commonService;
 
-    // 이모픽 리스트 조회
+    // 이모픽 리스트 조회 + 썸네일 n 개도 함께
     public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
-//    public PagedResponse<EmopickListResponse> findEmopickList(int offset, int size){
-//
-//        Page<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.of(offset - 1, size));
-//        return new PagedResponse<>()(page.getContent(), page.getNumber()+1, page.getSize(), page.getTotalElements(), page.getTotalPages(), page.isLast());
+
 
         Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickList(PageRequest.ofSize(size), prevId);
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+
+        List<ImageinEmopickListResponse> result = new ArrayList<>();
+
+        for (EmopickListResponse emoList : page.getContent()){
+            String bookSeqs = "";
+            if(emoList.getWebtoonSeq() != null)
+                bookSeqs += emoList.getWebtoonSeq();
+            if(emoList.getNovelSeq() != null)
+                bookSeqs += emoList.getNovelSeq();
+
+            String[] books = bookSeqs.split("_");
+            List<String> thumbnails = new ArrayList<>();
+            for (String bookId : books){
+                String thumbnail = bookQueryRepository.findThumbnail(Long.valueOf(bookId));
+                thumbnails.add(thumbnail);
+            }
+
+            result.add(new ImageinEmopickListResponse(emoList, thumbnails));
+        }
+
+
+        return new SlicedResponse<>(result, page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
 
     }
 
