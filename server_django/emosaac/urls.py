@@ -25,5 +25,7 @@ urlpatterns = [
     path('recommand/predict', include('userbasedpredict.urls')),
     path('recommand/predict/<int:user_id>', MyAPIView.as_view()),
     path('recommand/itembasedcf', include('itembasedcf.urls')),
+    path('recommand/totalgenre', include('totalgenre.urls')),
+    path('recommand/userbasedcf', include('userbasedcf.urls')),
     path('admin/', admin.site.urls),
 ]

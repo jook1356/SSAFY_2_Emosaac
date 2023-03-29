@@ -73,6 +73,7 @@ class UserBasedCFBook:
         self.bookmarks_result['values'] = 1
         self.reads_result['values'] = 1
 
+
         users_books = pd.merge(
             self.hits_result, self.bookmarks_result, how='outer', on=["user_no", "book_no"]
         )

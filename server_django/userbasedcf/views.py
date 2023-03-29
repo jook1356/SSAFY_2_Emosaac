@@ -28,3 +28,10 @@ class MyAPIView(APIView):
         }
 
         return Response(data)
+
+def index(request):
+    # print("--------------------------web")
+    recommandBook.execute_algorithm(0)
+    # print("--------------------------nov")
+    recommandBook.execute_algorithm(1)
+    return render(request, 'userbasecf')

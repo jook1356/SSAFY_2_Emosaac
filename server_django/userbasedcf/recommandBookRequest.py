@@ -28,8 +28,7 @@ class UserBasedCFBookRequest:
         self.user_id = user_id
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id ,age,gender,SUBSTRING_INDEX(favorite_webtoon_genre, '^', 1) as genre FROM user"
-        # self.strSql = "SELECT user_id ,age,gender FROM user"
+        self.strSql = "SELECT user_id ,age,gender FROM user"
         self.cursor.execute(self.strSql)
         self.users = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -43,8 +42,8 @@ class UserBasedCFBookRequest:
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd=" + str(
-            type_cd)
+        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book " \
+                      "on score.book_no = book.book_no where book.type_cd=" + str(type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
