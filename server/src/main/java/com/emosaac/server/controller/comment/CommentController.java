@@ -25,7 +25,7 @@ public class CommentController {
     @ApiOperation(value ="댓글 등록", notes = "댓글을 등록한다. commentType:(0:작품, 1:이모픽) / itemId:(book조회:bookId, emopick조회:emopickId)" )
     @PostMapping("/{itemId}")
     public ResponseEntity<CommonResponse> createComment(@ApiIgnore @CurrentUser UserPrincipal user,
-                                                            @RequestParam(required=true, defaultValue = "0") int commentType,
+                                                            @RequestParam(required=false, defaultValue = "0") int commentType,
                                                             @PathVariable Long itemId,
                                                             @RequestBody @Valid CommentSaveRequest request) throws Exception {
         return ResponseEntity.ok().body(CommonResponse.of(

@@ -20,6 +20,7 @@ import java.util.List;
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QGenre.genre;
 import static com.emosaac.server.domain.book.QReadBook.readBook;
+import static com.emosaac.server.domain.recommand.QItemBasedCFModel.itemBasedCFModel;
 import static com.emosaac.server.domain.recommand.QUserPredictedGradeModel.userPredictedGradeModel;
 
 @RequiredArgsConstructor
@@ -74,6 +75,24 @@ public class RecommandQueryRepository {
                 .or(book.regist.lt(regist));
     }
 
+    public String findItemList(int typeCd, Long bookId) {
+        return jpaQueryFactory.select(itemBasedCFModel.bookNoList)
+                .from(itemBasedCFModel)
+                .where(book.type.eq(typeCd), itemBasedCFModel.book.bookId.eq(bookId))
+                .fetchOne();
+    }
+
+    private BooleanExpression ltBookId(Long cursorId) {
+        return cursorId == 0 ? null : book.bookId.lt(cursorId);
+    }
+
+    private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
+        return (book.score.eq(cursorScore)
+                .and(ltBookId(cursorId)))
+//                .and(book.bookId.lt(cursorId)))
+                .or(book.score.lt(cursorScore));
+    }
+
     public Slice<BookListResponse> findPredictList(int typeCd, PageRequest page, Long prevId, Double prevScore, Long userId) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book).join(userPredictedGradeModel).on(book.bookId.eq(userPredictedGradeModel.book.bookId))
@@ -93,17 +112,6 @@ public class RecommandQueryRepository {
         }
 
         return new SliceImpl<>(content, page, hasNext);
-    }
-
-    private BooleanExpression ltBookId(Long cursorId) {
-        return cursorId == 0 ? null : book.bookId.lt(cursorId);
-    }
-
-    private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
-        return (book.score.eq(cursorScore)
-                .and(ltBookId(cursorId)))
-//                .and(book.bookId.lt(cursorId)))
-                .or(book.score.lt(cursorScore));
     }
 
 }

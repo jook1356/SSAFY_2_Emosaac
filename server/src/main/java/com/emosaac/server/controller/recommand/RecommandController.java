@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -66,17 +63,15 @@ public class RecommandController {
         );
     }
 
-    @ApiOperation(value = "최근 읽은 작품과 비슷한 작품 추천", notes = "사용자가 최근 읽은 작품과 유사한 작품들을 추천한다.")
+    @ApiOperation(value = "최근 읽은 작품 또는 현재 조회하고 있는 book과 비슷한 작품 추천", notes = "사용자가 최근 읽은 작품/현재 조회하고 있는 bookId와 유사한 작품들을 추천한다.(bookId = 0 -> 사용자가 최근 읽은 작품과 유사한 작품 추천)")
     @GetMapping("/item")
     public ResponseEntity<CommonResponse> findItemList(@RequestParam (value = "typeCode") int typeCd,
-                                                       @RequestParam(required=false, defaultValue = "date") String criteria,
-                                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                       @RequestParam(value = "id", required = false, defaultValue = "1")Long id,
+                                                       @RequestParam(value = "bookId", required=false, defaultValue = "0") Long bookId,
                                                        @ApiIgnore @CurrentUser UserPrincipal user) {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "최근 읽은 작품과 비슷한 작품 조회 성공", recommandService.findItemList(typeCd, size, criteria, id, user.getId()))
+                HttpStatus.OK, "bookId와 비슷한 작품 조회 성공", recommandService.findItemList(typeCd, bookId, user.getId()))
         );
     }
 
@@ -115,4 +110,6 @@ public class RecommandController {
                 HttpStatus.OK, "나의 취향별 추천 조회 성공", recommandService.findUserList(typeCd, user.getId()))
         );
     }
+
+
 }
