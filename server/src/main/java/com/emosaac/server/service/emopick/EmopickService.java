@@ -49,6 +49,33 @@ public class EmopickService {
     private final BookQueryRepository bookQueryRepository;
     private final CommonService commonService;
 
+    public SlicedResponse<EmopickListResponse> findEmopickListByUser(int size, Long prevId, Long userId) {
+
+        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickListByUser(PageRequest.ofSize(size), prevId, userId);
+
+        List<ImageinEmopickListResponse> result = new ArrayList<>();
+
+        for (EmopickListResponse emoList : page.getContent()){
+            String bookSeqs = "";
+            if(emoList.getWebtoonSeq() != null)
+                bookSeqs += emoList.getWebtoonSeq();
+            if(emoList.getNovelSeq() != null)
+                bookSeqs += emoList.getNovelSeq();
+
+            String[] books = bookSeqs.split("_");
+            List<String> thumbnails = new ArrayList<>();
+            for (String bookId : books){
+                String thumbnail = bookQueryRepository.findThumbnail(Long.valueOf(bookId));
+                thumbnails.add(thumbnail);
+            }
+
+            result.add(new ImageinEmopickListResponse(emoList, thumbnails));
+        }
+
+
+        return new SlicedResponse<>(result, page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+    }
+
     // 이모픽 리스트 조회 + 썸네일 n 개도 함께
     public SlicedResponse<EmopickListResponse> findEmopickList(int size, Long prevId){
 
