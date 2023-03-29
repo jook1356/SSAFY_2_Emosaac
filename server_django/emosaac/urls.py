@@ -22,7 +22,7 @@ from userbasedpredict.views import MyAPIView
 urlpatterns = [
     path('recommand/', include('recommand.urls')),
     path('recommand/cf/<int:user_id>', MyAPIView.as_view()), #cf
-    # path('recommand/predict', include('userbasedpredict.urls')),
+    path('recommand/predict', include('userbasedpredict.urls')),
     path('recommand/predict/<int:user_id>', MyAPIView.as_view()),
     path('recommand/itembasedcf', include('itembasedcf.urls')),
     path('admin/', admin.site.urls),
