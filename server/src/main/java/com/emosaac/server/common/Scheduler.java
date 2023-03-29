@@ -2,6 +2,7 @@ package com.emosaac.server.common;
 
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.genre.TotalResponse;
+import com.emosaac.server.dto.recommand.UserBaseCfDto;
 import com.emosaac.server.dto.user.UserResponse;
 import com.emosaac.server.repository.user.UserRepository;
 import com.emosaac.server.service.genre.GenreService;
@@ -11,38 +12,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class Scheduler {
 
-    private final GenreService genreService;
-    private final UserRepository userRepository;
+    RestTemplate restTemplate = new RestTemplate();
 
-
-//    @Scheduled(cron = "0/1 * * * * ?")
-
-    //일단 배치 작업 안함
     @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
+//    @Scheduled(cron = "0/1 * * * * ?")
     @Transactional
     public void getTotalGenre() { //스케줄러 처리 필요
 
-        List<User> list = userRepository.findAllUser();
-        for (User user : list) {
-            Long userId = user.getUserId();
+        String url = "http://j8d203.p.ssafy.io:8000/recommand/genre";
+//        String url = "http://127.0.0.1:8000/recommand/genre";
 
-            List<TotalResponse> listWebtoon = genreService.getTotalGenreCount(userId, 0);
-            List<TotalResponse> listNovel = genreService.getTotalGenreCount(userId, 1);
+        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url, UserBaseCfDto.class);
+        System.out.println(userBaseCfDto);
 
-            List<Long> tmpWebtoonList = genreService.calcMinOrMax(listWebtoon); //2
-            List<Long> tmpNovelList = genreService.calcMinOrMax(listNovel); //2
-
-            System.out.println(tmpWebtoonList);
-            genreService.setFavoriteGenre(tmpWebtoonList, 0, userId); //유저에 반영
-            genreService.setFavoriteGenre(tmpNovelList, 1, userId); //유저에 반영
-        }
     }
 }

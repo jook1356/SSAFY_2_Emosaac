@@ -1,6 +1,9 @@
 package com.emosaac.server.controller.genre;
 
 import com.emosaac.server.common.CommonResponse;
+import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.book.Hit;
+import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.GenreResponseList;
 import com.emosaac.server.dto.genre.UserResearchRequest;
@@ -56,19 +59,23 @@ public class genreController {
                                                        @RequestBody @Valid UserResearchRequest request) {
 
         GenreResponseList genreResponseList = genreService.postResearch(userPrincipal.getId(), request);
-        
         //장고로 요청
-//        String url = "http://127.0.0.1:8000/recommand/cf/"+userPrincipal.getId();
-//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
-
-        //predict By New User
-//        String url = "http://127.0.0.1:8000/recommand/predict/" + userPrincipal.getId();
-//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
-//
-//        System.out.println(response);
+        requestToDjango(); 
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "설문조사 성공", genreResponseList));
+    }
+
+    void requestToDjango() {
+        //cf By New User
+//        String url = "http://j8d203.p.ssafy.io:8000/recommand/cf/"+userPrincipal.getId();
+//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
+
+        //predict By New User
+//        String url = "http://j8d203.p.ssafy.io:8000/recommand/predict/" + userPrincipal.getId();
+//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
+//
+//        System.out.println(response);
     }
 
 
@@ -122,26 +129,27 @@ public class genreController {
     @GetMapping("/total/one")
     @ApiOperation(value = "통계기반 선호/비선호 탑 2 장르별 랜덤 조회 , 딱 하나만 랜덤으로 줍니다", notes = "typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)")
     public ResponseEntity<CommonResponse> getTotalUnlikeGenreBook(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                                            @RequestParam(value = "typeCode") int typeCd,
-                                                            @RequestParam(value = "isLike", defaultValue = "0") int isLike) {
+                                                                  @RequestParam(value = "typeCode") int typeCd,
+                                                                  @RequestParam(value = "isLike", defaultValue = "0") int isLike) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 선호/비선호 장르 탑2 책 랜덤 조회 성공", genreService.getTotalGenreBookOne(userPrincipal.getId(),typeCd, isLike)));
+                HttpStatus.OK, "장르별 선호/비선호 장르 탑2 책 랜덤 조회 성공", genreService.getTotalGenreBookOne(userPrincipal.getId(), typeCd, isLike)));
     }
+
     @GetMapping("/total/unlike")
     @ApiOperation(value = "통계기반 비선호 장르별 책 조회 *안쓸것 같아요*", notes = "typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)")
     public ResponseEntity<CommonResponse> getTotalUnlikeGenreBook(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                                            @RequestParam(value = "typeCode") int typeCd,
-                                                            @RequestParam(value = "order") int order,
-                                                            @ApiIgnore @RequestParam(value = "isLike", defaultValue = "0") int isLike,
-                                                            @RequestParam(required = false, defaultValue = "")
-                                                                String criteria,
-                                                            @RequestParam(value = "size", required = false, defaultValue = "10")
-                                                                int size,
-                                                            @RequestParam(value = "prevId", required = false, defaultValue = "20493")
-                                                                Long prevId,
-                                                            @RequestParam(value = "prevScore", required = false, defaultValue = "10")
-                                                                Double prevScore) {
+                                                                  @RequestParam(value = "typeCode") int typeCd,
+                                                                  @RequestParam(value = "order") int order,
+                                                                  @ApiIgnore @RequestParam(value = "isLike", defaultValue = "0") int isLike,
+                                                                  @RequestParam(required = false, defaultValue = "")
+                                                                  String criteria,
+                                                                  @RequestParam(value = "size", required = false, defaultValue = "10")
+                                                                  int size,
+                                                                  @RequestParam(value = "prevId", required = false, defaultValue = "20493")
+                                                                  Long prevId,
+                                                                  @RequestParam(value = "prevScore", required = false, defaultValue = "10")
+                                                                  Double prevScore) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "장르별 비선호 책 조회 성공", genreService.getTotalUnlikeGenreBook(userPrincipal.getId(), BookRequest.of(typeCd, criteria, size, prevId, prevScore, isLike, order))));
@@ -150,15 +158,15 @@ public class genreController {
     @GetMapping("/total/like")
     @ApiOperation(value = "선호 장르별 책 조회", notes = " typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)")
     public ResponseEntity<CommonResponse> getTotalLikeGenreBook(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                                            @RequestParam(value = "typeCode") int typeCd,
-                                                            @RequestParam(value = "order") int order,
-                                                            @ApiIgnore @RequestParam(value = "isLike", defaultValue = "0") int isLike,
-                                                            @RequestParam(value = "size", required = false, defaultValue = "10")
-                                                            int size,
-                                                            @RequestParam(value = "prevId", required = false, defaultValue = "0")
-                                                            Long prevId,
-                                                            @RequestParam(value = "prevScore", required = false, defaultValue = "10")
-                                                            Double prevScore) {
+                                                                @RequestParam(value = "typeCode") int typeCd,
+                                                                @RequestParam(value = "order") int order,
+                                                                @ApiIgnore @RequestParam(value = "isLike", defaultValue = "0") int isLike,
+                                                                @RequestParam(value = "size", required = false, defaultValue = "10")
+                                                                int size,
+                                                                @RequestParam(value = "prevId", required = false, defaultValue = "0")
+                                                                Long prevId,
+                                                                @RequestParam(value = "prevScore", required = false, defaultValue = "10")
+                                                                Double prevScore) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "장르별 선호 책 조회 성공",

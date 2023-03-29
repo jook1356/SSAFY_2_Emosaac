@@ -113,7 +113,7 @@ public class GenreService {
         return str;
     }
 
-    //장르 코드 주면 안읽은 것중에 조회
+    //장르 코드 주면 안읽은 것중에 조회 *안쓸것 같아요
     public SlicedResponse<BookListResponse> getBookByGenre(Long userId, BookRequest request) {
         User user = commonService.getUser(userId);
         Slice<BookListResponse> page = genreQueryRepository.findBookListByGenre(user, request, PageRequest.ofSize(request.getSize()));
@@ -129,14 +129,9 @@ public class GenreService {
 
         genreList = (typeCode == 0) ? webtoonGenreList : novelGenreList;
 
-//        List<Long> countList = genreQueryRepository.findReadSpecGenreCount1(userId, typeCode, genreList[0]);
-
         if (count > 0) {
             for (int i = 0; i < genreList.length; i++) {
                 Genre genre = commonService.getGenre(genreList[i]);
-//                list.add(new TotalResponse(genreList[i], genre.getName(), ((double)
-//                        countList.get(i) / count * 100)
-//                ));
                 list.add(new TotalResponse(genreList[i], genre.getName(), ((double)
                         genreQueryRepository.findReadSpecGenreCount(userId, typeCode, genreList[i]) / count * 100)
                 ));
@@ -182,7 +177,6 @@ public class GenreService {
 
         LinkedHashMap<Long, Double> sortedMap = MapToSortedMap(map);
 
-
         for (Map.Entry<Long, Double> entry : sortedMap.entrySet()) {
             likeList.add(entry.getKey());
         }
@@ -225,10 +219,6 @@ public class GenreService {
                 likeList[idx++] = tmpList.get(i);
             }
         }
-//        for (int i=0;i<likeList.length;i++){
-//            System.out.println(likeList[i]);
-//
-//        }
         return likeList;
     }
 
@@ -241,10 +231,6 @@ public class GenreService {
 
         List<Long> tmpList = calcMinOrMax(list); //2
         Long[] likeList = getLikeList(isLike, tmpList);
-
-
-//        setFavoriteGenre(tmpList, typeCode, userId); //유저에 반영, 스케줄러 처리 하면 지워도 될것 같음
-
 
         return genreQueryRepository.findBookGenreisLike(typeCode, likeList).stream().map(
                 (genre) -> new GenreResponse(genre)).collect(Collectors.toList());
@@ -267,7 +253,7 @@ public class GenreService {
         return responses.get(rndNum);
     }
 
-    //비선호 : 카운트를 기준으로
+    //비선호 : 카운트를 기준으로 *안쓸것 같아요
     public SlicedResponse<BookListResponse> getTotalUnlikeGenreBook(Long userId, BookRequest request) {
 
         List<TotalResponse> list = getTotalGenreCount(userId, request.getTypeCd());
