@@ -1,19 +1,15 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.shortcuts import render
 
-from userbasedcf import recommandBook, totalBookByAgeAndGender, totalBookByAgeAndGender, recommandBookRequest
+from userbasedcf import recommandBook, recommandBookRequest
+from total import totalBookByAgeAndGender
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 # 요청(회원 가입시)
-class MyAPIView(APIView):
+class MyAPIViewNewUserCf(APIView):
 
     def get(self, request, user_id, format=None):
-
-        # totalBookByAgeAndGender.execute_algorithm(0)
-        # totalBookByAgeAndGender.execute_algorithm(1)
 
         print("--------------------------tmp")
         print(user_id)
@@ -29,9 +25,28 @@ class MyAPIView(APIView):
 
         return Response(data)
 
+class MyAPIViewCf(APIView):
+
+    def get(self, request,format=None):
+
+        print("--------------------------tmp")
+        resWebtoon = recommandBook.execute_algorithm(0)
+        print("--------------------------resweb")
+        resNovel = recommandBook.execute_algorithm(1)
+
+        data = {
+            "userId": "none",
+            "webtoon": resWebtoon,
+            "novel": resNovel
+        }
+
+        return Response(data)
+
+
+
 def index(request):
     # print("--------------------------web")
-    recommandBook.execute_algorithm(0)
+    # recommandBook.execute_algorithm(0)
     # print("--------------------------nov")
-    recommandBook.execute_algorithm(1)
+    # recommandBook.execute_algorithm(1)
     return render(request, 'userbasecf')

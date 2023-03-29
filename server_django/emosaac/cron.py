@@ -1,6 +1,6 @@
 from recommand.models import UserPredictedGradeModel
-from totalgenre import favoriteGenre
-from userbasedcf import recommandBook, totalBookByAgeAndGender
+from total import favoriteGenre, totalBookByAgeAndGender
+from userbasedcf import recommandBook
 import os
 
 from userbasedpredict import ScorePredict
