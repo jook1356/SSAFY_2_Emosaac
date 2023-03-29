@@ -27,7 +27,8 @@ SECRET_KEY = my_settings.SECRET_KEY
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "j8d203.p.ssafy.io"
+    "j8d203.p.ssafy.io",
+    '127.0.0.1'
 ]
 
 # Application definition
