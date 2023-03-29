@@ -191,20 +191,34 @@ public class EmopickService {
 
         emopick.update(request);
 
-        String webtoonIdStr = "";
-        String novelIdStr = "";
+//        String webtoonIdStr = "";
+//        String novelIdStr = "";
+//
+//        // 웹툰 리스트
+//        if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
+//            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
+//
+//        // 노블 리스트
+//        if (request.getNovelList() != null || !request.getNovelList().isEmpty())
+//            novelIdStr = setIdStr(emopick, request.getNovelList());
+//
+//        emopick.setSeq(webtoonIdStr, novelIdStr);
 
-        // 웹툰 리스트
         if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
-            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
+            updateEmopickDetail(emopick, request.getWebtoonList(), 0);
 
-        // 노블 리스트
         if (request.getNovelList() != null || !request.getNovelList().isEmpty())
-            novelIdStr = setIdStr(emopick, request.getNovelList());
-
-        emopick.setSeq(webtoonIdStr, novelIdStr);
+            updateEmopickDetail(emopick, request.getNovelList(), 1);
 
         return emopick.getEmopickId();
+    }
+
+    private void updateEmopickDetail(Emopick emopick, Map<Long, String> bookList, int type) {
+        for(Entry<Long, String> review : bookList.entrySet()){
+            Book book = commonService.getBook(review.getKey());
+            EmopickDetail emopickDetail = emopickDetailRepository.findByEmopickIdAndBookId(emopick.getEmopickId(), book.getBookId());
+            emopickDetail.update(book, review.getValue(), type);
+        }
     }
 
     // 이모픽 삭제

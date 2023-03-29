@@ -3,6 +3,7 @@ package com.emosaac.server.domain.emo;
 import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.emopick.EmopickSaveRequest;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,6 +44,12 @@ public class EmopickDetail extends BaseEntity {
     @Builder
     public EmopickDetail(Emopick emopick, Book book, String review, Integer type){
         this.emopick = emopick;
+        this.book = book;
+        this.review = review;
+        this.type = type;
+    }
+
+    public void update(Book book, String review, Integer type){
         this.book = book;
         this.review = review;
         this.type = type;
