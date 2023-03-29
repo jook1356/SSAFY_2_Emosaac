@@ -7,10 +7,7 @@ import com.emosaac.server.common.exception.ResourceNotFoundException;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.BookComment;
 import com.emosaac.server.domain.book.BookCommentLike;
-import com.emosaac.server.domain.emo.Emopick;
-import com.emosaac.server.domain.emo.EmopickComment;
-import com.emosaac.server.domain.emo.EmoCommentLike;
-import com.emosaac.server.domain.emo.LikeEmo;
+import com.emosaac.server.domain.emo.*;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDetailResponse;
 import com.emosaac.server.dto.comment.CommentLikeResponse;
@@ -45,6 +42,7 @@ public class EmopickService {
     private final EmopickRepository emopickRepository;
     private final EmopickQueryRepository emopickQueryRepository;
     private final EmoLikeRepository emoLikeRepository;
+    private final EmopickDetailRepository emopickDetailRepository;
     private final BookRepository bookRepository;
     private final BookQueryRepository bookQueryRepository;
     private final CommonService commonService;
@@ -135,23 +133,42 @@ public class EmopickService {
     // 이모픽 등록
     @Transactional
     public Long createEmopickByUser(EmopickSaveRequest request, Long userId) {
+//        User user = commonService.getUser(userId);
+//        Emopick emopick = emopickRepository.save(request.of(user));
+//
+//        String webtoonIdStr = "";
+//        String novelIdStr = "";
+//
+//        // 웹툰 리스트
+//        if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
+//            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
+//
+//        // 노블 리스트
+//        if (request.getNovelList() != null || !request.getNovelList().isEmpty())
+//            novelIdStr = setIdStr(emopick, request.getNovelList());
+//
+//        emopick.setSeq(webtoonIdStr, novelIdStr);
+//
+//        return emopick.getEmopickId();
+
         User user = commonService.getUser(userId);
         Emopick emopick = emopickRepository.save(request.of(user));
 
-        String webtoonIdStr = "";
-        String novelIdStr = "";
-
-        // 웹툰 리스트
         if (request.getWebtoonList() != null || !request.getWebtoonList().isEmpty())
-            webtoonIdStr = setIdStr(emopick, request.getWebtoonList());
+            setEmopickDetail(emopick, request.getWebtoonList(), 0);
 
-        // 노블 리스트
         if (request.getNovelList() != null || !request.getNovelList().isEmpty())
-            novelIdStr = setIdStr(emopick, request.getNovelList());
-
-        emopick.setSeq(webtoonIdStr, novelIdStr);
+            setEmopickDetail(emopick, request.getNovelList(), 1);
 
         return emopick.getEmopickId();
+    }
+
+    private void setEmopickDetail(Emopick emopick, Map<Long, String> bookList, int type){
+        for(Entry<Long, String> review : bookList.entrySet()){
+            Book book = commonService.getBook(review.getKey());
+            EmopickDetail emopickDetail = EmopickDetail.builder().emopick(emopick).book(book).review(review.getValue()).type(type).build();
+            emopickDetailRepository.save(emopickDetail);
+        }
     }
 
     private String setIdStr(Emopick emopick, Map<Long, String> bookList){
