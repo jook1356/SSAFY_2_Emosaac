@@ -18,7 +18,7 @@ public class UserPredictedGradeModel extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="PRED_GRADE_NO")
-    private Integer id;
+    private Long id;
 
     // search_log - user
     @JsonManagedReference
