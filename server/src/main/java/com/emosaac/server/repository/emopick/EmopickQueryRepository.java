@@ -1,7 +1,13 @@
 package com.emosaac.server.repository.emopick;
 
+import com.emosaac.server.domain.emo.EmopickDetail;
 import com.emosaac.server.dto.emopick.EmopickListResponse;
 import com.emosaac.server.dto.emopick.QEmopickListResponse;
+import com.emosaac.server.dto.emopick.QThumbnailListResponse;
+import com.emosaac.server.dto.emopick.ThumbnailListResponse;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +18,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.emo.QEmopick.emopick;
+import static com.emosaac.server.domain.emo.QEmopickDetail.emopickDetail;
 
 @RequiredArgsConstructor
 @Repository
@@ -39,24 +47,32 @@ public class EmopickQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
 
-    public Slice<EmopickListResponse> findEmopickListByUser(PageRequest page, Long prevId, Long userId) {
-        List<EmopickListResponse> content = jpaQueryFactory.select(new QEmopickListResponse(emopick))
-                .from(emopick)
+//    public Slice<EmopickListResponse> findEmopickListByUser(PageRequest page, Long prevId, Long userId) {
+//        List<EmopickListResponse> content = jpaQueryFactory.select(new QEmopickListResponse(emopick))
+//                .from(emopick)
+//                .where(
+//                        emopick.user.userId.eq(userId),
+//                        ltEmopickId(prevId)
+//                )
+//                .limit(page.getPageSize()+1)
+//                .orderBy(emopick.EmopickId.desc())  // 평점 추가
+//                .fetch();
+//
+//        boolean hasNext = false;
+//        if (content.size() == page.getPageSize()+1) {
+//            content.remove(page.getPageSize());
+//            hasNext = true;
+//        }
+//
+//        return new SliceImpl<>(content, page, hasNext);
+//    }
+
+    public List<ThumbnailListResponse> findThumbnail(Long emopickId) {
+        return jpaQueryFactory.select(new QThumbnailListResponse(book))
+                .from(book).join(emopickDetail).on(book.bookId.eq(emopickDetail.book.bookId))
                 .where(
-                        emopick.user.userId.eq(userId),
-                        ltEmopickId(prevId)
-                )
-                .limit(page.getPageSize()+1)
-                .orderBy(emopick.EmopickId.desc())  // 평점 추가
-                .fetch();
-
-        boolean hasNext = false;
-        if (content.size() == page.getPageSize()+1) {
-            content.remove(page.getPageSize());
-            hasNext = true;
-        }
-
-        return new SliceImpl<>(content, page, hasNext);
+                        emopickDetail.emopick.EmopickId.eq(emopickId)
+                ).fetch();
     }
 
     private BooleanExpression ltEmopickId(Long cursorId) {
