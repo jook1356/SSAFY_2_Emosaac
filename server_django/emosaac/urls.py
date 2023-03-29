@@ -16,16 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from userbasedcf.views import MyAPIView
+from total.views import MyAPIViewGenre, MyAPIViewAgeAndGenre
+from userbasedcf.views import MyAPIViewNewUserCf, MyAPIViewCf
 from userbasedpredict.views import MyAPIView
 
 urlpatterns = [
     path('recommand/', include('recommand.urls')),
-    path('recommand/cf/<int:user_id>', MyAPIView.as_view()), #cf
+
+    path('recommand/total', include('total.urls')),
+    path('recommand/userbasedcf', include('userbasedcf.urls')),
+
+    path('recommand/cf/<int:user_id>', MyAPIViewNewUserCf.as_view()), #cf
+    path('recommand/cf', MyAPIViewCf.as_view()),  # cf By new user
+
+    path('recommand/genre', MyAPIViewGenre.as_view()),  # total genre
+    path('recommand/ageAndGen', MyAPIViewAgeAndGenre.as_view()),  # total genre
+
     path('recommand/predict', include('userbasedpredict.urls')),
     path('recommand/predict/<int:user_id>', MyAPIView.as_view()),
+
     path('recommand/itembasedcf', include('itembasedcf.urls')),
-    path('recommand/totalgenre', include('totalgenre.urls')),
-    path('recommand/userbasedcf', include('userbasedcf.urls')),
+
     path('admin/', admin.site.urls),
 ]
