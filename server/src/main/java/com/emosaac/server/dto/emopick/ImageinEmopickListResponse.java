@@ -9,35 +9,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class EmopickListResponse {
+public class ImageinEmopickListResponse {
     private WriterInfo writerInfo;
     private Long emopickId;
     private String title;
-    private String webtoonSeq;
-    private String novelSeq;
+    private List<String> thumbnails;
     private String createdDate;
     private String modifiedDate;
 
     @QueryProjection
-    public EmopickListResponse (Emopick emopick){
+    public ImageinEmopickListResponse (EmopickListResponse emopick, List<String> thumbnails){
 
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        this.writerInfo = WriterInfo.from(emopick.getUser());
+        this.writerInfo = emopick.getWriterInfo();
         this.emopickId = emopick.getEmopickId();
         this.title = emopick.getTitle();
 
-        this.webtoonSeq = emopick.getWebtoonSeq();
-        this.novelSeq = emopick.getNovelSeq();
-
-        this.createdDate = emopick.getCreatedDate().format(myFormatObj);
+        this.createdDate = emopick.getCreatedDate();
         if(emopick.getModifiedDate()!=null) {
-            this.modifiedDate = emopick.getModifiedDate().format(myFormatObj);
+            this.modifiedDate = emopick.getModifiedDate();
         }
+
+        this.thumbnails = thumbnails;
     }
 }
