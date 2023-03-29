@@ -19,6 +19,7 @@ import java.util.Optional;
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QHit.hit;
 import static com.emosaac.server.domain.book.QReadBook.readBook;
+import static com.emosaac.server.domain.emo.QEmopickDetail.emopickDetail;
 
 @RequiredArgsConstructor
 @Repository
@@ -153,33 +154,8 @@ public class BookQueryRepository {
                 .fetchOne());
     }
 
-    public String findThumbnail(Long bookId){
-        return jpaQueryFactory.select(book.thumbnail)
-                .from(book)
-                .where(
-                        book.bookId.eq(bookId)
-                ).fetchOne();
-    }
-
     /*-  10: 로맨스, 11: 로판, 12: 드라마, 13: 판타지, 14: 액션/무협, 15: BL/GL, 16: 공포 27: 현판, 28: 미스터리 */
     private Predicate filterGenreCd(Long genreCode) {
-//        if(criteria.contains("로맨스")){
-//            return book.genre.gerneId.eq(10L);
-//        } else if(criteria.contains("로판")){
-//            return book.genre.gerneId.eq(11L);
-//        } else if(criteria.contains("판타지")){
-//            return book.genre.gerneId.eq(13L);
-//        } else if(criteria.contains("무협")){
-//            return book.genre.gerneId.eq(14L);
-//        } else if(criteria.contains("BL/GL")){
-//            return book.genre.gerneId.eq(15L);
-//        } else if(criteria.contains("현판")){
-//            return book.genre.gerneId.eq(27L);
-//        } else if(criteria.contains("미스터리")){
-//            return book.genre.gerneId.eq(28L);
-//        } else if(criteria == null || criteria.contains("")){
-//            return null;
-//        }
 
         if(genreCode == 0 || genreCode == null) return null;
 

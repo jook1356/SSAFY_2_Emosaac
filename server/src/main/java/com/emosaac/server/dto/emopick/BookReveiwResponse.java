@@ -1,6 +1,7 @@
 package com.emosaac.server.dto.emopick;
 
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.emo.EmopickDetail;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class BookReveiwResponse {
     private String reveiw;
 
     @QueryProjection
-    public BookReveiwResponse(Book book, String review){
+    public BookReveiwResponse(Book book, EmopickDetail emopickDetail){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
@@ -39,6 +40,6 @@ public class BookReveiwResponse {
 
         this.avgScore = book.getScore();
 
-        this.reveiw = review;
+        this.reveiw = emopickDetail.getReview();
     }
 }
