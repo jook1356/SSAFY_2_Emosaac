@@ -61,6 +61,12 @@ public class genreController {
 //        String url = "http://127.0.0.1:8000/recommand/cf/"+userPrincipal.getId();
 //        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
 
+        //predict By New User
+//        String url = "http://127.0.0.1:8000/recommand/predict/" + userPrincipal.getId();
+//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
+//
+//        System.out.println(response);
+
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "설문조사 성공", genreResponseList));
     }
