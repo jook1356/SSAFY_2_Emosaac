@@ -123,27 +123,44 @@ public class GenreService {
 
     public List<TotalResponse> getTotalAmount(Long userId, int typeCode) {
         User user = commonService.getUser(userId);
-        Long count = genreQueryRepository.findTotalCount(userId, typeCode);
+
+//        Long count = genreQueryRepository.findTotalCount(userId, typeCode);
         List<TotalResponse> list = new ArrayList<>();
         Long[] genreList;
 
         genreList = (typeCode == 0) ? webtoonGenreList : novelGenreList;
 
-        if (count > 0) {
-            for (int i = 0; i < genreList.length; i++) {
-                Genre genre = commonService.getGenre(genreList[i]);
-                list.add(new TotalResponse(genreList[i], genre.getName(), ((double)
-                        genreQueryRepository.findReadSpecGenreCount(userId, typeCode, genreList[i]) / count * 100)
-                ));
-            }
-        } else {
-            for (int i = 0; i < genreList.length; i++) {
-                Genre genre = commonService.getGenre(genreList[i]);
-                list.add(new TotalResponse(genreList[i], genre.getName(), 0.0, "책 읽음 정보를 넣어주세요"));
-            }
-
+        for (int i = 0; i < genreList.length; i++) {
+            Genre genre = commonService.getGenre(genreList[i]);
+            Long count = genreQueryRepository.findGenreCountByHit(userId, typeCode, genreList[i]);
+            list.add(new TotalResponse(genreList[i], genre.getName(), (
+                    count == null ? 0 : count
+                    )
+            ));
         }
         return list;
+
+//        Long count = genreQueryRepository.findTotalCount(userId, typeCode);
+//        List<TotalResponse> list = new ArrayList<>();
+//        Long[] genreList;
+//
+//        genreList = (typeCode == 0) ? webtoonGenreList : novelGenreList;
+//
+//        if (count > 0) {
+//            for (int i = 0; i < genreList.length; i++) {
+//                Genre genre = commonService.getGenre(genreList[i]);
+//                list.add(new TotalResponse(genreList[i], genre.getName(), ((double)
+//                        genreQueryRepository.findReadSpecGenreCount(userId, typeCode, genreList[i]) / count * 100)
+//                ));
+//            }
+//        } else {
+//            for (int i = 0; i < genreList.length; i++) {
+//                Genre genre = commonService.getGenre(genreList[i]);
+//                list.add(new TotalResponse(genreList[i], genre.getName(), 0.0, "책 읽음 정보를 넣어주세요"));
+//            }
+//
+//        }
+//        return list;
 
     }
 

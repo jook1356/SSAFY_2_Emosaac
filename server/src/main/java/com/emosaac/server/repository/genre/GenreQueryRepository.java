@@ -20,6 +20,7 @@ import java.util.List;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.book.QGenre.genre;
+import static com.emosaac.server.domain.book.QHit.hit;
 import static com.emosaac.server.domain.book.QReadBook.readBook;
 import static com.emosaac.server.domain.user.QResearch.research;
 
@@ -102,6 +103,18 @@ public class GenreQueryRepository {
                         readBook.book.genre.gerneId.eq(genre)
                 )
                 .fetchFirst();
+    }
+
+    public Long findGenreCountByHit(Long userId, int typeCode, Long genre){
+        return jpaQueryFactory.select(hit.count())
+                .from(hit).join(book).on(hit.book.bookId.eq(book.bookId))
+                .where(
+                        hit.user.userId.eq(userId),
+                        book.type.eq(typeCode),
+                        book.genre.gerneId.eq(genre)
+                )
+                .groupBy(book.genre.gerneId)
+                .fetchOne();
     }
 
     //선호 장르

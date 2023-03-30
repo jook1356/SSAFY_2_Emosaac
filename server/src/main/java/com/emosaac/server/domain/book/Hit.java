@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -33,6 +34,9 @@ public class Hit extends BaseEntity {
     @JoinColumn(name = "USER_NO")
     private User user;
 
+    @ColumnDefault("1")
+    private Long count;
+
     @Builder
     public Hit(Book book, User user){
         this.book = book;
@@ -40,7 +44,7 @@ public class Hit extends BaseEntity {
     }
 
     public void update(){
-        this.setModifiedDate(LocalDateTime.now());
+        this.count++;
     }
 
 }
