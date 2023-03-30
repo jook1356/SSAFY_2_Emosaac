@@ -31,6 +31,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    'https://j8d203.p.ssafy.io',
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,7 +48,8 @@ INSTALLED_APPS = [
     'userbasedcf',
     'userbasedpredict',
     'django_crontab',  # 크론 설정
-    'itembasedcf'
+    'itembasedcf',
+    'corsheaders',
 
 ]
 
@@ -64,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'emosaac.urls'
