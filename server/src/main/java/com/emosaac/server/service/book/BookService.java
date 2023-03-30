@@ -12,6 +12,8 @@ import com.emosaac.server.repository.score.ScoreQueryRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final BookQueryRepository bookQueryRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ReadRepository readRepository;
@@ -34,12 +38,16 @@ public class BookService {
     // 요일별 작품 리스트
     public SlicedResponse<BookListResponse> findDayList(String day, int typeCd, Long genreCode, int size, Long prevId, Double prevScore) {
 
+        logger.info("==========findDayList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
+
         Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(day, typeCd, genreCode, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 장르벌 작품 리스트
     public SlicedResponse<BookListResponse> findGenreList(Long genreCode, int typeCd, int size, Long prevId, Double prevScore) {
+
+        logger.info("==========findGenreList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
 
         Slice<BookListResponse> page = bookQueryRepository.findBookListByGenre(genreCode, typeCd, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
