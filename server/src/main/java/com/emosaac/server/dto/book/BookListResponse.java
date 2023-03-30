@@ -19,7 +19,7 @@ public class BookListResponse {
     private String author;
     private String href;
     private String tag;
-    private double score;
+    private double avgScore;
     private Integer hit;
     private String regist;
     private Long genreId;
@@ -36,7 +36,9 @@ public class BookListResponse {
         this.href = book.getHref();
         //<----추가
         this.tag = book.getTag();
-        this.score = book.getScore();
+
+        this.avgScore = Double.parseDouble(String.format("%.2f", book.getScore()));
+
         this.hit = book.getHit();
         this.regist = book.getRegist();
         this.genreId = book.getGenre().getGerneId();
