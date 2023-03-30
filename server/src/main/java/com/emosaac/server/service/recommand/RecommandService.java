@@ -57,14 +57,14 @@ public class RecommandService {
         return res;
     }
 
-    public List<BookListResponse> findItemList(int typeCd, Long bookId, Long userId) {
+    public List<BookListResponse> findItemList(Long bookId, Long userId) {
         if(bookId == 0){ // 제일 최근 본 작품과 유사한 작품 추천
             Optional <ReadBook> readBook =bookQueryRepository.findBookRecent(userId);
             if(readBook.isPresent()){
                 bookId = readBook.get().getReadId();
             }
         }
-        return findBookStrListNotRead10(recommandQueryRepository.findItemList(typeCd, bookId), userId);
+        return findBookStrListNotRead10(recommandQueryRepository.findItemList(bookId), userId);
     }
 
     public SlicedResponse<PredictedBookResponse> findPredictList(int typeCd, int size, Double prevScore, Long prevId, Long userId) {
