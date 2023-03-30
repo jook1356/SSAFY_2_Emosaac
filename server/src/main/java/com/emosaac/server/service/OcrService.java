@@ -66,7 +66,6 @@ public class OcrService {
         ImageAnnotatorSettings settings =
                 ImageAnnotatorSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
 
-        StringBuilder sb = new StringBuilder();
         String strRes = "";
 
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create(settings)) {
@@ -85,7 +84,7 @@ public class OcrService {
 
                     String[] strList = {"일 전", "신작", "대여", "소장", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
                             "MY", "TALK", "새 이야기", "UP", "더보기", "이어보기", "연재중", "완결", "보관함", "좋아요", "구매 작품", "다운로드",
-                            "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기"};
+                            "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기", "일전"};
                     for (String tmp : strList) {
                         strRes = strRes.replaceAll(tmp, "");
                     }
@@ -95,71 +94,40 @@ public class OcrService {
             }
         }
 
-        return strRes;
+        return strRes.trim();
     }
+
     @Transactional
     public List<BookListResponse> postOcrFileAndRead(MultipartFile multipartFile, Long userId, int typeCd) throws IOException {
-
         List<BookListResponse> responses = new ArrayList<>();
 
         String text = detectTextGcs(multipartFile);
+        if (text == null) {
+            return responses;
+        }
 
-        //도서 검색
         String[] textList = text.split("\n");
+        List<Book> bookList = new ArrayList<>();
 
-       List<Book> bookList = new ArrayList<>();
         for (String str : textList) {
-            System.out.println("----------------------");
+            str = str.trim();
+            if (str.length() < 2) {
+                continue;
+            }
 
-            if (!str.equals(" ") && !str.equals("") && !str.equals("  ") && str.length() > 1 && !str.equals("   ")) {
-                System.out.println("====origin===");
-                System.out.println(str);
-
-                int idx = 0;
-                if (str.charAt(0) == ' ') {
-                    for (int i = 0; i < str.length(); i++) {
-                        if (str.charAt(i) != ' ') {
-                            idx = i;
-                            break;
-                        }
-                    }
-                    str = str.substring(idx, str.length());
-                }
-
-                if (str.charAt(str.length() - 1) == ' ') {
-                    idx = 0;
-                    for (int i = str.length() - 1; i >= 0; i--) {
-                        if (str.charAt(i) != ' ') {
-                            idx = i;
-                            break;
-                        }
-                    }
-                    str = str.substring(0, str.length() - idx-1);
-                }
-
-                if (str.length() <= 1) {
-                    continue;
-                }
-
-                System.out.println("===찾을 책==");
-                System.out.println(str + str.length());
-                List<Book> book = bookRepository.findBookname(typeCd, str);
-                System.out.println("===!!!!!찾은 책==");
-
-                for (Book b : book) {
-                    System.out.println(b.getTitle());
-                    bookList.add(b);
-                    break;
-                }
+            List<Book> books = bookRepository.findBookname(typeCd, str);
+            if (!books.isEmpty()) {
+                bookList.add(books.get(0));
             }
         }
 
         bookList.forEach((b) -> responses.add(new BookListResponse(b)));
         //읽음처리
-//        postRead(bookList, userId);
-        return responses;
+        //postRead(bookList, userId);
 
+        return responses;
     }
+
 
     @Transactional
     public void postRead(List<Book> bookList, Long userId) {
