@@ -106,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/api/recommand/best30", "/api/recommand/md", "/api/recommand/newbook")
                 .permitAll()
-                .antMatchers("/api/emopicks", "/api/books/**", "/api/genres", "/api/ocr")
+                .antMatchers("/api/emopicks", "/api/books/**", "/api/genres")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
