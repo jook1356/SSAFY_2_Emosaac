@@ -25,7 +25,8 @@ public class Scheduler {
 
     RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
+//    @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
+    @Scheduled(cron = "0 0/5 * * * ? ")  //5분마다
 //    @Scheduled(cron = "0/1 * * * * ?")
     @Transactional
     public void getTotalGenre() { //스케줄러 처리 필요
