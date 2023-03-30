@@ -88,5 +88,5 @@ public class EmopickController {
                 HttpStatus.CREATED, "이모픽 수정 성공", emopickService.toggleLikesByEmopick(emopickId, userPrincipal.getId())
         ));
     }
-    
+
 }
