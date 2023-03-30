@@ -1,5 +1,13 @@
 package com.emosaac.server.service;
 
+import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.book.BookmarkList;
+import com.emosaac.server.domain.book.Hit;
+import com.emosaac.server.domain.book.ReadBook;
+import com.emosaac.server.domain.user.User;
+import com.emosaac.server.dto.book.BookListResponse;
+import com.emosaac.server.repository.book.BookRepository;
+import com.emosaac.server.repository.readbook.ReadRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +37,11 @@ public class OcrService {
 
 
     private final CommonService commonService;
+    private final BookRepository bookRepository;
+    private final ReadRepository readRepository;
 
 
-    public static String detectTextGcs(MultipartFile file) throws IOException {
+    public String detectTextGcs(MultipartFile file) throws IOException {
 
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
@@ -51,7 +61,7 @@ public class OcrService {
                 ImageAnnotatorSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
 
         StringBuilder sb = new StringBuilder();
-        String strRes="";
+        String strRes = "";
 
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create(settings)) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
@@ -64,32 +74,96 @@ public class OcrService {
 
                 // For full list of available annotations, see http://g.co/cloud/vision/docs
                 for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
-
                     System.out.println("--------");
-                    strRes = annotation.getDescription().substring(68, annotation.getDescription().length());
-                    System.out.println(strRes);
-                    System.out.println("---------------");
+                    strRes = annotation.getDescription().substring(60, annotation.getDescription().length()).replaceAll("[^\n/(),.+ㄱ-ㅎㅏ-ㅣ가-힣\\[\\]]", " ");
 
-                    String str = annotation.getDescription().replaceAll("[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]", " ");
-                    str = str.substring(70, str.length());
-
-                    String[] strList = {"대여","소장","관심","NEW", "다운로드", "관심웹툰","전체", "지금", "볼", "최근",
-                            "본", "MY", "TALK", "새 이야기", "UP" ,"더보기" ,"이어보기" ,"월", "화","수","목","금","토","일","매일","연재중","완결", "보관함", "최근", "좋아요", "구매 작품", "다운로드",
-                    "대여", "소장", "책갈피", "다운로드","편집", "전체","업데이트 순", "임시저장","댓글","내 쿠키", "voice r","voice"};
-                    for(String tmp: strList){
-                        str.replaceAll(tmp, "");
+                    String[] strList = {"일 전", "신작", "대여", "소장", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
+                            "MY", "TALK", "새 이야기", "UP", "더보기", "이어보기", "연재중", "완결", "보관함", "좋아요", "구매 작품", "다운로드",
+                            "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기"};
+                    for (String tmp : strList) {
+                        strRes = strRes.replaceAll(tmp, "");
                     }
-
-                    sb.append(str).append("\n");
+                    System.out.println("---------------");
                     break;
-//                    System.out.format("Text: %s%n", annotation.getDescription());
-//                    System.out.format("Position : %s%n", annotation.getBoundingPoly());
                 }
             }
         }
-        System.out.println(sb);
-//        return sb.toString();
+
         return strRes;
+    }
+    @Transactional
+    public List<BookListResponse> postOcrFileAndRead(MultipartFile multipartFile, Long userId, int typeCd) throws IOException {
+
+        List<BookListResponse> responses = new ArrayList<>();
+
+        String text = detectTextGcs(multipartFile);
+
+        //도서 검색
+        String[] textList = text.split("\n");
+
+       List<Book> bookList = new ArrayList<>();
+        for (String str : textList) {
+            System.out.println("----------------------");
+
+            if (!str.equals(" ") && !str.equals("") && !str.equals("  ") && str.length() > 1 && !str.equals("   ")) {
+                System.out.println("====origin===");
+                System.out.println(str);
+
+                int idx = 0;
+                if (str.charAt(0) == ' ') {
+                    for (int i = 0; i < str.length(); i++) {
+                        if (str.charAt(i) != ' ') {
+                            idx = i;
+                            break;
+                        }
+                    }
+                    str = str.substring(idx, str.length());
+                }
+
+                if (str.charAt(str.length() - 1) == ' ') {
+                    idx = 0;
+                    for (int i = str.length() - 1; i >= 0; i--) {
+                        if (str.charAt(i) != ' ') {
+                            idx = i;
+                            break;
+                        }
+                    }
+                    str = str.substring(0, str.length() - idx-1);
+                }
+
+                if (str.length() <= 1) {
+                    continue;
+                }
+
+                System.out.println("===찾을 책==");
+                System.out.println(str + str.length());
+                List<Book> book = bookRepository.findBookname(typeCd, str);
+                System.out.println("===!!!!!찾은 책==");
+
+                for (Book b : book) {
+                    System.out.println(b.getTitle());
+                    bookList.add(b);
+                    break;
+                }
+            }
+        }
+
+        bookList.forEach((b) -> responses.add(new BookListResponse(b)));
+//        postRead(bookList, userId);
+        return responses;
+
+    }
+
+    @Transactional
+    public void postRead(List<Book> bookList, Long userId) {
+        User user = commonService.getUser(userId);
+
+        for (Book book : bookList) {
+            if (!readRepository.existsByBookIdAndUserId(book.getBookId(), userId).isPresent()) {
+                ReadBook readBook = ReadBook.builder().book(book).user(user).build();
+                readRepository.save(readBook);
+            }
+        }
     }
 
 }
