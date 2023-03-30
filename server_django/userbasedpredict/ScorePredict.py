@@ -148,8 +148,6 @@ class UserPredictedGrade:
     def save_list(self):
         user_predicted_book_dic = self.make_predicted_dic()
 
-        book_str = ""
-
         # UserPredictedGradeModel.objects.all().delete()
 
         for user_no, book_isbn_list in user_predicted_book_dic.items():
@@ -167,9 +165,6 @@ class UserPredictedGrade:
                     created_dt=datetime.now(),
                     modified_dt=datetime.now()
                 ).save()
-                book_str += str(book['book_no']) + " "
-
-        return book_str
 
 
 def execute_algorithm(type_cd):

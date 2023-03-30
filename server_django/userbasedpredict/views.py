@@ -38,18 +38,17 @@ class MyAPIView(APIView):
 
 
 class ClearAndSetPredict(APIView):
-    
+
     def get(self, request, format=None):
         print("-------------START : Predict by Signup-------------")
 
         UserPredictedGradeModel.objects.all().delete()
-        resWebtoon = ScorePredict.execute_algorithm(0)
-        resNovel = ScorePredict.execute_algorithm(1)
+        ScorePredict.execute_algorithm(0)
+        ScorePredict.execute_algorithm(1)
 
         data = {
-            "userId": user_id,
-            "webtoon": resWebtoon,
-            "novel": resNovel
+            "webtoon": "done",
+            "novel": "done"
         }
 
         print("-------------DONE : Predict by Signup-------------")
