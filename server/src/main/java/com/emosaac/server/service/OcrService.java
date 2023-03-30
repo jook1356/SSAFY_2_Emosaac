@@ -59,11 +59,11 @@ public class OcrService {
                 AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(image).build();
         requests.add(request);
 
-//        Resource resource = resourceLoader.getResource("classpath:woven-name-382111-f4f2ed422bd9.json");
-        String credentialPath =  "classpath:woven-name-382111-f4f2ed422bd9.json";
+        Resource resource = resourceLoader.getResource("classpath:woven-name-382111-f4f2ed422bd9.json");
+//        String credentialPath =  "classpath:woven-name-382111-f4f2ed422bd9.json";
+        GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
 
-        GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
-//        GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(absolutePath));
+//        GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
 
         // Set the ImageAnnotatorSettings with the credentials
         ImageAnnotatorSettings settings =
