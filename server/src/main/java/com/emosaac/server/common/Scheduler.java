@@ -30,11 +30,12 @@ public class Scheduler {
     @Transactional
     public void getTotalGenre() { //스케줄러 처리 필요
 
-        String url = "http://j8d203.p.ssafy.io:8000/recommand/genre";
-//        String url = "http://127.0.0.1:8000/recommand/genre";
+        String url = "http://j8d203.p.ssafy.io:8000/recommand/";
 
-        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url, UserBaseCfDto.class);
+
+        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "genre", UserBaseCfDto.class);
+        UserBaseCfDto userPredictfDto = restTemplate.getForObject(url + "predict", UserBaseCfDto.class);
         System.out.println(userBaseCfDto);
-
+        System.out.println(userPredictfDto);
     }
 }
