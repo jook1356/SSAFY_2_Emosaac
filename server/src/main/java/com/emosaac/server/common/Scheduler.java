@@ -34,9 +34,9 @@ public class Scheduler {
         String url = "http://j8d203.p.ssafy.io:8000/recommand/";
 
 
-        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "genre", UserBaseCfDto.class);
+//        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "genre", UserBaseCfDto.class);
         UserBaseCfDto userPredictfDto = restTemplate.getForObject(url + "predict", UserBaseCfDto.class);
-        System.out.println(userBaseCfDto);
+//        System.out.println(userBaseCfDto);
         System.out.println(userPredictfDto);
     }
 }
