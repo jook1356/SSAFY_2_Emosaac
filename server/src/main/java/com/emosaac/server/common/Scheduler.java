@@ -29,8 +29,8 @@ public class Scheduler {
 
     RestTemplate restTemplate = new RestTemplate();
 
-//    @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
-    @Scheduled(cron = "0 0/5 * * * ? ")  //5분마다
+    @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
+//    @Scheduled(cron = "0 0/5 * * * ? ")  //5분마다
 //    @Scheduled(cron = "0/1 * * * * ?")
     @Transactional
     public void getTotalGenre() { //스케줄러 처리 필요
@@ -40,10 +40,10 @@ public class Scheduler {
         logger.info("================ Schedule START ===================");
 
 
-//        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "genre", UserBaseCfDto.class);
+        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "genre", UserBaseCfDto.class);
         UserBaseCfDto userPredictfDto = restTemplate.getForObject(url + "predict", UserBaseCfDto.class);
 //        System.out.println(userBaseCfDto);
-        System.out.println(userPredictfDto);
+//        System.out.println(userPredictfDto);
 
         logger.info("================ Schedule DONE ===================");
     }
