@@ -1,7 +1,6 @@
 package com.emosaac.server.domain.book;
 
 import com.emosaac.server.common.exception.ResourceNotFoundException;
-import com.emosaac.server.domain.emo.EmoCommentLike;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
