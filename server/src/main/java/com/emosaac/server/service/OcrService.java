@@ -11,6 +11,10 @@ import com.emosaac.server.repository.readbook.ReadRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
@@ -20,6 +24,7 @@ import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +44,8 @@ public class OcrService {
     private final CommonService commonService;
     private final BookRepository bookRepository;
     private final ReadRepository readRepository;
-
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     public String detectTextGcs(MultipartFile file) throws IOException {
 
@@ -53,8 +59,11 @@ public class OcrService {
                 AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(image).build();
         requests.add(request);
 
-        String credentialPath = "src/main/resources/woven-name-382111-f4f2ed422bd9.json";
+//        Resource resource = resourceLoader.getResource("classpath:woven-name-382111-f4f2ed422bd9.json");
+        String credentialPath =  "classpath:woven-name-382111-f4f2ed422bd9.json";
+
         GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
+//        GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(absolutePath));
 
         // Set the ImageAnnotatorSettings with the credentials
         ImageAnnotatorSettings settings =
