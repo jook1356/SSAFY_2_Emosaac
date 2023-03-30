@@ -9,6 +9,8 @@ import com.emosaac.server.service.genre.GenreService;
 import com.emosaac.server.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class Scheduler {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     RestTemplate restTemplate = new RestTemplate();
 
 //    @Scheduled(cron = "0 0 0 * * *")  //매일 정각에
@@ -33,10 +37,14 @@ public class Scheduler {
 
         String url = "http://j8d203.p.ssafy.io:8000/recommand/";
 
+        logger.info("================ Schedule START ===================");
+
 
 //        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "genre", UserBaseCfDto.class);
         UserBaseCfDto userPredictfDto = restTemplate.getForObject(url + "predict", UserBaseCfDto.class);
 //        System.out.println(userBaseCfDto);
         System.out.println(userPredictfDto);
+
+        logger.info("================ Schedule DONE ===================");
     }
 }
