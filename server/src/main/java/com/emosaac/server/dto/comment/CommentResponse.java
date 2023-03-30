@@ -1,8 +1,6 @@
 package com.emosaac.server.dto.comment;
 
-import com.emosaac.server.domain.book.BookComment;
 import com.emosaac.server.domain.comment.Comment;
-import com.emosaac.server.domain.emo.EmopickComment;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,6 @@
 package com.emosaac.server.domain.user;
 
 import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.domain.emo.EmopickCommentList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

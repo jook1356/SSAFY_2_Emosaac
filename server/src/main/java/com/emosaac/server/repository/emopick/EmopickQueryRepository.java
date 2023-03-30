@@ -4,6 +4,7 @@ import com.emosaac.server.domain.emo.EmopickDetail;
 import com.emosaac.server.dto.emopick.*;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,14 +26,17 @@ public class EmopickQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Slice<EmopickListResponse> findEmopickList(PageRequest page, Long prevId) {
+    public Slice<EmopickListResponse> findEmopickList(PageRequest page, Long prevId, Long userId) {
+
+//        group_concat((select thumbnail from book where book_no = emopick_detail.book_no) separator ' ') as thumbnails
         List<EmopickListResponse> content = jpaQueryFactory.select(new QEmopickListResponse(emopick))
                 .from(emopick)
                 .where(
+                        checkUserId(userId),
                         ltEmopickId(prevId)
                 )
                 .limit(page.getPageSize()+1)
-                .orderBy(emopick.EmopickId.desc())  // 평점 추가
+                .orderBy(emopick.EmopickId.desc())
                 .fetch();
 
         boolean hasNext = false;
@@ -44,24 +48,8 @@ public class EmopickQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
 
-    public Slice<EmopickListResponse> findEmopickListByUser(PageRequest page, Long prevId, Long userId) {
-        List<EmopickListResponse> content = jpaQueryFactory.select(new QEmopickListResponse(emopick))
-                .from(emopick)
-                .where(
-                        emopick.user.userId.eq(userId),
-                        ltEmopickId(prevId)
-                )
-                .limit(page.getPageSize()+1)
-                .orderBy(emopick.EmopickId.desc())  // 평점 추가
-                .fetch();
-
-        boolean hasNext = false;
-        if (content.size() == page.getPageSize()+1) {
-            content.remove(page.getPageSize());
-            hasNext = true;
-        }
-
-        return new SliceImpl<>(content, page, hasNext);
+    private Predicate checkUserId(Long userId) {
+        return userId == null ? null : emopick.user.userId.eq(userId);
     }
 
     public List<ThumbnailListResponse> findThumbnail(Long emopickId) {
