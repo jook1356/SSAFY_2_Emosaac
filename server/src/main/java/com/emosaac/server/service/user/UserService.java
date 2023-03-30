@@ -38,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public Long updateUserInfo(Long userId, UserRequest request){
+    public Long updateUserInfo(Long userId, UserRequest request) {
 
         User originUser = commonService.getUser(userId);
 
@@ -49,45 +49,39 @@ public class UserService {
         originUser.setUserInfo(request); //이미지 링크 수정 빼고 업데이트
 
         String originImg = originUser.getImageUrl();
-        String newImg = null;
+        String newImg = request.getImageUrl();
 
-        if(request.getImageUrl()!=null || !request.getImageUrl().equals("")){
-            newImg = request.getImageUrl();
-        }
-        System.out.println("newImg "+newImg);
-
-        //이미지 널이면 디폴트 이미지 처리
-        if(newImg==null || newImg.equals("")){
+        // If new image is null or empty, set default image
+        if (newImg == null || newImg.isEmpty()) {
             originUser.updateImageUrl(baseImg);
-//            deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
-        }else{
+        } else {
+            // Update image URL and delete original image if URL has changed
             originUser.updateImageUrl(newImg);
-            if(!newImg.equals(originImg)){
-                deleteS3Image(originImg, baseImg); //기존이미지와 링크도 다른 경우 원래 이미지 삭제
+            if (!newImg.equals(originImg)) {
+                deleteS3Image(originImg);
             }
-
         }
 
         return userId;
     }
 
-    private void deleteS3Image(String originImg, String baseImg){
 
-        if(!(originImg != null) && !originImg.equals(baseImg)) {
-            try {
-                s3Uploader.delete(originImg);
-            } catch (AmazonS3Exception e) {
-                throw new ResourceNotFoundException("삭제할 파일이 서버에 존재하지 않습니다");
-            }
+    private void deleteS3Image(String imageUrl) {
+        if (imageUrl == null || imageUrl.equals(baseImg)) {
+            return;
+        }
+
+        try {
+            s3Uploader.delete(imageUrl);
+        } catch (AmazonS3Exception e) {
+            throw new ResourceNotFoundException("삭제할 파일이 서버에 존재하지 않습니다");
         }
     }
 
-    public boolean nickNameCheck(String nickName, Long userId) {//본인 닉네임 빼고 중복된 닉네임 있는지 확인
-        boolean flag = false;
-        if (userRepository.findByUserNickName(nickName, userId).isPresent()) {
-            flag = true;
-        }
-        return flag;
+    public boolean nickNameCheck(String nickName, Long userId) {
+        return userRepository.findByUserNickName(nickName, userId)
+                .map(user -> true)
+                .orElse(false);
     }
 
     ///<----------- 장르
@@ -95,7 +89,7 @@ public class UserService {
     //나의 선호 장르 조회
     public List<GenreResponse> getUserFavoriteGerne(Long userId, Integer typeCode) {
         User user = commonService.getUser(userId);
-        String str = (typeCode==0) ? user.getFavoriteWebtoonGenre() : user.getFavoriteNovelGenre(); //선호 장르에 반영
+        String str = (typeCode == 0) ? user.getFavoriteWebtoonGenre() : user.getFavoriteNovelGenre(); //선호 장르에 반영
 
         return stringToGenreList(str).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
@@ -105,24 +99,30 @@ public class UserService {
     public List<GenreResponse> updateUserGenre(Long userId, UserGenreRequest request, Integer typeCode) {
         User user = commonService.getUser(userId);
         String str = listToString(request);
-        if(typeCode==0){
-            user.setFavoriteWebtoonGenre(str);
-        } else if (typeCode==1) {
-            user.setFavoriteNovelGenre(str);
+        switch (typeCode) {
+            case 0:
+                user.setFavoriteWebtoonGenre(str);
+                break;
+            case 1:
+                user.setFavoriteNovelGenre(str);
+                break;
+            default:
+                // Handle unexpected typeCode
+                break;
         }
         return getUserFavoriteGerne(user.getUserId(), typeCode);
     }
 
     //선호 장르 컬럼에 반영할 문자열(10^11^12)
     public String listToString(UserGenreRequest request) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         if (!request.getGerne().isEmpty()) {
             for (Long tmp : request.getGerne()) {
                 Genre genre = commonService.getGenre(tmp);
-                str += genre.getGerneId() + "^";
+                str.append(genre.getGerneId()).append("^");
             }
         }
-        return str;
+        return str.toString();
     }
 
     public List<Genre> stringToGenreList(String request) {
