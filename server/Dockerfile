@@ -6,10 +6,6 @@ COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 ENV TZ=Asia/Seoul
 RUN apt-get install -y tzdata
-##########
-#RUN apt update
-#RUN apt install -y tesseract-ocr
-#RUN apt install -y tesseract-ocr-script-hangul
 
 #FROM openjdk:8
 #ARG JAR_FILE=build/libs/*.jar
