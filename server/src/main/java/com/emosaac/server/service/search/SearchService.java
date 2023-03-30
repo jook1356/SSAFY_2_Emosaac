@@ -4,7 +4,7 @@ import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.repository.book.BookQueryRepository;
-import com.emosaac.server.repository.search.TagQueryRepository;
+import com.emosaac.server.repository.search.SearchQueryRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,28 +19,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SearchService {
-    private final TagQueryRepository tagQueryRepository;
+    private final SearchQueryRepository searchQueryRepository;
     private final BookQueryRepository bookQueryRepository;
     private final CommonService commonService;
 
     public List<BookDayResponse> findBookListByTagName(String tagName, String type, int size, Long prevId, Double prevScore) {
-        if(type.equals("total")){
-            return tagQueryRepository.findTotalBookListByTagName(tagName,  PageRequest.ofSize(size), prevId, prevScore);
-        }else if(type.equals("webtoon")){
-            return tagQueryRepository.findBookListByTagName(tagName, 0,  PageRequest.ofSize(size), prevId, prevScore);
-        }else{
-            return tagQueryRepository.findBookListByTagName(tagName, 1,  PageRequest.ofSize(size), prevId, prevScore);
-        }
+        return searchQueryRepository.findBookListByTagName(tagName, type,  PageRequest.ofSize(size), prevId, prevScore);
+
     }
 
     public List<BookDayResponse> findBookListByTitle(String content, String type, int size, Long prevId, Double prevScore) {
-        if(type.equals("total")){
-            return tagQueryRepository.findTotalBookListByTitle(content,  PageRequest.ofSize(size), prevId, prevScore);
-        }else if(type.equals("webtoon")){
-            return tagQueryRepository.findBookListByTitle(content,  0, PageRequest.ofSize(size), prevId, prevScore);
-        }else{
-            return tagQueryRepository.findBookListByTitle(content,  1, PageRequest.ofSize(size), prevId, prevScore);
-        }
+        return searchQueryRepository.findBookListByTitle(content.replace(" ", ""), type, PageRequest.ofSize(size), prevId, prevScore);
 
     }
 
