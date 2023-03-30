@@ -71,10 +71,10 @@ public class RecommandQueryRepository {
                 .or(book.regist.lt(regist));
     }
 
-    public String findItemList(int typeCd, Long bookId) {
+    public String findItemList(Long bookId) {
         return jpaQueryFactory.select(itemBasedCFModel.bookNoList)
                 .from(itemBasedCFModel)
-                .where(book.type.eq(typeCd), itemBasedCFModel.book.bookId.eq(bookId))
+                .where(itemBasedCFModel.book.bookId.eq(bookId))
                 .fetchOne();
     }
 
