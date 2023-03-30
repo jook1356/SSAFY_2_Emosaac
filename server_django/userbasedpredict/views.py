@@ -42,8 +42,14 @@ class ClearAndSetPredict(APIView):
         print("-------------START : Predict by Signup-------------")
 
         UserPredictedGradeModel.objects.all().delete()
-        ScorePredict.execute_algorithm(0)
-        ScorePredict.execute_algorithm(1)
+        resWebtoon = ScorePredict.execute_algorithm(0)
+        resNovel = ScorePredict.execute_algorithm(1)
+
+        data = {
+            "userId": user_id,
+            "webtoon": resWebtoon,
+            "novel": resNovel
+        }
 
         print("-------------DONE : Predict by Signup-------------")
 
