@@ -100,7 +100,7 @@ public class UserService {
         return stringToGenreList(str).stream().map((genre) -> new GenreResponse(genre)).collect(Collectors.toList());
     }
 
-    //선호 장르 변경
+    //선호 장르 변경(안쓸 것같음)
     @Transactional
     public List<GenreResponse> updateUserGenre(Long userId, UserGenreRequest request, Integer typeCode) {
         User user = commonService.getUser(userId);
@@ -113,7 +113,7 @@ public class UserService {
         return getUserFavoriteGerne(user.getUserId(), typeCode);
     }
 
-
+    //선호 장르 컬럼에 반영할 문자열(10^11^12)
     public String listToString(UserGenreRequest request) {
         String str = "";
         if (!request.getGerne().isEmpty()) {
@@ -126,17 +126,15 @@ public class UserService {
     }
 
     public List<Genre> stringToGenreList(String request) {
-        List<Genre> tmpList = new ArrayList<>();
+        List<Genre> genreList = new ArrayList<>();
         if (request != null) {
-            String[] list = request.split("\\^");
-            System.out.println(list[0]);
-            for (int i = 0; i < list.length; i++) {
-                String tmp = list[i];
-                Genre genre = commonService.getGenre(Long.parseLong(tmp));
-                tmpList.add(genre);
+            String[] genreIds = request.split("\\^");
+            for (String genreId : genreIds) {
+                Genre genre = commonService.getGenre(Long.parseLong(genreId));
+                genreList.add(genre);
             }
         }
-        return tmpList;
+        return genreList;
     }
 
 }
