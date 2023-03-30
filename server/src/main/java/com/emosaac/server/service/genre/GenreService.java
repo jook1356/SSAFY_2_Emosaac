@@ -99,19 +99,19 @@ public class GenreService {
 
     //설문조사 반영하기(map으로 많이 들어온 장르 3개 추출)
     public String bookListToFavoriteString(Long[] request) {
-        Map<Long, Double> map = new HashMap<>();
+        Map<Long, Long> map = new HashMap<>();
 
         for (Long tmp : request) {
             Book book = commonService.getBook(tmp);
             Long genreId = book.getGenre().getGerneId();
-            map.put(genreId, map.getOrDefault(genreId, 1.0) + 1);
+            map.put(genreId, map.getOrDefault(genreId, 1L) + 1);
         }
 
-        LinkedHashMap<Long, Double> sortedMap = mapToSortedMap(map);
+        LinkedHashMap<Long, Long> sortedMap = mapToSortedMap(map);
 
         StringBuilder sb = new StringBuilder();
         int idx = 0;
-        for (Map.Entry<Long, Double> entry : sortedMap.entrySet()) {
+        for (Map.Entry<Long, Long> entry : sortedMap.entrySet()) {
             if (idx == 3) {
                 break;
             }
@@ -150,7 +150,7 @@ public class GenreService {
     }
 
     //Map의 entrySet을 가져와 stream으로 변환하고, sorted를 이용하여 정렬한 뒤, collect를 이용하여 맵으로 다시 변환
-    private LinkedHashMap<Long, Double> mapToSortedMap(Map<Long, Double> map) {
+    private LinkedHashMap<Long, Long> mapToSortedMap(Map<Long, Long> map) {
         return map.entrySet().stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toMap(
@@ -160,15 +160,15 @@ public class GenreService {
 
     public List<Long> calcMinOrMax(List<TotalResponse> list) { //List<TotalResponse>를 맵으로 만들고 맵의 value값으로 내림차순 정렬
         ArrayList<Long> likeList = new ArrayList<>();
-        Map<Long, Double> map = new HashMap<>();
+        Map<Long, Long> map = new HashMap<>();
 
         for (TotalResponse totalResponse : list) {
-            map.put(totalResponse.getGenreId(), totalResponse.getAmount());
+            map.put(totalResponse.getGenreId(), totalResponse.getCount());
         }
 
-        LinkedHashMap<Long, Double> sortedMap = mapToSortedMap(map);
+        LinkedHashMap<Long, Long> sortedMap = mapToSortedMap(map);
 
-        for (Map.Entry<Long, Double> entry : sortedMap.entrySet()) {
+        for (Map.Entry<Long, Long> entry : sortedMap.entrySet()) {
             likeList.add(entry.getKey());
         }
 
@@ -177,15 +177,16 @@ public class GenreService {
 
 
     //Arrays.stream을 이용하여 GenreList를 스트림으로 변환하고, map과 collect를 이용하여 TotalResponse를 생성
-    public List<TotalResponse> getTotalGenreCount(Long userId, int typeCode) {
-        return Arrays.stream(typeCode == 0 ? webtoonGenreList : novelGenreList)
-                .map(genreId -> {
-                    Genre genre = commonService.getGenre(genreId);
-                    return new TotalResponse(genreId, genre.getName(), (double) (
-                            genreQueryRepository.findGenreCountByHit(userId, typeCode, genreId)));
-                })
-                .collect(Collectors.toList());
-    }
+//    public List<TotalResponse> getTotalGenreCount(Long userId, int typeCode) {
+//        return Arrays.stream(typeCode == 0 ? webtoonGenreList : novelGenreList)
+//                .map(genreId -> {
+//                    Genre genre = commonService.getGenre(genreId);
+//                    System.out.println(genre.getName());
+//                    return new TotalResponse(genreId, genre.getName(), (double) (
+//                            genreQueryRepository.findGenreCountByHit(userId, typeCode, genreId)));
+//                })
+//                .collect(Collectors.toList());
+//    }
 
     //List.subList를 이용하여 리스트 자르기
     public Long[] getLikeList(int isLike, List<Long> tmpList) {
@@ -197,7 +198,7 @@ public class GenreService {
     @Transactional
     public List<GenreResponse> getTotalGenre(Long userId, int typeCode, int isLike) {
 
-        List<TotalResponse> list = getTotalGenreCount(userId, typeCode); //2
+        List<TotalResponse> list = getTotalAmount(userId, typeCode); //2
 
         List<Long> tmpList = calcMinOrMax(list); //2
         Long[] likeList = getLikeList(isLike, tmpList);
@@ -209,7 +210,8 @@ public class GenreService {
 
     //선호/비선호 : 랜덤으로 한개만 반환(선호/비선호 장르 중에 탑 2)
     public BookListResponse getTotalGenreBookOne(Long userId, int typeCd, int isLike) {
-        List<TotalResponse> list = getTotalGenreCount(userId, typeCd);
+        List<TotalResponse> list = getTotalAmount(userId, typeCd);
+
         List<Long> tmpList = calcMinOrMax(list); //2
 
         Long[] likeList = getLikeList(isLike, tmpList);
@@ -227,7 +229,9 @@ public class GenreService {
     //비선호 : 카운트를 기준으로 *안쓸것 같아요
     public SlicedResponse<BookListResponse> getTotalUnlikeGenreBook(Long userId, BookRequest request) {
 
-        List<TotalResponse> list = getTotalGenreCount(userId, request.getTypeCd());
+        List<TotalResponse> list = getTotalAmount(userId, request.getTypeCd());
+//        List<TotalResponse> list = getTotalGenreCount(userId, request.getTypeCd());
+
         List<Long> tmpList = calcMinOrMax(list); //2
 
         Long[] likeList = getLikeList(0, tmpList);
