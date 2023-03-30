@@ -34,3 +34,15 @@ class MyAPIView(APIView):
         print("-------------DONE : Predict by Signup-------------")
 
         return Response(data)
+
+class ClearAndSetPredict(APIView):
+    def doPredict(self, request, format=None):
+        print("-------------START : Predict by Signup-------------")
+
+        UserPredictedGradeModel.objects.all().delete()
+        ScorePredict.execute_algorithm(0)
+        ScorePredict.execute_algorithm(1)
+
+        print("-------------DONE : Predict by Signup-------------")
+
+        return Response(data)
