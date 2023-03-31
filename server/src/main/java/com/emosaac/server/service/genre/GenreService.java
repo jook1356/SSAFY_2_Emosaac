@@ -130,24 +130,17 @@ public class GenreService {
 
     }
 
+    //Arrays.stream을 이용하여 GenreList를 스트림으로 변환하고, map과 collect를 이용하여 TotalResponse를 생성
     public List<TotalResponse> getTotalAmount(Long userId, int typeCode) {
         User user = commonService.getUser(userId);
 
-        List<TotalResponse> list = new ArrayList<>();
-        Long[] genreList;
-
-        genreList = (typeCode == 0) ? webtoonGenreList : novelGenreList;
-
-        for (int i = 0; i < genreList.length; i++) {
-            Genre genre = commonService.getGenre(genreList[i]);
-            Long count = genreQueryRepository.findGenreCountByHit(userId, typeCode, genreList[i]);
-            list.add(new TotalResponse(genreList[i], genre.getName(), (
-                    count == null ? 0 : count
-            )
-            ));
-        }
-        return list;
+        return Arrays.stream((typeCode == 0) ? webtoonGenreList : novelGenreList).map(genreId -> {
+            Genre genre = commonService.getGenre(genreId);
+            Long count = genreQueryRepository.findGenreCountByHit(userId, typeCode, genreId);
+            return new TotalResponse(genreId, genre.getName(), count == null ? 0 : count);
+        }).collect(Collectors.toList());
     }
+
 
     //Map의 entrySet을 가져와 stream으로 변환하고, sorted를 이용하여 정렬한 뒤, collect를 이용하여 맵으로 다시 변환
     private LinkedHashMap<Long, Long> mapToSortedMap(Map<Long, Long> map) {
@@ -158,7 +151,8 @@ public class GenreService {
                         LinkedHashMap::new));
     }
 
-    public List<Long> calcMinOrMax(List<TotalResponse> list) { //List<TotalResponse>를 맵으로 만들고 맵의 value값으로 내림차순 정렬
+    //List<TotalResponse>를 맵으로 만들고 맵의 value값으로 내림차순 정렬
+    public List<Long> calcMinOrMax(List<TotalResponse> list) {
         ArrayList<Long> likeList = new ArrayList<>();
         Map<Long, Long> map = new HashMap<>();
 
@@ -174,19 +168,6 @@ public class GenreService {
 
         return likeList;
     }
-
-
-    //Arrays.stream을 이용하여 GenreList를 스트림으로 변환하고, map과 collect를 이용하여 TotalResponse를 생성
-//    public List<TotalResponse> getTotalGenreCount(Long userId, int typeCode) {
-//        return Arrays.stream(typeCode == 0 ? webtoonGenreList : novelGenreList)
-//                .map(genreId -> {
-//                    Genre genre = commonService.getGenre(genreId);
-//                    System.out.println(genre.getName());
-//                    return new TotalResponse(genreId, genre.getName(), (double) (
-//                            genreQueryRepository.findGenreCountByHit(userId, typeCode, genreId)));
-//                })
-//                .collect(Collectors.toList());
-//    }
 
     //List.subList를 이용하여 리스트 자르기
     public Long[] getLikeList(int isLike, List<Long> tmpList) {
@@ -215,10 +196,16 @@ public class GenreService {
         List<Long> tmpList = calcMinOrMax(list); //2
 
         Long[] likeList = getLikeList(isLike, tmpList);
-
         Long[] top2List = new Long[2];
-        top2List[0] = likeList[0];
-        top2List[1] = likeList[1];
+
+        if (isLike == 1) {
+            top2List[0] = likeList[0];
+            top2List[1] = likeList[1];
+        } else {
+            top2List[0] = likeList[2];
+            top2List[1] = likeList[1];
+        }
+
 
         List<BookListResponse> bookListResponses = genreQueryRepository.findBookLikeRandom(userId, typeCd, isLike, top2List);
         int randomIndex = (int) (Math.random() * bookListResponses.size());

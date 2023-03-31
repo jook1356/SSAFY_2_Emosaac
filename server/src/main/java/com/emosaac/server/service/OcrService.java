@@ -82,7 +82,7 @@ public class OcrService {
                     System.out.println("--------");
                     strRes = annotation.getDescription().substring(60, annotation.getDescription().length()).replaceAll("[^\n/(),.+ㄱ-ㅎㅏ-ㅣ가-힣\\[\\]]", " ");
 
-                    String[] strList = {"일 전", "신작", "대여", "소장", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
+                    String[] strList = {"웹툰" ,"웹소설", "일 전", "신작", "대여", "소장", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
                             "MY", "TALK", "새 이야기", "UP", "더보기", "이어보기", "연재중", "완결", "보관함", "좋아요", "구매 작품", "다운로드",
                             "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기", "일전"};
                     for (String tmp : strList) {
