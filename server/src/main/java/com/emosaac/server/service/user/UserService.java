@@ -98,7 +98,7 @@ public class UserService {
     @Transactional
     public List<GenreResponse> updateUserGenre(Long userId, UserGenreRequest request, Integer typeCode) {
         User user = commonService.getUser(userId);
-        String str = listToString(request);
+        String str = listToFavoriteString(request);
         switch (typeCode) {
             case 0:
                 user.setFavoriteWebtoonGenre(str);
@@ -107,14 +107,13 @@ public class UserService {
                 user.setFavoriteNovelGenre(str);
                 break;
             default:
-                // Handle unexpected typeCode
                 break;
         }
         return getUserFavoriteGerne(user.getUserId(), typeCode);
     }
 
     //선호 장르 컬럼에 반영할 문자열(10^11^12)
-    public String listToString(UserGenreRequest request) {
+    public String listToFavoriteString(UserGenreRequest request) {
         StringBuilder str = new StringBuilder();
         if (!request.getGerne().isEmpty()) {
             for (Long tmp : request.getGerne()) {
