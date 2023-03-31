@@ -1,7 +1,6 @@
 package com.emosaac.server.controller.book;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.dto.book.BookPageRequest;
 import com.emosaac.server.security.CurrentUser;
 import com.emosaac.server.security.UserPrincipal;
 import com.emosaac.server.service.book.BookService;

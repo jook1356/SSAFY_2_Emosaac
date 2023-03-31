@@ -1,7 +1,6 @@
 package com.emosaac.server.service.search;
 
 import com.emosaac.server.domain.user.User;
-import com.emosaac.server.dto.book.BookDayResponse;
 import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.repository.search.SearchQueryRepository;
@@ -23,12 +22,12 @@ public class SearchService {
     private final BookQueryRepository bookQueryRepository;
     private final CommonService commonService;
 
-    public List<BookDayResponse> findBookListByTagName(String tagName, String type, int size, Long prevId, Double prevScore) {
+    public List<BookListResponse> findBookListByTagName(String tagName, String type, int size, Long prevId, Double prevScore) {
         return searchQueryRepository.findBookListByTagName(tagName, type,  PageRequest.ofSize(size), prevId, prevScore);
 
     }
 
-    public List<BookDayResponse> findBookListByTitle(String content, String type, int size, Long prevId, Double prevScore) {
+    public List<BookListResponse> findBookListByTitle(String content, String type, int size, Long prevId, Double prevScore) {
         return searchQueryRepository.findBookListByTitle(content.replace(" ", ""), type, PageRequest.ofSize(size), prevId, prevScore);
 
     }

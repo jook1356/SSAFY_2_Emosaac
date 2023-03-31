@@ -21,8 +21,6 @@ public class EmopickListResponse {
     private WriterInfo writerInfo;
     private Long emopickId;
     private String title;
-//    private String webtoonSeq;
-//    private String novelSeq;
     private String thumbnails;
     private String createdDate;
     private String modifiedDate;
@@ -36,9 +34,6 @@ public class EmopickListResponse {
         this.emopickId = emopick.getEmopickId();
         this.title = emopick.getTitle();
 
-//        this.webtoonSeq = emopick.getWebtoonSeq();
-//        this.novelSeq = emopick.getNovelSeq();
-
         this.createdDate = emopick.getCreatedDate().format(myFormatObj);
         if(emopick.getModifiedDate()!=null) {
             this.modifiedDate = emopick.getModifiedDate().format(myFormatObj);
@@ -48,20 +43,5 @@ public class EmopickListResponse {
     public void setThumbnails(String thumbnails) {
         this.thumbnails = thumbnails;
     }
-
-    //    @QueryProjection
-//    public EmopickListResponse(User user, Long emopickId, String title, String thumbnails, LocalDateTime createdDate, LocalDateTime modifiedDate) {
-//        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//
-//        this.writerInfo = WriterInfo.from(user);
-//        this.emopickId = emopickId;
-//        this.title = title;
-//        this.thumbnails = thumbnails;
-//
-//        this.createdDate = createdDate.format(myFormatObj);
-//        if(modifiedDate!=null) {
-//            this.modifiedDate = modifiedDate.format(myFormatObj);
-//        }
-//    }
 
 }

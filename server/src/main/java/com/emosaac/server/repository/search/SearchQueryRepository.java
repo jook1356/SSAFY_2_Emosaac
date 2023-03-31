@@ -1,7 +1,7 @@
 package com.emosaac.server.repository.search;
 
-import com.emosaac.server.dto.book.BookDayResponse;
-import com.emosaac.server.dto.book.QBookDayResponse;
+import com.emosaac.server.dto.book.BookListResponse;
+import com.emosaac.server.dto.book.QBookListResponse;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -20,8 +20,8 @@ import static com.emosaac.server.domain.book.QBook.book;
 public class SearchQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<BookDayResponse> findBookListByTagName(String tagName, String type,  PageRequest page, Long prevId, Double prevScore) {
-        return jpaQueryFactory.select(new QBookDayResponse(book))
+    public List<BookListResponse> findBookListByTagName(String tagName, String type, PageRequest page, Long prevId, Double prevScore) {
+        return jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
                         findType(type),
@@ -32,8 +32,8 @@ public class SearchQueryRepository {
                 .orderBy(book.score.desc(), book.bookId.desc())  // 평점 추가
                 .fetch();
     }
-    public List<BookDayResponse> findBookListByTitle(String content, String type, PageRequest page, Long prevId, Double prevScore) {
-        return jpaQueryFactory.select(new QBookDayResponse(book))
+    public List<BookListResponse> findBookListByTitle(String content, String type, PageRequest page, Long prevId, Double prevScore) {
+        return jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(
                         Expressions.stringTemplate("replace({0}, ' ', '')", book.title).contains(content)
