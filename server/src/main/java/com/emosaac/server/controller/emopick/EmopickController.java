@@ -69,7 +69,7 @@ public class EmopickController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "사용자의 댓글 목록 조회 성공", emopickService.findEmopickListByLike(user.getId(), prevId, size)));
+                HttpStatus.OK, "사용자가 좋아요 누른 이모픽 목록 조회 성공", emopickService.findEmopickListByLike(user.getId(), prevId, size)));
     }
     @ApiOperation(value = "이모픽 등록", notes = "유저가 이모픽을 등록한다.")
     @PostMapping
