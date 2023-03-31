@@ -57,7 +57,7 @@ public class BookController {
 
         if(userPrincipal == null){
             return ResponseEntity.ok().body(CommonResponse.of(
-                    HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByNoneUser(bookId)
+                    HttpStatus.OK, "작품 디테일 조회 성공", bookService.findDetailByBook(bookId, null)
             ));
         }
 
@@ -139,7 +139,7 @@ public class BookController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "평점 조회 성공", bookService.findScoreByUser(bookId, userPrincipal.getId())
+                HttpStatus.OK, "평점 조회 성공", bookService.findScoreByUserAndBook(bookId, userPrincipal.getId())
         ));
     }
 
@@ -151,7 +151,7 @@ public class BookController {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.CREATED, "평점 수정 성공", bookService.updateScoreByUser(bookId, userPrincipal.getId(), score)
+                HttpStatus.CREATED, "평점 수정 성공", bookService.updateScoreByUserAndBook(bookId, userPrincipal.getId(), score)
         ));
     }
 
