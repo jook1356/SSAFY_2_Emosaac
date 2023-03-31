@@ -5,8 +5,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 import static com.emosaac.server.domain.book.QScore.score1;
 
 @RequiredArgsConstructor

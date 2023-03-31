@@ -1,12 +1,7 @@
 package com.emosaac.server.repository.emopick;
 
-import com.emosaac.server.domain.emo.EmopickDetail;
-import com.emosaac.server.domain.emo.LikeEmo;
 import com.emosaac.server.dto.emopick.*;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +14,6 @@ import java.util.List;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.emo.QEmopick.emopick;
-//import static com.emosaac.server.domain.emo.QLikeEme.likeEmo;
 import static com.emosaac.server.domain.emo.QEmopickDetail.emopickDetail;
 import static com.emosaac.server.domain.comment.QComment.comment;
 import static com.emosaac.server.domain.emo.QLikeEmo.likeEmo;
@@ -32,7 +26,6 @@ public class EmopickQueryRepository {
 
     public Slice<EmopickListResponse> findEmopickList(PageRequest page, Long prevId, Long userId) {
 
-//        group_concat((select thumbnail from book where book_no = emopick_detail.book_no) separator ' ') as thumbnails
         List<EmopickListResponse> content = jpaQueryFactory.select(new QEmopickListResponse(emopick))
                 .from(emopick)
                 .where(

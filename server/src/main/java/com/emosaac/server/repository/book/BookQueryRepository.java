@@ -1,17 +1,10 @@
 package com.emosaac.server.repository.book;
 
-import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.dto.book.*;
-import com.emosaac.server.repository.score.ScoreRepository;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +27,6 @@ import static com.emosaac.server.domain.book.QScore.score1;
 public class BookQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final ScoreRepository scoreRepository;
 
     // 요일별 소설 리스트
     public Slice<BookListResponse> findBookListByDay(String day, int typeCd, Long genreCode, PageRequest page, Long prevId, Double prevScore) {
