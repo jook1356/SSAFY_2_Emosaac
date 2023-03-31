@@ -36,16 +36,12 @@ public class BookService {
     // 요일별 작품 리스트
     public SlicedResponse<BookListResponse> findDayList(String day, int typeCd, Long genreCode, int size, Long prevId, Double prevScore) {
 
-        log.info("==========findDayList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
-
         Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(day, typeCd, genreCode, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 장르벌 작품 리스트
     public SlicedResponse<BookListResponse> findGenreList(Long genreCode, int typeCd, int size, Long prevId, Double prevScore) {
-
-        log.info("==========findGenreList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
 
         Slice<BookListResponse> page = bookQueryRepository.findBookListByGenre(genreCode, typeCd, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
@@ -54,9 +50,11 @@ public class BookService {
     // 작품 상세 조회
     @Transactional
     public BookDetailResponse findDetailByBook(Long bookId, Long userId) {
+        Book book = commonService.getBook(bookId);
+        if (userId == null)
+            return new BookDetailResponse(book, false, false, 0.0);
 
         User user = commonService.getUser(userId);
-        Book book = commonService.getBook(bookId);
 
         book.addHit();
         book.setAvgScore();
@@ -86,16 +84,6 @@ public class BookService {
         return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
     }
 
-    public BookDetailResponse findDetailByNoneUser(Long bookId) {
-        Book book = commonService.getBook(bookId);
-
-        Boolean bookmarkStatus = false;
-        Boolean readStatus = false;
-        double score = 0.0;
-
-        return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
-    }
-
     // 나의 북마크 리스트 조회
     public SlicedResponse<MyListResponse> findBookmarkList(int typeCd, int size, Long prevId, String inputTime, Long userId) {
         User user = commonService.getUser(userId);
@@ -103,7 +91,6 @@ public class BookService {
         LocalDateTime prevTime = setPrevTime(inputTime);
 
         Slice<MyListResponse> page = bookQueryRepository.findBookMarkList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
-
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
@@ -146,23 +133,21 @@ public class BookService {
         Book book = commonService.getBook(bookId);
         User user = commonService.getUser(userId);
 
-        ReadBook readBook = ReadBook.builder().book(book).user(user).build();
-        return book.toggleReadBook(readBook);
+        return book.toggleReadBook(ReadBook.builder().book(book).user(user).build());
     }
 
     /* 평점 */
 
-    public Double findScoreByUser(Long bookId, Long userId) {
+    public Double findScoreByUserAndBook(Long bookId, Long userId) {
         Book book = commonService.getBook(bookId);
         User user = commonService.getUser(userId);
 
         Score curScore = scoreQueryRepository.findScoreByBookIdAndUserId(bookId, userId);
-        if(curScore ==  null) return 0.0;
-        return curScore.getScore();
+        return curScore == null ? 0.0 : curScore.getScore();
     }
 
     @Transactional
-    public Double updateScoreByUser(Long bookId, Long userId, Double score) {
+    public Double updateScoreByUserAndBook(Long bookId, Long userId, Double score) {
         Book book = commonService.getBook(bookId);
         User user = commonService.getUser(userId);
 
@@ -173,11 +158,11 @@ public class BookService {
             book.setAvgScore();
             return curScore.getScore();
         }
+
         toggleReadByBook(bookId, userId); // 평점 등록 시, 자동 읽음 처리
 
-        Score newScore = Score.builder().book(book).user(user).score(score).build();
-        double result = book.setScore(newScore);
-        book.setAvgScore();;
+        double result = book.setScore(Score.builder().book(book).user(user).score(score).build());
+        book.setAvgScore();
         return result;
     }
 
