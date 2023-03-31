@@ -61,7 +61,7 @@ public class RecommandService {
         if(bookId == 0){ // 제일 최근 본 작품과 유사한 작품 추천
             Optional <ReadBook> readBook =bookQueryRepository.findBookRecent(userId);
             if(readBook.isPresent()){
-                bookId = readBook.get().getReadId();
+                bookId = readBook.get().getBook().getBookId();
             }
         }
         return findBookStrListNotRead10(recommandQueryRepository.findItemList(bookId), userId);

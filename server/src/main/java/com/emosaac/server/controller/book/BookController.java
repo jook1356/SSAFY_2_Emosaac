@@ -66,6 +66,20 @@ public class BookController {
         ));
     }
 
+    @ApiOperation(value = "북마크 리스트", notes = "내가 설정한 북마크 리스트를 조회한다.")
+    @GetMapping("/bookmark")
+    public ResponseEntity<CommonResponse> findBookmarkList(@RequestParam (value = "typeCode") int typeCd,
+                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                           @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                           @RequestParam(value = "prevTime", required = false, defaultValue = "0")String prevTime,
+                                                           @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "북마크 리스트 조회 성공", bookService.findBookmarkList(typeCd, size, prevId, prevTime, userPrincipal.getId())
+        ));
+    }
+
     @ApiOperation(value = "북마크", notes = "작품의 북마크를 설정한다.")
     @PutMapping("/bookmark/{bookId}")
     public ResponseEntity<CommonResponse> setBookmarkByWebtoon(@PathVariable Long bookId,
@@ -74,6 +88,20 @@ public class BookController {
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "북마크 수정 성공", bookService.toggleBookmarkByBook(bookId, userPrincipal.getId())
+        ));
+    }
+
+    @ApiOperation(value = "읽은 책 리스트", notes = "내가 읽은 책 리스트를 조회한다.")
+    @GetMapping("/read-book")
+    public ResponseEntity<CommonResponse> findReadBookList(@RequestParam (value = "typeCode") int typeCd,
+                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                           @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                           @RequestParam(value = "prevTime", required = false, defaultValue = "0")String prevTime,
+                                                           @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "읽은 책 리스트 조회 성공", bookService.findReadBookList(typeCd, size, prevId, prevTime, userPrincipal.getId())
         ));
     }
 
@@ -89,6 +117,20 @@ public class BookController {
     }
 
     /* 평점 */
+
+    @ApiOperation(value = "평점 리스트", notes = "내가 설정한 평점 리스트를 조회한다.")
+    @GetMapping("/score")
+    public ResponseEntity<CommonResponse> findMyScoreList(@RequestParam (value = "typeCode") int typeCd,
+                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                          @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                          @RequestParam(value = "prevTime", required = false, defaultValue = "0")String prevTime,
+                                                          @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "평점 리스트 조회 성공", bookService.findMyScoreList(typeCd, size, prevId, prevTime, userPrincipal.getId())
+        ));
+    }
 
     @ApiOperation(value = "평점 조회", notes = "사용자가 설정한 평점을 조회한다.")
     @GetMapping("/score/{bookId}")
@@ -125,13 +167,4 @@ public class BookController {
         ));
     }
 
-    @ApiOperation(value = "유사한 작품", notes = "유사한 작품들을 조회한다.")
-    @GetMapping("/recommend/{bookId}")
-    public ResponseEntity<CommonResponse> findListByItem(@PathVariable Long bookId) {
-
-
-        return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "유사한 작품 조회 성공", bookService.findListByItem(bookId)
-        ));
-    }
 }

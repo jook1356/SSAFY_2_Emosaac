@@ -12,13 +12,12 @@ import com.emosaac.server.repository.score.ScoreQueryRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +26,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BookService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final BookQueryRepository bookQueryRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ReadRepository readRepository;
@@ -38,7 +36,7 @@ public class BookService {
     // 요일별 작품 리스트
     public SlicedResponse<BookListResponse> findDayList(String day, int typeCd, Long genreCode, int size, Long prevId, Double prevScore) {
 
-        logger.info("==========findDayList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
+        log.info("==========findDayList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
 
         Slice<BookListResponse> page = bookQueryRepository.findBookListByDay(day, typeCd, genreCode, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
@@ -47,7 +45,7 @@ public class BookService {
     // 장르벌 작품 리스트
     public SlicedResponse<BookListResponse> findGenreList(Long genreCode, int typeCd, int size, Long prevId, Double prevScore) {
 
-        logger.info("==========findGenreList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
+        log.info("==========findGenreList=========== prevId : {}, prevScore : {}" , prevId, prevScore);
 
         Slice<BookListResponse> page = bookQueryRepository.findBookListByGenre(genreCode, typeCd, PageRequest.ofSize(size), prevId, prevScore);
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
@@ -98,15 +96,51 @@ public class BookService {
         return new BookDetailResponse(book, bookmarkStatus, readStatus, score);
     }
 
+    // 나의 북마크 리스트 조회
+    public SlicedResponse<MyListResponse> findBookmarkList(int typeCd, int size, Long prevId, String inputTime, Long userId) {
+        User user = commonService.getUser(userId);
+
+        LocalDateTime prevTime = setPrevTime(inputTime);
+
+        Slice<MyListResponse> page = bookQueryRepository.findBookMarkList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
+
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+    }
+
+    // 나의 읽은 책 리스트 조회
+    public SlicedResponse<MyListResponse> findReadBookList(int typeCd, int size, Long prevId, String inputTime, Long userId) {
+        User user = commonService.getUser(userId);
+
+        LocalDateTime prevTime = setPrevTime(inputTime);
+
+        Slice<MyListResponse> page = bookQueryRepository.findReadBookList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+    }
+
+    // 나의 평점 리스트 조회
+    public SlicedResponse<MyListResponse> findMyScoreList(int typeCd, int size, Long prevId, String inputTime, Long userId) {
+        User user = commonService.getUser(userId);
+
+        LocalDateTime prevTime = setPrevTime(inputTime);
+
+        Slice<MyListResponse> page = bookQueryRepository.findMyScoreList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+    }
+
+    private LocalDateTime setPrevTime(String inputTime) {
+        return !inputTime.equals("0") ? LocalDateTime.parse(inputTime) : LocalDateTime.now();
+    }
+
+    // 북마크 설정
     @Transactional
     public Boolean toggleBookmarkByBook(Long bookId, Long userId) {
         Book book = commonService.getBook(bookId);
         User user = commonService.getUser(userId);
 
-        BookMark bookMark = BookMark.builder().book(book).user(user).build();
-        return book.toggleBookmark(bookMark);
+        return book.toggleBookmark(BookMark.builder().book(book).user(user).build());
     }
 
+    // 읽음 여부 설정
     @Transactional
     public Object toggleReadByBook(Long bookId, Long userId) {
         Book book = commonService.getBook(bookId);
@@ -117,6 +151,7 @@ public class BookService {
     }
 
     /* 평점 */
+
     public Double findScoreByUser(Long bookId, Long userId) {
         Book book = commonService.getBook(bookId);
         User user = commonService.getUser(userId);
@@ -153,11 +188,6 @@ public class BookService {
         String[] author = book.getAuthor().split("/");
 
         return bookQueryRepository.findBookByAuthor(bookId, author);
-    }
-
-    /* 추천 알고리즘 적용 */
-    public Object findListByItem(Long novelId) {
-        return null;
     }
 
 }
