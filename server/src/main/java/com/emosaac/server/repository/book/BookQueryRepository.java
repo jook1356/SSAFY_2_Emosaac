@@ -1,11 +1,17 @@
 package com.emosaac.server.repository.book;
 
+import com.emosaac.server.domain.BaseEntity;
 import com.emosaac.server.domain.book.Book;
 import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.dto.book.*;
+import com.emosaac.server.repository.score.ScoreRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -13,19 +19,22 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.emosaac.server.domain.book.QBook.book;
+import static com.emosaac.server.domain.book.QBookMark.bookMark;
 import static com.emosaac.server.domain.book.QHit.hit;
 import static com.emosaac.server.domain.book.QReadBook.readBook;
-import static com.emosaac.server.domain.emo.QEmopickDetail.emopickDetail;
+import static com.emosaac.server.domain.book.QScore.score1;
 
 @RequiredArgsConstructor
 @Repository
 public class BookQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final ScoreRepository scoreRepository;
 
     // 요일별 소설 리스트
     public Slice<BookListResponse> findBookListByDay(String day, int typeCd, Long genreCode, PageRequest page, Long prevId, Double prevScore) {
@@ -34,12 +43,9 @@ public class BookQueryRepository {
                 .where(
                         book.type.eq(typeCd),
                         book.day.contains(day),
-                        //no-offset 페이징 처리
-//                        ltBookId(prevId),
                         cursorIdAndCursorScore(prevId, prevScore),
                         filterGenreCd(genreCode)
                 )
-//                .orderBy(findCriteria(criteria))
                 .limit(page.getPageSize()+1)
                 .orderBy(book.score.desc(),book.bookId.desc())  // 평점 추가
                 .fetch();
@@ -60,11 +66,8 @@ public class BookQueryRepository {
                 .where(
                         book.type.eq(typeCd),
                         book.genre.gerneId.eq(genreCode),
-                        //no-offset 페이징 처리
-//                        ltBookId(request.getPrevId())
                         cursorIdAndCursorScore(prevId, prevScore)
                 )
-//                .orderBy(findCriteria(criteria))
                 .limit(page.getPageSize()+1)
                 .orderBy(book.score.desc(),book.bookId.desc())
                 .fetch();
@@ -120,19 +123,9 @@ public class BookQueryRepository {
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (book.score.eq(cursorScore)
                 .and(ltBookId(cursorId)))
-//                .and(book.bookId.lt(cursorId)))
                 .or(book.score.lt(cursorScore));
     }
 
-    private OrderSpecifier<?> findCriteria(String criteria) { //정렬 조건
-        if (criteria.contains("date")) {
-            return book.regist.asc();
-        } else if (criteria == null) {
-            return book.hit.desc();
-        }
-
-        return book.bookId.desc();
-    }
     public Optional<ReadBook> findBookRecent(Long userId){
         return Optional.ofNullable(jpaQueryFactory.select(readBook)
                 .from(readBook)
@@ -160,5 +153,85 @@ public class BookQueryRepository {
         if(genreCode == 0 || genreCode == null) return null;
 
         return book.genre.gerneId.eq(genreCode); // 장르 코드로 사용할 때
+    }
+
+    public Slice<MyListResponse> findBookMarkList(int typeCd, PageRequest page, Long prevId, LocalDateTime prevTime, Long userId) {
+        List<MyListResponse> content = jpaQueryFactory.select(new QMyListResponse(book, bookMark.modifiedDate))
+                .from(book).join(bookMark).on(book.bookId.eq(bookMark.book.bookId))
+                .where(
+                        book.type.eq(typeCd),
+                        bookMark.user.userId.eq(userId),
+                        cursorIdAndCursorTime("bookMark", prevId, prevTime)
+                )
+                .limit(page.getPageSize()+1)
+                .orderBy(bookMark.modifiedDate.desc(),book.bookId.desc())
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() == page.getPageSize()+1) {
+            content.remove(page.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, page, hasNext);
+    }
+
+    public Slice<MyListResponse> findReadBookList(int typeCd, PageRequest page, Long prevId, LocalDateTime prevTime, Long userId) {
+        List<MyListResponse> content = jpaQueryFactory.select(new QMyListResponse(book, readBook.modifiedDate))
+                .from(book).join(readBook).on(book.bookId.eq(readBook.book.bookId))
+                .where(
+                        book.type.eq(typeCd),
+                        readBook.user.userId.eq(userId),
+                        cursorIdAndCursorTime("readBook", prevId, prevTime)
+                )
+                .limit(page.getPageSize()+1)
+                .orderBy(readBook.modifiedDate.desc(),book.bookId.desc())
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() == page.getPageSize()+1) {
+            content.remove(page.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, page, hasNext);
+    }
+
+    public Slice<MyListResponse> findMyScoreList(int typeCd, PageRequest page, Long prevId, LocalDateTime prevTime, Long userId) {
+        List<MyListResponse> content = jpaQueryFactory.select(new QMyListResponse(book, score1.score, score1.modifiedDate))
+                .from(book).join(score1).on(book.bookId.eq(score1.book.bookId))
+                .where(
+                        book.type.eq(typeCd),
+                        score1.user.userId.eq(userId),
+                        cursorIdAndCursorTime("score1", prevId, prevTime)
+                )
+                .limit(page.getPageSize()+1)
+                .orderBy(score1.modifiedDate.desc(),book.bookId.desc())
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() == page.getPageSize()+1) {
+            content.remove(page.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, page, hasNext);
+    }
+
+    private Predicate cursorIdAndCursorTime(String tableName, Long cursorId, LocalDateTime cursorTime) {
+        if(tableName.equals("bookMark")){
+            return (bookMark.modifiedDate.eq(cursorTime)
+                    .and(ltBookId(cursorId)))
+                    .or(bookMark.modifiedDate.lt(cursorTime));
+        }
+        else if(tableName.equals("readBook")){
+            return (readBook.modifiedDate.eq(cursorTime)
+                    .and(ltBookId(cursorId)))
+                    .or(readBook.modifiedDate.lt(cursorTime));
+        }
+
+        return (score1.modifiedDate.eq(cursorTime)
+                .and(ltBookId(cursorId)))
+                .or(score1.modifiedDate.lt(cursorTime));
     }
 }
