@@ -72,6 +72,25 @@ public class EmopickService {
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
+    public SlicedResponse<EmopickListResponse> findEmopickListByLike(Long userId, Long prevId, int size) {
+        Slice<EmopickListResponse> page = emopickQueryRepository.findEmopickListByLike(PageRequest.ofSize(size), prevId, userId);
+
+        for (EmopickListResponse emoList : page.getContent()){
+
+            List<ThumbnailListResponse> thumbnails = emopickQueryRepository.findThumbnail(Long.valueOf(emoList.getEmopickId()));
+
+            String str = "";
+
+            for (ThumbnailListResponse thumbnail : thumbnails){
+                str += thumbnail.getThumbnail() + " ";
+            }
+
+            emoList.setThumbnails(str);
+        }
+
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+    }
+
     // 이모픽 상세 조회
     public DetailResponse<BookReveiwResponse> findEmopickDetail(Long emopickId, Long userId) {
         Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
