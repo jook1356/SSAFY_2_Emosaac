@@ -51,6 +51,26 @@ public class EmopickController {
         ));
     }
 
+    @ApiOperation(value = "내가 댓글 쓴 이모픽 조회", notes = "내가 댓글 쓴 이모픽 조회")
+    @GetMapping("/me/comment")
+    public ResponseEntity<CommonResponse> findEmopickListByComment(@ApiIgnore @CurrentUser UserPrincipal user,
+                                                                    @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                                    @RequestParam(value = "size", required = false, defaultValue = "10") int size){
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "사용자가 댓글 남긴 이모픽 목록 조회 성공", emopickService.findEmopickListByComment(user.getId(), prevId, size)));
+    }
+    @ApiOperation(value = "내가 좋아요 한 이모픽 조회", notes = "내가 좋아요 한 쓴 이모픽 조회")
+    @GetMapping("/me/like")
+    public ResponseEntity<CommonResponse> findEmopickListByLike(@ApiIgnore @CurrentUser UserPrincipal user,
+                                                                    @RequestParam(value = "prevId", required = false, defaultValue = "0")Long prevId,
+                                                                    @RequestParam(value = "size", required = false, defaultValue = "10") int size){
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "사용자의 댓글 목록 조회 성공", emopickService.findEmopickListByLike(user.getId(), prevId, size)));
+    }
     @ApiOperation(value = "이모픽 등록", notes = "유저가 이모픽을 등록한다.")
     @PostMapping
     public ResponseEntity<CommonResponse> createEmopickByUser(@RequestBody @Valid EmopickSaveRequest request,
