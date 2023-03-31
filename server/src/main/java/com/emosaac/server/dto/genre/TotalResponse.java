@@ -14,19 +14,8 @@ import lombok.Setter;
 public class TotalResponse {
     private Long genreId;
     private String genreName;
-    private Double amount;
     private Long count = 0L;
     private String description;
-
-    public TotalResponse(String description) {
-        this.description = description;
-    }
-
-    public TotalResponse(Long genreId, String genreName, Double amount) {
-        this.genreId = genreId;
-        this.genreName = genreName;
-        this.amount = (double) Math.round(amount);
-    }
 
     public TotalResponse(Long genreId, String genreName, Long count) {
         this.genreId = genreId;
