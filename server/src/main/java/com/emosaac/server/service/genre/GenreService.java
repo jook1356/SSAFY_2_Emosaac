@@ -57,16 +57,16 @@ public class GenreService {
 
         User user = commonService.getUser(userId);
 
-        //선택한 책들을 조회 테이블에 추가(관심의 척도,,,)
+        //선택한 책들을 조회 테이블에 추가
         postHits(user, request.getNovelId());
         postHits(user, request.getWebtoonId());
-        ////////////
 
         String strWebtoon = bookListToFavoriteString(request.getWebtoonId());
         String strNovel = bookListToFavoriteString(request.getNovelId());
 
-        user.setFavoriteWebtoonGenre(strWebtoon); //선호 장르에 반영
-        user.setFavoriteNovelGenre(strNovel); //선호 장르에 반영
+        //선호 장르에 반영
+        user.setFavoriteWebtoonGenre(strWebtoon);
+        user.setFavoriteNovelGenre(strNovel);
 
         // Convert favorite genres to GenreResponse lists
         List<GenreResponse> webtoon = stringToGenreResponseList(strWebtoon);
@@ -217,7 +217,6 @@ public class GenreService {
     public SlicedResponse<BookListResponse> getTotalUnlikeGenreBook(Long userId, BookRequest request) {
 
         List<TotalResponse> list = getTotalAmount(userId, request.getTypeCd());
-//        List<TotalResponse> list = getTotalGenreCount(userId, request.getTypeCd());
 
         List<Long> tmpList = calcMinOrMax(list); //2
 

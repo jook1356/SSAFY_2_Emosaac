@@ -1,7 +1,6 @@
 package com.emosaac.server.service;
 
 import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.domain.book.BookmarkList;
 import com.emosaac.server.domain.book.Hit;
 import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.domain.user.User;
@@ -11,8 +10,6 @@ import com.emosaac.server.repository.readbook.ReadRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -23,11 +20,9 @@ import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -40,12 +35,10 @@ import com.google.protobuf.ByteString;
 @Transactional(readOnly = true)
 public class OcrService {
 
-
     private final CommonService commonService;
     private final BookRepository bookRepository;
     private final ReadRepository readRepository;
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
     public String detectTextGcs(MultipartFile file) throws IOException {
 
@@ -85,9 +78,14 @@ public class OcrService {
                     String[] strList = {"웹툰" ,"웹소설", "일 전", "신작", "대여", "소장", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
                             "MY", "TALK", "새 이야기", "UP", "더보기", "이어보기", "연재중", "완결", "보관함", "좋아요", "구매 작품", "다운로드",
                             "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기", "일전"};
-                    for (String tmp : strList) {
-                        strRes = strRes.replaceAll(tmp, "");
-                    }
+//                    for (String tmp : strList) {
+//                        strRes = strRes.replaceAll(tmp, "");
+//                    }
+
+                    strRes = Arrays.stream(strList)
+                            .filter(strRes::contains)
+                            .reduce(strRes, (s, c) -> s.replaceAll(c, ""));
+                    System.out.println(strRes);
                     System.out.println("---------------");
                     break;
                 }

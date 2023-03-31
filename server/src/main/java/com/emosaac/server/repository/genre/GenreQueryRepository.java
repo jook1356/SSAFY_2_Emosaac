@@ -8,6 +8,7 @@ import com.emosaac.server.dto.book.BookRequest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -48,17 +49,15 @@ public class GenreQueryRepository {
     }
 
     public Slice<BookListResponse> findBookListByGenre(User user, BookRequest request, PageRequest page) {
+
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(
                                 request.getTypeCd()),
                         book.genre.gerneId.eq(request.getGenreCode()),
                         cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
-                        book.notIn(
-                                JPAExpressions
-                                        .select(readBook.book).from(readBook)
-                                        .where(readBook.user.eq(user))
-                        )
+                        notReadByUser(user.getUserId())
+
                 )
                 .limit(page.getPageSize() + 1)
                 .orderBy(book.score.desc(), book.bookId.desc())
@@ -73,39 +72,7 @@ public class GenreQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
 
-    //총 읽음 카운트
-    public Long findTotalCount(Long userId, int typeCode) {
-        return jpaQueryFactory.select(readBook.book.count())
-                .from(readBook)
-                .where(readBook.book.type.eq(typeCode),
-                        readBook.user.userId.eq(userId))
-                .fetchFirst();
-    }
-
-    //장르별 읽음 카운트
-//    public List<Long> findReadSpecGenreCount1(Long userId, int typeCode, Long genre) {
-//        return jpaQueryFactory.select(readBook.book.count())
-//                .from(readBook)
-//                .join(book)
-//                .where(readBook.book.type.eq(typeCode),
-//                        readBook.user.userId.eq(userId),
-//                        readBook.book.eq(book)
-////                        readBook.book.genre.gerneId.eq(genre)
-//                        )
-//                .groupBy(book.genre)
-//                .fetch();
-//    }
-    public Long findReadSpecGenreCount(Long userId, int typeCode, Long genre) {
-        return jpaQueryFactory.select(readBook.book.count())
-                .from(readBook)
-                .where(readBook.book.type.eq(typeCode),
-                        readBook.user.userId.eq(userId),
-                        readBook.book.genre.gerneId.eq(genre)
-                )
-                .fetchFirst();
-    }
-
-    public Long findGenreCountByHit(Long userId, int typeCode, Long genre){
+    public Long findGenreCountByHit(Long userId, int typeCode, Long genre) {
         return jpaQueryFactory.select(hit.count())
                 .from(hit).join(book).on(hit.book.bookId.eq(book.bookId))
                 .where(
@@ -130,16 +97,13 @@ public class GenreQueryRepository {
 
     //선호/비선호 장르별 책
     public Slice<BookListResponse> findBookLikeGenre(Long userId, BookRequest request, PageRequest page, Long likeGenre) {
+
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(request.getTypeCd()),
                         book.genre.gerneId.eq(likeGenre),
                         cursorIdAndCursorScore(request.getPrevId(), request.getPrevScore()),
-                        book.notIn(
-                                JPAExpressions
-                                        .select(readBook.book).from(readBook)
-                                        .where(readBook.user.userId.eq(userId))
-                        )
+                        notReadByUser(userId)
                 )
                 .limit(page.getPageSize() + 1)
                 .orderBy(book.score.desc(), book.bookId.desc())
@@ -155,29 +119,33 @@ public class GenreQueryRepository {
     }
 
     //선호/비선호 장르별 책 하나만
-    public List<BookListResponse> findBookLikeRandom(Long userId, int typeCd, int like,
-                                                     Long[] top2List) {
+    public List<BookListResponse> findBookLikeRandom(Long userId, int typeCd, int like, Long[] top2List) {
         return jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(typeCd),
                         book.genre.gerneId.in(top2List),
-                        book.notIn(
-                                JPAExpressions
-                                        .select(readBook.book).from(readBook)
-                                        .where(readBook.user.userId.eq(userId))
-                        )
+                        notReadByUser(userId)
                 )
                 .limit(30)
                 .orderBy(book.score.desc())
                 .fetch();
-
     }
 
 
     /////////////<-----조건
 
     private BooleanExpression ltBookId(Long cursorId) {
+
         return cursorId == 0 ? null : book.bookId.lt(cursorId);
+    }
+
+
+    private BooleanExpression notReadByUser(Long userId) {
+        return book.notIn(
+                JPAExpressions.select(readBook.book)
+                        .from(readBook)
+                        .where(readBook.user.userId.eq(userId))
+        );
     }
 
 
@@ -189,15 +157,18 @@ public class GenreQueryRepository {
     }
 
     private BooleanExpression filterGenreCd(int typeCode) {
-        if (typeCode == 1) {
-            return Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1).eq("2").
-                    or(genre.gerneId.ne(12L).
-                            and(genre.gerneId.ne(16L)));
-        } else if (typeCode == 0) { //웹툰
-            return Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1).eq("1");
-        }
-        return null; // 장르 코드로 사용할 때
+        StringTemplate genreIdSubstr = Expressions.stringTemplate("function('substring', {0}, {1}, {2})", genre.gerneId, 1, 1);
 
+        switch (typeCode) {
+            case 1:
+                return genreIdSubstr.eq("2").or(
+                        genre.gerneId.notIn(12L, 16L)
+                );
+            case 2:
+                return genreIdSubstr.eq("1");
+        }
+
+        return null; // 장르 코드로 사용할 때
     }
 
 
