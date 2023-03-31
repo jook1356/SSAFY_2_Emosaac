@@ -1,46 +1,35 @@
 # Create your views here.
 from django.shortcuts import render
-
+from rest_framework.decorators import api_view
 from userbasedcf import recommandBook, recommandBookRequest
-from total import totalBookByAgeAndGender
-from rest_framework.views import APIView
 from rest_framework.response import Response
 
 # 요청(회원 가입시)
-class MyAPIViewNewUserCf(APIView):
+@api_view(['GET'])
+def new_user_cf(request, user_id):
+    res_webtoon = recommandBookRequest.execute_algorithm(user_id, 0)
+    res_novel = recommandBookRequest.execute_algorithm(user_id, 1)
 
-    def get(self, request, user_id, format=None):
+    data = {
+        "userId": user_id,
+        "webtoon": res_webtoon,
+        "novel": res_novel
+    }
 
-        print("--------------------------tmp")
-        print(user_id)
-        resWebtoon = recommandBookRequest.execute_algorithm(user_id, 0)
-        print("--------------------------resweb")
-        resNovel = recommandBookRequest.execute_algorithm(user_id, 1)
+    return Response(data)
 
-        data = {
-            "userId": user_id,
-            "webtoon": resWebtoon,
-            "novel": resNovel
-        }
+@api_view(['GET'])
+def schedule_cf(request):
+    res_webtoon = recommandBook.execute_algorithm(0)
+    res_novel = recommandBook.execute_algorithm(1)
 
-        return Response(data)
+    data = {
+        "userId": "none",
+        "webtoon": res_webtoon,
+        "novel": res_novel
+    }
 
-class MyAPIViewCf(APIView):
-
-    def get(self, request,format=None):
-
-        print("--------------------------tmp")
-        resWebtoon = recommandBook.execute_algorithm(0)
-        print("--------------------------resweb")
-        resNovel = recommandBook.execute_algorithm(1)
-
-        data = {
-            "userId": "none",
-            "webtoon": resWebtoon,
-            "novel": resNovel
-        }
-
-        return Response(data)
+    return Response(data)
 
 
 

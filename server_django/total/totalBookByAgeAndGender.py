@@ -37,12 +37,12 @@ class totalBookByAgeAndGender():
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
-        # print(self.hits_result)
 
         self.cursor = connection.cursor()
         self.strSql = "SELECT score.book_no, score.score, user.age, user.gender FROM score " \
                       "join book on score.book_no = book.book_no " \
-                      "where score.score>=8 andbook.type_cd=" + str(type_cd)
+                      "join user on user.user_id = score.user_no " \
+                      "where score.score>=8 and book.type_cd=" + str(type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -60,7 +60,7 @@ class totalBookByAgeAndGender():
         self.cursor = connection.cursor()
         self.strSql = "SELECT read_book.book_no, user.age, user.gender FROM read_book " \
                       "join book on read_book.book_no = book.book_no " \
-                      "join user on user.user_id = read_book.user_no  where book.type_cd="+str(type_cd)
+                      "join user on user.user_id = read_book.user_no where book.type_cd="+str(type_cd)
         self.cursor.execute(self.strSql)
         self.reads = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]

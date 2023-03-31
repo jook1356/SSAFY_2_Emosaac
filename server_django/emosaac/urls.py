@@ -14,23 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
-from total.views import MyAPIViewGenre, MyAPIViewAgeAndGenre
-from userbasedcf.views import MyAPIViewNewUserCf, MyAPIViewCf
+# from total.views import MyAPIViewGenre, MyAPIViewAgeAndGenre
 from userbasedpredict.views import MyAPIView
 
 urlpatterns = [
     path('recommand/', include('recommand.urls')),
 
-    path('recommand/total', include('total.urls')),
-    path('recommand/userbasedcf', include('userbasedcf.urls')),
+    path('recommand/total/', include('total.urls')),
+    path('recommand/cf/', include('userbasedcf.urls')),
 
-    path('recommand/cf/<int:user_id>', MyAPIViewNewUserCf.as_view()), #cf
-    path('recommand/cf', MyAPIViewCf.as_view()),  # cf By new user
-
-    path('recommand/genre', MyAPIViewGenre.as_view()),  # total genre
-    path('recommand/ageAndGen', MyAPIViewAgeAndGenre.as_view()),  # total genre
+    # path('recommand/cf/<int:user_id>', MyAPIViewNewUserCf.as_view()), #cf
+    # path('recommand/cf', MyAPIViewCf.as_view()),  # cf By new user
+    #
+    # path('recommand/genre', MyAPIViewGenre.as_view()),  # total genre
+    # path('recommand/ageAndGen', MyAPIViewAgeAndGenre.as_view()),  # total genre
 
     path('recommand/predict', include('userbasedpredict.urls')),
     path('recommand/predict/<int:user_id>', MyAPIView.as_view()),

@@ -44,14 +44,15 @@ INSTALLED_APPS = [
     'userbasedcf',
     'userbasedpredict',
     'django_crontab',  # 크론 설정
-    'itembasedcf'
-
+    'itembasedcf',
 ]
 
 CRONJOBS = [
-    ('0 0 * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '), #매일 정각
+    ('0 0 * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
+    # 매일 정각
     ('0 0 * * *', 'emosaac.cron.crontab_job_age_gen', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
-    ('* * * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),  # 매 분마다 실행
+    ('* * * * *', 'emosaac.cron.crontab_job_cf', '>> ' + os.path.join(BASE_DIR, 'config/log/cron.log') + ' 2>&1 '),
+    # 매 분마다 실행
 
 ]
 
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'emosaac.urls'
