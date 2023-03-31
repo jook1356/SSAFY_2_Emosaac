@@ -18,6 +18,8 @@ from django.urls import path, include, re_path
 
 # from total.views import MyAPIViewGenre, MyAPIViewAgeAndGenre
 from userbasedpredict.views import MyAPIView
+from userbasedpredict.views import MyAPIView, ClearAndSetPredict
+
 
 urlpatterns = [
     path('recommand/', include('recommand.urls')),
@@ -31,7 +33,8 @@ urlpatterns = [
     # path('recommand/genre', MyAPIViewGenre.as_view()),  # total genre
     # path('recommand/ageAndGen', MyAPIViewAgeAndGenre.as_view()),  # total genre
 
-    path('recommand/predict', include('userbasedpredict.urls')),
+    # path('recommand/predict', include('userbasedpredict.urls')),
+    path('recommand/predict', ClearAndSetPredict.as_view()),
     path('recommand/predict/<int:user_id>', MyAPIView.as_view()),
 
     path('recommand/itembasedcf', include('itembasedcf.urls')),

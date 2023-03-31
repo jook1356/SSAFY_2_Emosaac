@@ -7,6 +7,7 @@ from recommand.models import UserPredictedGradeModel
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+
 def index(request):
     UserPredictedGradeModel.objects.all().delete()
     ScorePredict.execute_algorithm(0)
@@ -15,11 +16,11 @@ def index(request):
 
     return render(request, 'userbasedpredict')
 
+
 # 요청(회원 가입시)
 class MyAPIView(APIView):
 
     def get(self, request, user_id, format=None):
-
         print("-------------START : Predict by Signup-------------")
 
         resWebtoon = RequestPredictByNewUser.execute_algorithm(user_id, 0)
@@ -29,6 +30,25 @@ class MyAPIView(APIView):
             "userId": user_id,
             "webtoon": resWebtoon,
             "novel": resNovel
+        }
+
+        print("-------------DONE : Predict by Signup-------------")
+
+        return Response(data)
+
+
+class ClearAndSetPredict(APIView):
+
+    def get(self, request, format=None):
+        print("-------------START : Predict by Signup-------------")
+
+        UserPredictedGradeModel.objects.all().delete()
+        ScorePredict.execute_algorithm(0)
+        ScorePredict.execute_algorithm(1)
+
+        data = {
+            "webtoon": "done",
+            "novel": "done"
         }
 
         print("-------------DONE : Predict by Signup-------------")

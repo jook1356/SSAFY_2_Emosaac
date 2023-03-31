@@ -32,6 +32,7 @@ RUN apt-get install -y python3-dev python3-pip
 RUN pip3 install Django
 RUN pip install --upgrade pip
 RUN pip install django-crontab
+RUN pip install django-cors-headers
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 

@@ -158,7 +158,7 @@ class UserPredictedGrade:
                 if book['score'] == 0 or math.isnan(book['score']):
                     continue
 
-                if book['score'] <  5 : # 추후 8로 변경 예정
+                if book['score'] < 7 : # 추후 8로 변경 예정
                     break
 
                 UserPredictedGradeModel(
