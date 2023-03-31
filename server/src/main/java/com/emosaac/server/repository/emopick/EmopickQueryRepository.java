@@ -19,6 +19,7 @@ import java.util.List;
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.emo.QEmopick.emopick;
 import static com.emosaac.server.domain.emo.QEmopickDetail.emopickDetail;
+import static com.emosaac.server.domain.comment.QComment.comment;
 
 @RequiredArgsConstructor
 @Repository
@@ -48,6 +49,26 @@ public class EmopickQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
 
+    public Slice<EmopickListResponse> findEmopickListByComment(PageRequest page, Long prevId, Long userId) {
+        List<EmopickListResponse> content = jpaQueryFactory.select(new QEmopickListResponse(emopick))
+                .from(emopick)
+                .join(comment).on(emopick.EmopickId.eq(comment.emopick.EmopickId))
+                .where(
+                        comment.user.userId.eq(userId),
+                        ltEmopickId(prevId)
+                )
+                .limit(page.getPageSize()+1)
+                .orderBy(comment.modifiedDate.desc())
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() == page.getPageSize()+1) {
+            content.remove(page.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(content, page, hasNext);
+    }
+
     private Predicate checkUserId(Long userId) {
         return userId == null ? null : emopick.user.userId.eq(userId);
     }
@@ -74,4 +95,5 @@ public class EmopickQueryRepository {
                 .orderBy(emopickDetail.createdDate.asc())
                 .fetch();
     }
+
 }

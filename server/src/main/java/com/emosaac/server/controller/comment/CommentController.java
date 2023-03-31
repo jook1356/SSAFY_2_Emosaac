@@ -80,4 +80,5 @@ public class CommentController {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "수정 성공", commentService.toggleBookCommentLike(user.getId(), commentId)));
     }
+
 }

@@ -46,7 +46,6 @@ public class CommentService {
             emopick = emopickRepository.findById(itemId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", itemId));
         }
         User user = commonService.getUser(userId);
-        System.out.println(book.getBookId() + " " + user.getUserId());
         Comment comment = null;
         if(request.getParentId() != null){
             Comment parent = commentRepository.findComment(request.getParentId()).orElseThrow(() -> new ResourceNotFoundException("ParentComment", "parentId", request.getParentId()));;
@@ -128,11 +127,10 @@ public class CommentService {
         return new CommentLikeResponse(comment.getCommentId(), comment.toggleCommentLike(commentLike), comment.getTotalLikes());
     }
     public void validBookCommentUser(Long currentUser, Long CommentUser) {
-
-    if (currentUser == CommentUser || currentUser.equals(CommentUser)) {
-        return;
-    } else {
-        throw new ResourceForbiddenException("본인이 작성한 글이 아닙니다");
+        if (currentUser == CommentUser || currentUser.equals(CommentUser)) {
+            return;
+        } else {
+            throw new ResourceForbiddenException("본인이 작성한 글이 아닙니다");
+        }
     }
-}
 }

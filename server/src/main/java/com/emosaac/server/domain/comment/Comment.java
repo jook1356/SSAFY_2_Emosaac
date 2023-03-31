@@ -102,9 +102,6 @@ public class Comment extends BaseEntity {
     public Integer getTotalLikes(){
         return commentLikeList.size();
     }
-//    public void deleteLikeList(){
-//        this.commentLikeList.clear();
-//    }
 
 
 }
