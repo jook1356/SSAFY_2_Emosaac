@@ -40,7 +40,7 @@ class MyAPIView(APIView):
 class ClearAndSetPredict(APIView):
 
     def get(self, request, format=None):
-        print("-------------START : Predict by Signup-------------")
+        print("-------------START : Clear And Set Predict-------------")
 
         UserPredictedGradeModel.objects.all().delete()
         ScorePredict.execute_algorithm(0)
@@ -51,6 +51,6 @@ class ClearAndSetPredict(APIView):
             "novel": "done"
         }
 
-        print("-------------DONE : Predict by Signup-------------")
+        print("-------------DONE : Clear And Set Predict-------------")
 
         return Response(data)
