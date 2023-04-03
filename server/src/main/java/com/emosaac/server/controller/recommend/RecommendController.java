@@ -1,4 +1,4 @@
-package com.emosaac.server.controller.recommand;
+package com.emosaac.server.controller.recommend;
 
 import com.emosaac.server.common.CommonResponse;
 import com.emosaac.server.security.CurrentUser;
@@ -15,7 +15,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/api/recommend")
 @Api(tags = {"추천 컨트롤러"})
-public class RecommandController {
+public class RecommendController {
     @Autowired
     RecommandService recommandService;
 
