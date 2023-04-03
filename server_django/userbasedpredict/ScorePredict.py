@@ -83,7 +83,7 @@ class UserPredictedGrade:
         self.book_sim_df = pd.DataFrame(data=self.item_sim, index=self.rating_df.index, columns=self.rating_df.index)
 
     # def. User 별 도서 예상 평점 계산
-    def predict_rating_topsim(self, ratings_arr, item_sim_arr, n=10): # n: 이웃의 수
+    def predict_rating_topsim(self, ratings_arr, item_sim_arr, n=8): # n: 이웃의 수
         predict_rating_np = np.zeros(ratings_arr.shape)
 
         for col in range(ratings_arr.shape[1]):
@@ -155,8 +155,8 @@ class UserPredictedGrade:
             for book in book_isbn_list:
                 if book['score'] == 0 or math.isnan(book['score']):
                     continue
-                if book['score'] < 7 : # 추후 8로 변경 예정
-                    break
+                # if book['score'] < 5 : # 추후 8로 변경 예정
+                #     break
                 # print(book['book_no'], book['score'])
                 UserPredictedGradeModel(
                     user_no=User.objects.get(user_id=user_no),
