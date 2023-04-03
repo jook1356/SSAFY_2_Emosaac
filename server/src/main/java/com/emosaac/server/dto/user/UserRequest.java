@@ -32,8 +32,4 @@ public class UserRequest {
         }
         return new UserRequest(request.getNickName(), request.getGender(), request.getAge(), tmpImg);
     }
-
-    public static UserRequest of(UserRequestFile request) {
-        return new UserRequest(request.getNickName(), request.getGender(), request.getAge(), null);
-    }
 }

@@ -1,9 +1,6 @@
 package com.emosaac.server.controller.genre;
 
 import com.emosaac.server.common.CommonResponse;
-import com.emosaac.server.domain.book.Book;
-import com.emosaac.server.domain.book.Hit;
-import com.emosaac.server.domain.user.User;
 import com.emosaac.server.dto.book.BookRequest;
 import com.emosaac.server.dto.genre.GenreResponseList;
 import com.emosaac.server.dto.genre.UserResearchRequest;
@@ -60,22 +57,22 @@ public class genreController {
 
         GenreResponseList genreResponseList = genreService.postResearch(userPrincipal.getId(), request);
         //장고로 요청
-        requestToDjango(); 
+        requestToDjango(userPrincipal.getId());
 
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "설문조사 성공", genreResponseList));
     }
 
-    void requestToDjango() {
+    void requestToDjango(Long userId) {
         //cf By New User
-//        String url = "http://j8d203.p.ssafy.io:8000/recommand/cf/"+userPrincipal.getId();
-//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
+        String cfUrl = "http://j8d203.p.ssafy.io:8000/recommand/cf/" + userId;
+        UserBaseCfDto cfResponse = restTemplate.getForObject(cfUrl, UserBaseCfDto.class);
 
-        //predict By New User
-//        String url = "http://j8d203.p.ssafy.io:8000/recommand/predict/" + userPrincipal.getId();
-//        UserBaseCfDto response = restTemplate.getForObject(url, UserBaseCfDto.class);
-//
+//        predict By New User
+        String predictUrl = "http://j8d203.p.ssafy.io:8000/recommand/predict/" + userId;
+        UserBaseCfDto predictResponse = restTemplate.getForObject(predictUrl, UserBaseCfDto.class);
 //        System.out.println(response);
+
     }
 
 
