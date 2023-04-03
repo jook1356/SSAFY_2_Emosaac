@@ -6,6 +6,7 @@ import com.emosaac.server.domain.user.AuthProvider;
 import com.emosaac.server.domain.user.User;
 import com.emosaac.server.repository.user.UserRefreshTokenRepository;
 import com.emosaac.server.repository.user.UserRepository;
+import com.emosaac.server.security.TokenAuthenticationFilter;
 import com.emosaac.server.security.TokenProvider;
 import com.emosaac.server.security.oauth2.user.OAuth2UserInfo;
 import com.emosaac.server.security.oauth2.user.OAuth2UserInfoFactory;
@@ -101,7 +102,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
         String providerType =  (String) authToken.getAuthorizedClientRegistrationId();
-        System.out.println("providerType  "+providerType);
+
+
+
 
         Optional<User> userOptional = userRepository.findByEmailANDProviderType(authentication.getName(), providerType);
 
@@ -111,6 +114,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 flag = true;
             }
         }
+
+        logger.info("=====providerType: {}", providerType);
+        logger.info("=====userEmail: {}", userEmail);
 
         String code = "";
         if(flag){

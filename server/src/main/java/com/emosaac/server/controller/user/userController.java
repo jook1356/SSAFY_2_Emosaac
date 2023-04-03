@@ -13,6 +13,8 @@ import com.emosaac.server.service.user.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +33,7 @@ public class userController {
 
     private final UserService userService;
     private final S3Uploader s3Uploader;
-    RestTemplate restTemplate = new RestTemplate();
+    private static final Logger logger = LoggerFactory.getLogger(userController.class);
 
     @GetMapping("/me")
     @ApiOperation(value = "로그인 유저 조회", notes = "현재 로그인한 유저 정보를 반환한다.")
@@ -51,11 +53,13 @@ public class userController {
     }
 
     private UserRequest filetoString(UserRequestFile request) throws IOException {
-        System.out.println(request.getFile());
         String imgUrl = null; // imgUrl 변수를 null로 초기화
+
         if (request.getFile() != null && !request.getFile().isEmpty()) { // request.getFile()이 null이 아니고 비어있지 않을 때만 imgUrl 변수를 업데이트
             imgUrl = s3Uploader.upload(request.getFile(), "static/user");
         }
+        logger.info("====imgUrl: {}", imgUrl);
+
         return UserRequest.of(request, imgUrl); // imgUrl 변수를 포함한 UserRequest 객체 반환
     }
 

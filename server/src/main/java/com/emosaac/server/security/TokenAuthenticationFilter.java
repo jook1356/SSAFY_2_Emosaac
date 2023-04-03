@@ -53,7 +53,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader("Authorization");
 //        System.out.println(bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            System.out.println(bearerToken.substring(7, bearerToken.length()));
+//            System.out.println(bearerToken.substring(7, bearerToken.length()));
+            logger.info("=====token: {}", bearerToken.substring(7, bearerToken.length()));
+
             return bearerToken.substring(7, bearerToken.length());
         }
 
