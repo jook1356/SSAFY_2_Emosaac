@@ -8,25 +8,19 @@ import com.emosaac.server.dto.book.BookListResponse;
 import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.readbook.ReadRepository;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.vision.v1.AnnotateImageRequest;
+import com.google.cloud.vision.v1.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.google.cloud.vision.v1.AnnotateImageResponse;
-import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
-import com.google.cloud.vision.v1.EntityAnnotation;
-import com.google.cloud.vision.v1.Feature;
-import com.google.cloud.vision.v1.Image;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.protobuf.ByteString;
 
@@ -72,22 +66,25 @@ public class OcrService {
 
                 // For full list of available annotations, see http://g.co/cloud/vision/docs
                 for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
-                    System.out.println("--------");
-                    strRes = annotation.getDescription().substring(60, annotation.getDescription().length()).replaceAll("[^\n/(),.+ㄱ-ㅎㅏ-ㅣ가-힣\\[\\]]", " ");
-
-                    String[] strList = {"웹툰" ,"웹소설", "일 전", "신작", "대여", "소장", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
-                            "MY", "TALK", "새 이야기", "UP", "더보기", "이어보기", "연재중", "완결", "보관함", "좋아요", "구매 작품", "다운로드",
-                            "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기", "일전"};
-//                    for (String tmp : strList) {
-//                        strRes = strRes.replaceAll(tmp, "");
-//                    }
-
-                    strRes = Arrays.stream(strList)
-                            .filter(strRes::contains)
-                            .reduce(strRes, (s, c) -> s.replaceAll(c, ""));
-                    System.out.println(strRes);
-                    System.out.println("---------------");
-                    break;
+                    BoundingPoly boundingPoly = annotation.getBoundingPoly();
+                    List<Vertex> vertices = boundingPoly.getVerticesList();
+                    int width = vertices.get(2).getX() - vertices.get(0).getX();
+//                    System.out.println(width);
+                    int height = vertices.get(2).getY() - vertices.get(0).getY();
+//                    System.out.println(height);
+                    int textSizeThreshold = 100000; // 필요한 텍스트 크기
+                    if (width * height > textSizeThreshold) {
+                        strRes = annotation.getDescription().substring(20, annotation.getDescription().length()).replaceAll("[^\n/(),.+ㄱ-ㅎㅏ-ㅣ가-힣\\[\\]]", " ");
+                        String[] strList = {"웹툰", "웹소설", "일 전", "신작", "관심", "NEW", "다운로드", "관심웹툰", "전체", "지금", "최근", "무료", "voice",
+                                "MY", "TALK", "새 이야기", "UP", "더보기", "이어보기", "연재중", "완결", "보관함", "좋아요", "구매 작품", "다운로드",
+                                "대여", "소장", "책갈피", "편집", "전체", "업데이트 순", "임시저장", "댓글", "내 쿠키", "다음화 보기", "일전"};
+                        strRes = Arrays.stream(strList)
+                                .filter(strRes::contains)
+                                .reduce(strRes, (s, c) -> s.replaceAll(c, ""));
+//                        System.out.println(strRes);
+                        System.out.println("---------------");
+                        break;
+                    }
                 }
             }
         }
@@ -114,7 +111,7 @@ public class OcrService {
             }
 
             List<Book> books = bookRepository.findBookname(typeCd, str);
-            if (!books.isEmpty()) {
+            if (!books.isEmpty() && !bookList.contains(books.get(0))) { //
                 bookList.add(books.get(0));
             }
         }

@@ -29,7 +29,6 @@ public class SearchService {
 
     public List<BookListResponse> findBookListByTitle(String content, String type, int size, Long prevId, Double prevScore) {
         return searchQueryRepository.findBookListByTitle(content.replace(" ", ""), type, PageRequest.ofSize(size), prevId, prevScore);
-
     }
 
     public List<BookListResponse> findBookByHit(Long userId) {
