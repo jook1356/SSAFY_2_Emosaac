@@ -65,8 +65,8 @@ public class GenreService {
         String strNovel = bookListToFavoriteString(request.getNovelId());
 
         //선호 장르에 반영
-        user.setFavoriteWebtoonGenre(strWebtoon);
-        user.setFavoriteNovelGenre(strNovel);
+        user.updateFavoriteWebtoonGenre(strWebtoon);
+        user.updateFavoriteNovelGenre(strNovel);
 
         // Convert favorite genres to GenreResponse lists
         List<GenreResponse> webtoon = stringToGenreResponseList(strWebtoon);

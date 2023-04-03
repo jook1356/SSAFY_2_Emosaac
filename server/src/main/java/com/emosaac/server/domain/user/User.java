@@ -89,46 +89,22 @@ public class User extends BaseEntity {
     }
 
 
-
-//    public User update(String nickName, String imageUrl){
-//        this.nickName = nickName;
-//        this.imageUrl = imageUrl;
-//
-//        return this;
-//    }
-
     public User setUserInfo(UserRequest user){
         this.nickName = user.getNickName();
         this.gender = user.getGender();
         this.age = user.getAge();
         return this;
     }
-    public void updateNickName(String nickName){
-        this.nickName = nickName;
-    }
 
     public void updateImageUrl(String profileImageUrl){
         this.imageUrl = profileImageUrl;
     }
 
-    public void setUserProfile(String baseImg) {
-        this.imageUrl = baseImg;
-    }
-
     public void updateFavoriteNovelGenre(String str){
-//        String str = "";
-//        for(String tmp :list){
-//            str +=tmp+"^";
-//        }
         this.favoriteNovelGenre= str;
-
     }
 
     public void updateFavoriteWebtoonGenre(String str){
-//        String str = "";
-//        for(String tmp :list){
-//            str +=tmp+"^";
-//        }
         this.favoriteWebtoonGenre = str;
     }
 }
