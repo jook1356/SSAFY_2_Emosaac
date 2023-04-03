@@ -112,8 +112,10 @@ public class EmopickService {
         Boolean emoLikeStatus = false;
         if(emoLikeRepository.existsByEmopickIdAndUserId(emopickId, userId).isPresent())
             emoLikeStatus = true;
+
+        Long likeCnt = emopickQueryRepository.findLikeCnt(emopickId);
         
-        EmopickDetailResponse result = new EmopickDetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel, emoLikeStatus);
+        EmopickDetailResponse result = new EmopickDetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel, emoLikeStatus, likeCnt);
 
         return result;
     }

@@ -16,8 +16,9 @@ public class EmopickDetailResponse<T> {
     private Object webtoon;
     private Object novel;
     private boolean emoLike;
+    private Long likeCnt;
 
-    public EmopickDetailResponse(User user, String title, String content, Object webtoon, Object novel, boolean emoLikeStatus){
+    public EmopickDetailResponse(User user, String title, String content, Object webtoon, Object novel, boolean emoLikeStatus, Long likeCnt){
         this.writerInfo = WriterInfo.from(user);
         this.title = title;
         this.content = content;
@@ -25,6 +26,7 @@ public class EmopickDetailResponse<T> {
         this.novel = novel;
 
         this.emoLike = emoLikeStatus;
+        this.likeCnt = likeCnt;
     }
 
 
