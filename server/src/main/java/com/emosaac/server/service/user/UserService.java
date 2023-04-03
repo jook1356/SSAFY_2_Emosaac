@@ -50,11 +50,13 @@ public class UserService {
 
         String originImg = originUser.getImageUrl();
         String newImg = request.getImageUrl();
-
+        System.out.println(newImg);
         // If new image is null or empty, set default image
         if (newImg == null || newImg.isEmpty()) {
+            System.out.println("nullImg");
             originUser.updateImageUrl(baseImg);
         } else {
+            System.out.println("newImg");
             // Update image URL and delete original image if URL has changed
             originUser.updateImageUrl(newImg);
             if (!newImg.equals(originImg)) {
@@ -101,10 +103,10 @@ public class UserService {
         String str = listToFavoriteString(request);
         switch (typeCode) {
             case 0:
-                user.setFavoriteWebtoonGenre(str);
+                user.updateFavoriteNovelGenre(str);
                 break;
             case 1:
-                user.setFavoriteNovelGenre(str);
+                user.updateFavoriteWebtoonGenre(str);
                 break;
             default:
                 break;

@@ -43,7 +43,7 @@ public class userController {
 
     @PutMapping()
     @ApiOperation(value = "유저 정보 업데이트", notes = "유저 정보를 등록/수정 하고 유저 아이디 반환")
-    public ResponseEntity<CommonResponse> updateUserInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,@Valid UserRequestFile request) throws IOException {
+    public ResponseEntity<CommonResponse> updateUserInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @Valid UserRequestFile request) throws IOException {
 
 
         return ResponseEntity.ok().body(CommonResponse.of(
@@ -51,17 +51,12 @@ public class userController {
     }
 
     private UserRequest filetoString(UserRequestFile request) throws IOException {
-        String imgUrl= "";
-        UserRequest userRequest;
-//        System.out.println("request.getFile() "+ request.getFile().getOriginalFilename());
-        if (request.getFile()== null){
-            userRequest = UserRequest.of(request);
-        }
-        else if (request.getFile()!= null || request.getFile().getOriginalFilename().length()!=0 || !request.getFile().isEmpty()) {
+        System.out.println(request.getFile());
+        String imgUrl = null; // imgUrl 변수를 null로 초기화
+        if (request.getFile() != null && !request.getFile().isEmpty()) { // request.getFile()이 null이 아니고 비어있지 않을 때만 imgUrl 변수를 업데이트
             imgUrl = s3Uploader.upload(request.getFile(), "static/user");
         }
-        userRequest = UserRequest.of(request, imgUrl);
-        return userRequest;
+        return UserRequest.of(request, imgUrl); // imgUrl 변수를 포함한 UserRequest 객체 반환
     }
 
     @GetMapping("/nickname/{nickName}")
@@ -75,7 +70,7 @@ public class userController {
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "유저 정보 조회", notes = "조회하고자 하는 유저의 정보를 반환한다.")
-    public ResponseEntity<CommonResponse> getUser(@PathVariable Long userId){
+    public ResponseEntity<CommonResponse> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "유저 조회 성공", userService.getUser(userId)));
     }
@@ -86,12 +81,12 @@ public class userController {
     @GetMapping("/{userId}/genres")
     @ApiOperation(value = "유저별 선호 장르 보여주기", notes = "웹툰 선호 리스트반환")
     public ResponseEntity<CommonResponse> getUserFavoriteGerne(@PathVariable Long userId,
-                                                               @RequestParam(value = "typeCode") int typeCode){
+                                                               @RequestParam(value = "typeCode") int typeCode) {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, "유저별 선호 장르 조회 성공", userService.getUserFavoriteGerne(userId, typeCode)));
     }
 
-   ///////
+    ///////
     @PutMapping("/genres")
     @ApiOperation(value = "나의 웹툰/소설 선호 장르 수정", notes = "나의 선호 장르 수정하고 선호 리스트 반환")
     public ResponseEntity<CommonResponse> updateUserGenre(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
@@ -100,12 +95,6 @@ public class userController {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.CREATED, "나의 웹툰 선호 장르 수정 성공", userService.updateUserGenre(userPrincipal.getId(), request, typeCode)));
     }
-
-
-
-
-    
-
 
 
 }

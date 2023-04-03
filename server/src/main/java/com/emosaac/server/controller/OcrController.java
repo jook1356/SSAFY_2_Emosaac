@@ -24,14 +24,6 @@ public class OcrController {
 
     private final OcrService ocrService;
 
-//    @PostMapping("/test")
-//    @ApiOperation(value = "OCR인식할 사진 등록", notes = "사진을 등록하면 문자열 반환")
-//    public ResponseEntity<CommonResponse> postOcrFile(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-//
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, "ocr 텍스트 조회 성공", ocrService.detectTextGcs(multipartFile)));
-//    }
-
     @PostMapping()
     @ApiOperation(value = "읽음 처리할 인식할 사진 등록", notes = "사진을 등록하면 검색한 책 반환(읽음 처리도 함)")
     public ResponseEntity<CommonResponse> postOcrFileAndRead(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
