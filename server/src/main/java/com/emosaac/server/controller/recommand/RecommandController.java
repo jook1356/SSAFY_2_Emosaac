@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-@RequestMapping("/api/recommand")
+@RequestMapping("/api/recommend")
 @Api(tags = {"추천 컨트롤러"})
 public class RecommandController {
     @Autowired
