@@ -47,11 +47,13 @@ public class SearchQueryRepository {
     }
     private Predicate cursorIdAndCursorScore(Long cursorId, Double cursorScore) {
         return (book.score.eq(cursorScore)
-                .and(book.bookId.lt(cursorId)))
+                .and(ltBookId(cursorId)))
                 .or(book.score.lt(cursorScore));
     }
 
-
+    private BooleanExpression ltBookId(Long cursorId) {
+        return cursorId == 0 ? null : book.bookId.lt(cursorId);
+    }
     private BooleanExpression findType(String type) { // 검색 조건 판별
         if(type.equals("total")){
             return null;
