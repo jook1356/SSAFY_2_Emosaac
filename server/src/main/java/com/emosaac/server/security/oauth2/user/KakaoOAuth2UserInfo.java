@@ -46,8 +46,8 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
             return null;
         }
 
-        return (String) properties.get("thumbnail_image");
-//        return "https://utilbucket.s3.ap-northeast-2.amazonaws.com/static/user/ab578efc-b859-4285-b32f-b1cba56fa51b122.jpg";
+//        return (String) properties.get("thumbnail_image");
+        return "https://emosaacbucket.s3.ap-northeast-2.amazonaws.com/static/user/d5be5034-79c6-4ef7-861a-0f119247c9c6age.png";
     }
 }
 
