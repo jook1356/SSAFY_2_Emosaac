@@ -15,12 +15,16 @@ import com.emosaac.server.repository.genre.GenreRepository;
 import com.emosaac.server.repository.user.UserRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mysql.cj.conf.PropertyKey.logger;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,7 @@ public class UserService {
     private final String baseImg = "static/user/d5be5034-79c6-4ef7-861a-0f119247c9c6age.png";
     private final S3Uploader s3Uploader;
     private final CommonService commonService;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserResponse getUser(Long userId) {
         User user = commonService.getUser(userId);
@@ -50,13 +55,14 @@ public class UserService {
 
         String originImg = originUser.getImageUrl();
         String newImg = request.getImageUrl();
-        System.out.println(newImg);
+        logger.info("======newImg: {}",newImg);
+
         // If new image is null or empty, set default image
         if (newImg == null || newImg.isEmpty()) {
-            System.out.println("nullImg");
+            logger.info("nullImg");
             originUser.updateImageUrl(baseImg);
         } else {
-            System.out.println("newImg");
+            logger.info("newImg");
             // Update image URL and delete original image if URL has changed
             originUser.updateImageUrl(newImg);
             if (!newImg.equals(originImg)) {
@@ -76,7 +82,9 @@ public class UserService {
         try {
             s3Uploader.delete(imageUrl);
         } catch (AmazonS3Exception e) {
-            throw new ResourceNotFoundException("삭제할 파일이 서버에 존재하지 않습니다");
+            logger.info("삭제할 파일이 서버에 존재하지 않습니다");
+//            return;
+//            throw new ResourceNotFoundException("삭제할 파일이 서버에 존재하지 않습니다");
         }
     }
 
