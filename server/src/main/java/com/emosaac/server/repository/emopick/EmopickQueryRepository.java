@@ -113,4 +113,21 @@ public class EmopickQueryRepository {
     }
 
 
+    public Long findLikeCnt(Long emopickId) {
+        return jpaQueryFactory.select(emopick.count())
+                .from(emopick).join(likeEmo).on(emopick.EmopickId.eq(likeEmo.emopick.EmopickId))
+                .where(
+                        likeEmo.emopick.EmopickId.eq(emopickId)
+                )
+                .fetchOne();
+    }
+
+    public Long findBookCnt(Long emopickId) {
+        return jpaQueryFactory.select(emopick.count())
+                .from(emopick).join(emopickDetail).on(emopick.EmopickId.eq(emopickDetail.emopick.EmopickId))
+                .where(
+                        emopickDetail.emopick.EmopickId.eq(emopickId)
+                )
+                .fetchOne();
+    }
 }

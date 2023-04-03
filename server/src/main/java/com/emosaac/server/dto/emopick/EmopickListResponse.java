@@ -24,6 +24,8 @@ public class EmopickListResponse {
     private String thumbnails;
     private String createdDate;
     private String modifiedDate;
+    private Long likeCnt;
+    private Long bookCnt;
 
     @QueryProjection
     public EmopickListResponse (Emopick emopick){
@@ -44,4 +46,11 @@ public class EmopickListResponse {
         this.thumbnails = thumbnails;
     }
 
+    public void setLikeCnt(Long likeCnt) {
+        this.likeCnt = likeCnt;
+    }
+
+    public void setbookCnt(Long bookCnt) {
+        this.bookCnt = bookCnt;
+    }
 }

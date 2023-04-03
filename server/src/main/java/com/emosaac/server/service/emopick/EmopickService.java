@@ -46,7 +46,12 @@ public class EmopickService {
                 str += thumbnail.getThumbnail() + " ";
             }
 
+            Long likeCnt = emopickQueryRepository.findLikeCnt(emoList.getEmopickId());
+            Long bookCnt = emopickQueryRepository.findBookCnt(emoList.getEmopickId());
+
             emoList.setThumbnails(str);
+            emoList.setLikeCnt(likeCnt);
+            emoList.setbookCnt(bookCnt);
         }
 
         return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
