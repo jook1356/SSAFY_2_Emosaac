@@ -135,7 +135,7 @@ class UserBasedCFBook:
             target_gender = target_user[2]
 
             # 나이와 성별 필터링 적용
-            # user_similarity = user_similarity[(user_similarity.index.get_level_values('age') == target_age) | (user_similarity.index.get_level_values('gender') == target_gender)]
+            user_similarity = user_similarity[(user_similarity.index.get_level_values('age') == target_age) & (user_similarity.index.get_level_values('gender') == target_gender)]
             sim_users = user_similarity.sort_values(by=target_user, ascending=False).index[1:11]
             # print(sim_users)
 

@@ -169,7 +169,7 @@ class UserBasedCFBookRequest:
             UserBasedCfModel(
                 user_no=User.objects.get(user_id=user_no),
                 book_no_list=book_str,
-                type_cd=0,
+                type_cd=self.type_cd,
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
