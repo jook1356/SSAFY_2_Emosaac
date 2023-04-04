@@ -76,6 +76,8 @@ class UserPredictedGrade:
 
         # Create Pivot Table
         self.rating_df = self.score_result.pivot_table('score', index='book_no', columns='user_no').fillna(0)
+        # print(self.rating_df)
+        # self.rating_df = self.user_score_list.pivot_table('score', index='book_no', columns='user_no').fillna(0)
 
         # Create Cosine Silmilarity Dataframe
         self.item_sim = cosine_similarity(self.rating_df, self.rating_df)
@@ -83,12 +85,12 @@ class UserPredictedGrade:
         self.book_sim_df = pd.DataFrame(data=self.item_sim, index=self.rating_df.index, columns=self.rating_df.index)
 
     # def. User 별 도서 예상 평점 계산
-    def predict_rating_topsim(self, ratings_arr, item_sim_arr, n=8): # n: 이웃의 수
+    def predict_rating_topsim(self, ratings_arr, item_sim_arr, n=5):  # n: 이웃의 수
         predict_rating_np = np.zeros(ratings_arr.shape)
 
         for col in range(ratings_arr.shape[1]):
             # 유사도가 큰 순으로 n개의 데이터 행렬의 index 반환
-            top_n_items = [np.argsort(item_sim_arr[:, col])[:-n - 1:-1]]
+            top_n_items = np.argsort(item_sim_arr[:, col])[:-n - 1:-1]
 
             # 각 item 별로 전체 사용자들의 예측 평점
             for row in range(ratings_arr.shape[0]):
