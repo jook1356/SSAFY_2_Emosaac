@@ -41,12 +41,12 @@ public class RecommandService {
 
     public SlicedResponse<BookListResponse> findBestList(int size, Long prevId, Double prevScore, int hit, int typeCd) {
         Slice<BookListResponse> page = recommandQueryRepository.findBestList(hit, typeCd, prevId, prevScore, PageRequest.ofSize(size));
-        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     public SlicedResponse<BookListResponse> findNewBookList(int size, Long prevId, String regist, int typeCd) {
         Slice<BookListResponse> page = recommandQueryRepository.findNewBookList(regist, typeCd, prevId, PageRequest.ofSize(size));
-        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     //    public List<BookListResponse> findMdList(int typeCd) {

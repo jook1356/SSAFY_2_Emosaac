@@ -54,7 +54,7 @@ public class EmopickService {
             emoList.setbookCnt(bookCnt);
         }
 
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
 
     }
 
@@ -74,7 +74,7 @@ public class EmopickService {
             emoList.setThumbnails(str);
         }
 
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     public SlicedResponse<EmopickListResponse> findEmopickListByLike(Long userId, Long prevId, int size) {
@@ -93,7 +93,7 @@ public class EmopickService {
             emoList.setThumbnails(str);
         }
 
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 이모픽 상세 조회
