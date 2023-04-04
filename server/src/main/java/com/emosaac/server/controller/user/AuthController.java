@@ -6,7 +6,6 @@ import com.emosaac.server.config.properties.AppProperties;
 import com.emosaac.server.domain.user.AuthReqModel;
 import com.emosaac.server.domain.user.UserRefreshToken;
 import com.emosaac.server.repository.user.UserRefreshTokenRepository;
-import com.emosaac.server.utils.CookieUtil;
 import com.emosaac.server.utils.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
