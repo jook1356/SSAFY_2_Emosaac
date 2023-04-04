@@ -40,6 +40,7 @@ public class GenreService {
     private final Long[] webtoonGenreList = {10L, 11L, 12L, 13L, 14L, 15L, 16L};
     private final Long[] novelGenreList = {10L, 11L, 13L, 14L, 15L, 27L, 28L};
     private final HitRepository hitRepository;
+    private final UserRepository userRepository;
 
     public List<GenreResponse> getBookGenre(int typeCode) {
         return genreQueryRepository.findBookGenre(typeCode).stream().map(
@@ -60,6 +61,16 @@ public class GenreService {
         //선택한 책들을 조회 테이블에 추가
         postHits(user, request.getNovelId());
         postHits(user, request.getWebtoonId());
+
+        //같은 나이대나 성별에도 조회수도 추가
+        Integer age = user.getAge();
+        Integer gender = user.getGender();
+
+        for(User userTmp: userRepository.findAgeAndGenUser(gender, age)){
+            postHits(userTmp, request.getNovelId());
+            postHits(userTmp, request.getWebtoonId());
+        }
+
 
         String strWebtoon = bookListToFavoriteString(request.getWebtoonId());
         String strNovel = bookListToFavoriteString(request.getNovelId());
@@ -93,6 +104,9 @@ public class GenreService {
             if (!hitRepository.existsByBookIdAndUserId(bookId, user.getUserId()).isPresent()) {
                 Hit hit = Hit.builder().book(book).user(user).build();
                 hitRepository.save(hit);
+            } else {
+                Hit hit = hitRepository.findByBookIdAndUserId(bookId, user.getUserId());
+                hit.update();
             }
         }
     }
