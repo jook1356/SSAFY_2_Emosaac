@@ -70,6 +70,8 @@ public class RecommandService {
             Optional<ReadBook> readBook = bookQueryRepository.findBookRecent(userId);
             if (readBook.isPresent()) {
                 bookId = readBook.get().getBook().getBookId();
+            }else {
+                bookId = bookQueryRepository.findBookRecentHit(userId).get().getBook().getBookId();
             }
         }
 
@@ -117,6 +119,7 @@ public class RecommandService {
         for (String bookIdStr : str.split(" ")) {
             // 안 읽은 작품 찾기
             Optional<BookListResponse> book = bookQueryRepository.findBookRead(Long.parseLong(bookIdStr), userId);
+
             if (book.isEmpty()) {
                 res.add(new BookListResponse(commonService.getBook(Long.parseLong(bookIdStr))));
             }

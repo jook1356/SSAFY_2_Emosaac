@@ -1,6 +1,7 @@
 package com.emosaac.server.repository.book;
 
 import com.emosaac.server.domain.book.Book;
+import com.emosaac.server.domain.book.Hit;
 import com.emosaac.server.domain.book.ReadBook;
 import com.emosaac.server.dto.book.*;
 import com.querydsl.core.types.Predicate;
@@ -125,6 +126,17 @@ public class BookQueryRepository {
                         readBook.user.userId.eq(userId)
                 )
                 .orderBy(readBook.modifiedDate.desc())
+                .limit(1)
+                .fetchOne());
+    }
+
+    public Optional<Hit> findBookRecentHit(Long userId){
+        return Optional.ofNullable(jpaQueryFactory.select(hit)
+                .from(hit)
+                .where(
+                        hit.user.userId.eq(userId)
+                )
+                .orderBy(hit.modifiedDate.desc())
                 .limit(1)
                 .fetchOne());
     }
