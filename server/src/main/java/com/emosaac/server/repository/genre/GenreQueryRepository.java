@@ -164,7 +164,7 @@ public class GenreQueryRepository {
                 return genreIdSubstr.eq("2").or(
                         genre.gerneId.notIn(12L, 16L)
                 );
-            case 2:
+            case 0:
                 return genreIdSubstr.eq("1");
         }
 
