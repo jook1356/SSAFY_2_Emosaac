@@ -74,7 +74,7 @@ public class RecommendController {
         );
     }
 
-    @ApiOperation(value = "예측 점수가 높은 작품 추천", notes = "나와 비슷한 작품을 읽은 다른 사용자의 평점을 활용해 나의 평점을 예측, 높은 평점 작품을 추천한다.")
+    @ApiOperation(value = "예측 점수가 높은 작품 추천", notes = "나와 비슷한 작품을 읽은 다른 사용자의 평점을 활용해 나의 평점을 예측, 높은 평점 작품을 추천한다. 예측 점수가 높은 순으로 가져오기때문에, prevScore에는 predictScore를 넣는다")
     @GetMapping("/prediction")
     public ResponseEntity<CommonResponse> findPredictiList(@RequestParam (value = "typeCode") int typeCd,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
