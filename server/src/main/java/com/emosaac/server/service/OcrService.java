@@ -118,7 +118,7 @@ public class OcrService {
 
         bookList.forEach((b) -> responses.add(new BookListResponse(b)));
         //읽음처리
-        //postRead(bookList, userId);
+        postRead(bookList, userId);
 
         return responses;
     }
