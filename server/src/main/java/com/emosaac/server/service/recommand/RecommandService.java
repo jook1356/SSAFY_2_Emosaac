@@ -92,7 +92,7 @@ public class RecommandService {
         String str = userBasedCfRepository.findByBookList(userId, typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
-        return new SlicedResponse<>(res, 1, 0, true, true, false);
+        return new SlicedResponse<>(res, 1, 20, true, true, false);
     }
 
     public List<BookListResponse> findBookStrList(String str, int typeCd) {
@@ -137,6 +137,6 @@ public class RecommandService {
         String str = totalByAgeAndGenderModelRepository.findByBookList(age, gender, typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
-        return new SlicedResponse<>(res, 1, 0, true, true, false);
+        return new SlicedResponse<>(res, 1, 20, true, true, false);
     }
 }
