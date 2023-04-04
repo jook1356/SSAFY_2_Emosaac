@@ -60,7 +60,7 @@ public class RecommandService {
             res.add(book);
         }
 //        return res;
-        return new SlicedResponse<>(res, 1, 0, true, true, false);
+        return new SlicedResponse<>(res, 1,  res.size(), true, true, false);
 
     }
 
@@ -76,7 +76,8 @@ public class RecommandService {
         }
 
 //        return findBookStrListNotRead10(recommandQueryRepository.findItemList(bookId), userId);
-        return new SlicedResponse<>(findBookStrListNotRead10(recommandQueryRepository.findItemList(bookId), userId), 1, 0, true, true, false);
+        List<BookListResponse> res = findBookStrListNotRead10(recommandQueryRepository.findItemList(bookId), userId);
+        return new SlicedResponse<>(res, 1, res.size(), true, true, false);
     }
 
     public SlicedResponse<PredictedBookResponse> findPredictList(int typeCd, int size, Double prevScore, Long prevId, Long userId) {
@@ -92,7 +93,7 @@ public class RecommandService {
         String str = userBasedCfRepository.findByBookList(userId, typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
-        return new SlicedResponse<>(res, 1, 20, true, true, false);
+        return new SlicedResponse<>(res, 1, res.size(), true, true, false);
     }
 
     public List<BookListResponse> findBookStrList(String str, int typeCd) {
@@ -137,6 +138,6 @@ public class RecommandService {
         String str = totalByAgeAndGenderModelRepository.findByBookList(age, gender, typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
-        return new SlicedResponse<>(res, 1, 20, true, true, false);
+        return new SlicedResponse<>(res, 1, res.size(), true, true, false);
     }
 }
