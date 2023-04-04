@@ -90,7 +90,7 @@ public class RecommandService {
 
     public SlicedResponse<BookListResponse> findUserList(int typeCd, Long userId) { //유저베이스 추천
         User user = commonService.getUser(userId);
-        String str = userBasedCfRepository.findByBookList(userId, typeCd);
+        String str = recommandQueryRepository.findUserList(user.getUserId(), typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
         return new SlicedResponse<>(res, 1, res.size(), true, true, false);
@@ -135,7 +135,7 @@ public class RecommandService {
         User user = commonService.getUser(userId);
         int age = user.getAge();
         int gender = user.getGender();
-        String str = totalByAgeAndGenderModelRepository.findByBookList(age, gender, typeCd);
+        String str = recommandQueryRepository.findAgeAndGenderList(age, gender, typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
         return new SlicedResponse<>(res, 1, res.size(), true, true, false);

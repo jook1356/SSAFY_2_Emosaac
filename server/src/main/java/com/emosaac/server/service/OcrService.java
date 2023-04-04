@@ -69,9 +69,9 @@ public class OcrService {
                     BoundingPoly boundingPoly = annotation.getBoundingPoly();
                     List<Vertex> vertices = boundingPoly.getVerticesList();
                     int width = vertices.get(2).getX() - vertices.get(0).getX();
-//                    System.out.println(width);
+                    System.out.println(width);
                     int height = vertices.get(2).getY() - vertices.get(0).getY();
-//                    System.out.println(height);
+                    System.out.println(height);
                     int textSizeThreshold = 100000; // 필요한 텍스트 크기
                     if (width * height > textSizeThreshold) {
                         strRes = annotation.getDescription().substring(20, annotation.getDescription().length()).replaceAll("[^\n/(),.+ㄱ-ㅎㅏ-ㅣ가-힣\\[\\]]", " ");

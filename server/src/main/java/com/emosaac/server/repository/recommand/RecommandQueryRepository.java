@@ -17,6 +17,8 @@ import java.util.List;
 
 import static com.emosaac.server.domain.book.QBook.book;
 import static com.emosaac.server.domain.recommand.QItemBasedCFModel.itemBasedCFModel;
+import static com.emosaac.server.domain.recommand.QTotalByAgeAndGenderModel.totalByAgeAndGenderModel;
+import static com.emosaac.server.domain.recommand.QUserBasedCFModel.userBasedCFModel;
 import static com.emosaac.server.domain.recommand.QUserPredictedGradeModel.userPredictedGradeModel;
 
 @RequiredArgsConstructor
@@ -75,6 +77,24 @@ public class RecommandQueryRepository {
         return jpaQueryFactory.select(itemBasedCFModel.bookNoList)
                 .from(itemBasedCFModel)
                 .where(itemBasedCFModel.book.bookId.eq(bookId))
+                .fetchOne();
+    }
+
+    public String findAgeAndGenderList(Integer age, Integer gender, int typeCd) {
+        return jpaQueryFactory.select(totalByAgeAndGenderModel.bookNoList)
+                .from(totalByAgeAndGenderModel)
+                .where(totalByAgeAndGenderModel.gender.eq(gender),
+                        totalByAgeAndGenderModel.age.eq(age),
+                        totalByAgeAndGenderModel.typeCode.eq(typeCd)
+                        )
+                .fetchOne();
+    }
+//
+    public String findUserList(Long userId, int typeCd) {
+        return jpaQueryFactory.select(userBasedCFModel.bookNoList)
+                .from(userBasedCFModel)
+                .where(userBasedCFModel.user.userId.eq(userId),
+                        userBasedCFModel.typeCode.eq(typeCd))
                 .fetchOne();
     }
 
