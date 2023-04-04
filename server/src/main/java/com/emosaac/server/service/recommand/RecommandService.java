@@ -35,8 +35,8 @@ public class RecommandService {
     Long[] toonRec = {5L, 596L, 1190L, 404L, 2582L, 2306L, 2384L, 4453L, 4470L, 4463L};
     Long[] novelRec = {6533L, 6535L, 6531L, 7145L, 9069L, 9952L, 9889L, 10938L, 10939L, 10944L};
 
-    public SlicedResponse<BookListResponse> findBestList(int size, Long prevId, Double prevScore, int hit, int typeCd) {
-        Slice<BookListResponse> page = recommandQueryRepository.findBestList(hit, typeCd, prevId, prevScore, PageRequest.ofSize(size));
+    public SlicedResponse<BookListResponse> findBestList(int typeCd) {
+        Slice<BookListResponse> page = recommandQueryRepository.findBestList(typeCd, PageRequest.ofSize(30));
         return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 

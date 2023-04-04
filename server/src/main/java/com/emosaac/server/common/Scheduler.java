@@ -41,10 +41,10 @@ public class Scheduler {
         logger.info("================ Schedule START ===================");
 
 
-        UserBaseCfDto ageAndGenDto = restTemplate.getForObject(url + "total/ageAndGen", UserBaseCfDto.class);
-        UserBaseCfDto genreCfDto = restTemplate.getForObject(url + "total/genre", UserBaseCfDto.class);
-        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "cf/schedule", UserBaseCfDto.class);
-        UserBaseCfDto userPredictfDto = restTemplate.getForObject(url + "predict", UserBaseCfDto.class);
+//        UserBaseCfDto ageAndGenDto = restTemplate.getForObject(url + "total/ageAndGen", UserBaseCfDto.class);
+//        UserBaseCfDto genreCfDto = restTemplate.getForObject(url + "total/genre", UserBaseCfDto.class);
+//        UserBaseCfDto userBaseCfDto = restTemplate.getForObject(url + "cf/schedule", UserBaseCfDto.class);
+//        UserBaseCfDto userPredictfDto = restTemplate.getForObject(url + "predict", UserBaseCfDto.class);
 //        System.out.println(userBaseCfDto);
 //        System.out.println(userPredictfDto);
 

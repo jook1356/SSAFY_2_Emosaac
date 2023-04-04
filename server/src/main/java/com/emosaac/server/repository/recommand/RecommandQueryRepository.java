@@ -27,13 +27,14 @@ public class RecommandQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Slice<BookListResponse> findBestList(int hit, int typeCd, Long prevId, Double prevScore, PageRequest page) {
+    public Slice<BookListResponse> findBestList(int typeCd, PageRequest page) {
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
-                .where(book.type.eq(typeCd),
-                        cursorIdAndCursorScoreAndCursorHit(prevId, prevScore, hit)
+                .where(
+                        book.type.eq(typeCd)
+//                        cursorIdAndCursorScoreAndCursorHit(prevId, prevScore, hit)
                 )
-                .limit(page.getPageSize() + 1)
+                .limit(30)
                 .orderBy(book.hit.desc(), book.score.desc(), book.bookId.desc())
                 .fetch();
 
