@@ -98,6 +98,8 @@ public class BookService {
     public SlicedResponse<MyListResponse> findReadBookList(int typeCd, int size, Long prevId, String inputTime, Long userId) {
         User user = commonService.getUser(userId);
 
+        if(inputTime.equals("undefined")) inputTime = "0";
+
         LocalDateTime prevTime = setPrevTime(inputTime);
 
         Slice<MyListResponse> page = bookQueryRepository.findReadBookList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
@@ -107,6 +109,8 @@ public class BookService {
     // 나의 평점 리스트 조회
     public SlicedResponse<MyListResponse> findMyScoreList(int typeCd, int size, Long prevId, String inputTime, Long userId) {
         User user = commonService.getUser(userId);
+
+//        if(inputTime.equals("undefined")) inputTime = "0";
 
         LocalDateTime prevTime = setPrevTime(inputTime);
 
