@@ -166,4 +166,14 @@ public class BookController {
         ));
     }
 
+    @ApiOperation(value = "플랫폼별 리스트 조회", notes = "플랫폼별로 책 15개를 조회한다.")
+    @GetMapping("/platform")
+    public ResponseEntity<CommonResponse> findListByPlatform() {
+
+
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, "플랫폼별 리스트 조회 성공", bookService.findListByPlatform()
+        ));
+    }
+
 }

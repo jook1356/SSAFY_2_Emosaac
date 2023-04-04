@@ -175,4 +175,11 @@ public class BookService {
         return bookQueryRepository.findBookByAuthor(bookId, author);
     }
 
+    public PlatformResponse findListByPlatform() {
+        List<BookListResponse> kakao = bookQueryRepository.findBookByPlatform(1);
+        List<BookListResponse> naver = bookQueryRepository.findBookByPlatform(2);
+        List<BookListResponse> ridi = bookQueryRepository.findBookByPlatform(4);
+
+        return new PlatformResponse(kakao, naver, ridi);
+    }
 }

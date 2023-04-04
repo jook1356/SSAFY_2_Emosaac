@@ -226,4 +226,15 @@ public class BookQueryRepository {
                 .and(ltBookId(cursorId)))
                 .or(score1.modifiedDate.lt(cursorTime));
     }
+
+    public List<BookListResponse> findBookByPlatform(int platCd) {
+        return jpaQueryFactory.select(new QBookListResponse(book))
+                .from(book)
+                .where(
+                        book.platform.eq(platCd)
+                )
+                .orderBy(book.score.desc())
+                .limit(15)
+                .fetch();
+    }
 }
