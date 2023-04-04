@@ -18,7 +18,7 @@ public class PredictedBookResponse {
     private String title;
     private String author;
     private String href;
-    private double score;
+    private double avgScore;
     private Integer hit;
     private String regist;
     private Long genreId;
@@ -35,7 +35,7 @@ public class PredictedBookResponse {
         this.author = book.getAuthor();
         this.href = book.getHref();
         //<----추가
-        this.score = book.getScore();
+        this.avgScore = book.getScore();
         this.hit = book.getHit();
         this.regist = book.getRegist();
         this.genreId = book.getGenre().getGerneId();
