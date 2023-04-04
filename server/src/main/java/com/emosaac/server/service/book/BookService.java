@@ -91,7 +91,7 @@ public class BookService {
         LocalDateTime prevTime = setPrevTime(inputTime);
 
         Slice<MyListResponse> page = bookQueryRepository.findBookMarkList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 나의 읽은 책 리스트 조회
@@ -101,7 +101,7 @@ public class BookService {
         LocalDateTime prevTime = setPrevTime(inputTime);
 
         Slice<MyListResponse> page = bookQueryRepository.findReadBookList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     // 나의 평점 리스트 조회
@@ -111,7 +111,7 @@ public class BookService {
         LocalDateTime prevTime = setPrevTime(inputTime);
 
         Slice<MyListResponse> page = bookQueryRepository.findMyScoreList(typeCd, PageRequest.ofSize(size), prevId, prevTime, userId);
-        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber()+1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     private LocalDateTime setPrevTime(String inputTime) {

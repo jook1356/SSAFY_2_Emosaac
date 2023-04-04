@@ -85,7 +85,7 @@ public class RecommandService {
         User user = commonService.getUser(userId);
 
         Slice<PredictedBookResponse> page = recommandQueryRepository.findPredictList(typeCd, PageRequest.ofSize(size), prevId, prevScore, user.getUserId());
-        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getSize(), page.isFirst(), page.isLast(), page.hasNext());
+        return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
     public SlicedResponse<BookListResponse> findUserList(int typeCd, Long userId) { //유저베이스 추천
