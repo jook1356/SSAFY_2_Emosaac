@@ -28,7 +28,7 @@ class UserBasedCFBook:
         self.type_cd = type_cd
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id ,age,gender,SUBSTRING_INDEX(favorite_webtoon_genre, '^', 1) as genre FROM user"
+        self.strSql = "SELECT user_id ,age,gender FROM user"
         # self.strSql = "SELECT user_id ,age,gender FROM user"
         self.cursor.execute(self.strSql)
         self.users = self.cursor.fetchall()
@@ -95,23 +95,23 @@ class UserBasedCFBook:
         # print(users_books)
 
         # Create pivot table with age and gender
-        pivot_table = pd.pivot_table(
-            users_books,
-            index=['user_no', 'age', 'gender'],
-            columns=['book_no'],
-            values=['values_x', 'values_y', 'score', 'values'],
-            aggfunc=sum,
-        )
+        # pivot_table = pd.pivot_table(
+        #     users_books,
+        #     index=['user_no', 'age', 'gender'],
+        #     columns=['book_no'],
+        #     values=['values_x', 'values_y', 'score', 'values'],
+        #     aggfunc=sum,
+        # )
 
         # print(pivot_table)
         print("/************")
-        # pivot_table = pd.pivot_table(
-        #     users_books,
-        #     index=['user_no'],
-        #     columns=['book_no'],
-        #     values=['values_x', 'values_y', 'score' ,'values'],
-        #     aggfunc=sum,
-        # )
+        pivot_table = pd.pivot_table(
+            users_books,
+            index=['user_no'],
+            columns=['book_no'],
+            values=['values_x', 'values_y', 'score' ,'values'],
+            aggfunc=sum,
+        )
 
         # result = pivot_table.groupby(['book_no'], axis=1).sum()
         # result.fillna(0, inplace=True)
@@ -131,11 +131,11 @@ class UserBasedCFBook:
             # target_user: 추천 받을 대상
             # sim_users: 추천 받을 대상과 유사한 유저
 
-            target_age = target_user[1]
-            target_gender = target_user[2]
+            # target_age = target_user[1]
+            # target_gender = target_user[2]
 
             # 나이와 성별 필터링 적용
-            user_similarity = user_similarity[(user_similarity.index.get_level_values('age') == target_age) & (user_similarity.index.get_level_values('gender') == target_gender)]
+            # user_similarity = user_similarity[(user_similarity.index.get_level_values('age') == target_age) & (user_similarity.index.get_level_values('gender') == target_gender)]
             sim_users = user_similarity.sort_values(by=target_user, ascending=False).index[1:11]
             # print(sim_users)
 
@@ -194,13 +194,14 @@ class UserBasedCFBook:
                 book_str += str(book_no) + " "
 
             UserBasedCfModel(
-                user_no=User.objects.get(user_id=user_no[0]),
+                user_no=User.objects.get(user_id=user_no),
+                # user_no=User.objects.get(user_id=user_no[0]),
                 book_no_list=book_str,
                 type_cd=self.type_cd,
                 created_dt=datetime.now(),
                 modified_dt=datetime.now()
             ).save()
-            
+
             # //////////////필터 적용안된 경우//////////////
             # UserBasedCfModel(
             #     user_no=User.objects.get(user_id=user_no),
