@@ -13,7 +13,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.favoriteNovelGenre!= null and u.favoriteWebtoonGenre!= null and u.favoriteNovelGenre ='' and u.favoriteWebtoonGenre!= ''")
-    List<User> findAllUser();
+    List<User> findNotNewUser();
+
+    @Query("select u from User u where u.gender= :gender and u.age = :age")
+    List<User> findAgeAndGenUser(@Param("gender") Integer gender, @Param("age") Integer age);
 
 
     Optional<User> findByUserId(String userId); //프로바이더 아이디
