@@ -104,8 +104,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String providerType =  (String) authToken.getAuthorizedClientRegistrationId();
 
 
-
-
         Optional<User> userOptional = userRepository.findByEmailANDProviderType(authentication.getName(), providerType);
 
         if(userOptional.isPresent()) {

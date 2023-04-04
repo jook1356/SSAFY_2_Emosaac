@@ -60,7 +60,7 @@ public class UserService {
         // If new image is null or empty, set default image
         if (newImg == null || newImg.isEmpty()) {
             logger.info("nullImg");
-            originUser.updateImageUrl(baseImg);
+//            originUser.updateImageUrl(baseImg);
         } else {
             logger.info("newImg");
             // Update image URL and delete original image if URL has changed
