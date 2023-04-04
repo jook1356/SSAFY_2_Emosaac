@@ -104,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/api/books/day/**", "/api/books/genre/**", "/api/search/tag/**","/api/search/title/**") //북 컨르롤러는 로그인하지 않아도 되도록
                 .permitAll()
-                .antMatchers("/api/recommand/best30", "/api/recommand/md", "/api/recommand/newbook")
+                .antMatchers("/api/recommend/best30", "/api/recommend/md", "/api/recommend/newbook")
                 .permitAll()
                 .antMatchers("/api/emopicks", "/api/books/**", "/api/genres")
                 .permitAll()
