@@ -9,8 +9,6 @@ import com.emosaac.server.repository.book.BookQueryRepository;
 import com.emosaac.server.dto.recommand.PredictedBookResponse;
 import com.emosaac.server.repository.book.BookRepository;
 import com.emosaac.server.repository.recommand.RecommandQueryRepository;
-import com.emosaac.server.repository.recommand.TotalByAgeAndGenderModelRepository;
-import com.emosaac.server.repository.recommand.UserBasedCfRepository;
 import com.emosaac.server.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +31,6 @@ public class RecommandService {
 
     private final CommonService commonService;
     private final RecommandQueryRepository recommandQueryRepository;
-    private final UserBasedCfRepository userBasedCfRepository;
-    private final TotalByAgeAndGenderModelRepository totalByAgeAndGenderModelRepository;
     private final BookQueryRepository bookQueryRepository;
     Long[] toonRec = {5L, 596L, 1190L, 404L, 2582L, 2306L, 2384L, 4453L, 4470L, 4463L};
     Long[] novelRec = {6533L, 6535L, 6531L, 7145L, 9069L, 9952L, 9889L, 10938L, 10939L, 10944L};
@@ -49,7 +45,6 @@ public class RecommandService {
         return new SlicedResponse<>(page.getContent(), page.getNumber() + 1, page.getContent().size(), page.isFirst(), page.isLast(), page.hasNext());
     }
 
-    //    public List<BookListResponse> findMdList(int typeCd) {
     public SlicedResponse<BookListResponse> findMdList(int typeCd) {
         List<BookListResponse> res = new ArrayList<>();
 
@@ -64,7 +59,6 @@ public class RecommandService {
 
     }
 
-    //    public List<BookListResponse> findItemList(Long bookId, Long userId) {
     public SlicedResponse<BookListResponse> findItemList(Long bookId, Long userId) {
         if (bookId == 0) { // 제일 최근 본 작품과 유사한 작품 추천
             Optional<ReadBook> readBook = bookQueryRepository.findBookRecent(userId);
@@ -90,7 +84,7 @@ public class RecommandService {
 
     public SlicedResponse<BookListResponse> findUserList(int typeCd, Long userId) { //유저베이스 추천
         User user = commonService.getUser(userId);
-        String str = userBasedCfRepository.findByBookList(userId, typeCd);
+        String str = recommandQueryRepository.findUserList(user.getUserId(), typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
         return new SlicedResponse<>(res, 1, res.size(), true, true, false);
@@ -130,12 +124,11 @@ public class RecommandService {
 
     }
 
-    //    public List<BookListResponse> findAgeAndGenderList(int typeCd, Long userId) { //나이, 성별별 통계
     public SlicedResponse<BookListResponse> findAgeAndGenderList(int typeCd, Long userId) { //나이, 성별별 통계
         User user = commonService.getUser(userId);
         int age = user.getAge();
         int gender = user.getGender();
-        String str = totalByAgeAndGenderModelRepository.findByBookList(age, gender, typeCd);
+        String str = recommandQueryRepository.findAgeAndGenderList(age, gender, typeCd);
         List<BookListResponse> res = findBookStrList(str, typeCd);
 //        return res;
         return new SlicedResponse<>(res, 1, res.size(), true, true, false);
