@@ -167,12 +167,13 @@ public class BookService {
     }
 
     /* 같은 작가 다른 작품 찾기 */
-    public List<BookListResponse> findListByAuthor(Long bookId) {
+    public SlicedResponse<BookListResponse> findListByAuthor(Long bookId) {
         Book book = commonService.getBook(bookId);
 
         String[] author = book.getAuthor().split("/");
 
-        return bookQueryRepository.findBookByAuthor(bookId, author);
+        List<BookListResponse> res =  bookQueryRepository.findBookByAuthor(bookId, author);
+        return new SlicedResponse<>(res, 1, res.size(), true, true, false);
     }
 
     public PlatformResponse findListByPlatform() {
