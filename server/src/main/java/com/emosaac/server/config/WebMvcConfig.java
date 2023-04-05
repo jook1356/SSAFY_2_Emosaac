@@ -19,7 +19,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
                         HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
                         HttpMethod.PATCH.name())
-                .maxAge(1000);
+                .maxAge(1000)
+                .exposedHeaders("Authorization"); // 추가된 부분;
     }
 
 }
