@@ -13,6 +13,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.emosaac.server.domain.book.QBook.book;
@@ -47,10 +50,14 @@ public class RecommandQueryRepository {
         return new SliceImpl<>(content, page, hasNext);
     }
     public Slice<BookListResponse> findNewBookList(String regist, int typeCd, Long prevId, PageRequest page) {
+        LocalDate currentDate = LocalDate.now();
+//        System.out.println(currentDate);
+
         List<BookListResponse> content = jpaQueryFactory.select(new QBookListResponse(book))
                 .from(book)
                 .where(book.type.eq(typeCd),
-                        cursorIdAndCursorRegist(prevId, regist)
+                        cursorIdAndCursorRegist(prevId, regist),
+                        book.regist.gt(String.valueOf(currentDate))
                 )
                 .limit(page.getPageSize() + 1)
                 .orderBy(book.regist.desc(), book.bookId.desc())
