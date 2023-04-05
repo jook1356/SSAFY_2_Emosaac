@@ -14,12 +14,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
 //                .allowedOrigins("*")
-                .allowedOrigins("http://localhost:3000", "https://j8d203.p.ssafy.io", "http://j8d203.p.ssafy.io:8081")
+                .allowedOrigins("http://localhost:3000", "https://j8d203.p.ssafy.io", "http://j8d203.p.ssafy.io:8081", "http://j8d203.p.ssafy.io")
                 .allowCredentials(true)
                 .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
                         HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
                         HttpMethod.PATCH.name())
-                .maxAge(1000);
+                .maxAge(1000)
+                .exposedHeaders("Authorization"); // 추가된 부분;
     }
 
 }

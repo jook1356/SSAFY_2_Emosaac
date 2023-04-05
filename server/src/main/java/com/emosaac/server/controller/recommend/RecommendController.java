@@ -21,19 +21,10 @@ public class RecommendController {
 
     @ApiOperation(value = "인기작 top 30", notes = "소설 인기작 top 30 리스트를 조회한다.")
     @GetMapping("/best30")
-    public ResponseEntity<CommonResponse> findBestList(@RequestParam(value = "size", required = false, defaultValue = "10")
-                                                       int size,
-                                                       @RequestParam(value = "prevId", required = false, defaultValue = "20000")
-                                                       Long prevId,
-                                                       @RequestParam(value = "prevScore", required = false, defaultValue = "10")
-                                                       Double prevScore,
-                                                       @RequestParam(value = "hit", required = false, defaultValue = "1000")
-                                                       Integer hit,
-                                                       @RequestParam(value = "typeCd", required = true)
-                                                       int typeCd) {
+    public ResponseEntity<CommonResponse> findBestList(@RequestParam(value = "typeCd", required = true) int typeCd) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "인기작 top 30 조회 성공", recommandService.findBestList(size, prevId, prevScore, hit, typeCd)
+                HttpStatus.OK, "인기작 top 30 조회 성공", recommandService.findBestList(typeCd)
         ));
     }
 
