@@ -166,7 +166,6 @@ public class BookController {
         ));
     }
 
-    @CrossOrigin(origins = "http://j8d203.p.ssafy.io")
     @ApiOperation(value = "플랫폼별 리스트 조회", notes = "플랫폼별로 책 15개를 조회한다.")
     @GetMapping("/platform")
     public ResponseEntity<CommonResponse> findListByPlatform() {
