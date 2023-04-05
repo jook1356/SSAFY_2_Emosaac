@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("select u from User u where u.favoriteNovelGenre!= null and u.favoriteWebtoonGenre!= null and u.favoriteNovelGenre ='' and u.favoriteWebtoonGenre!= ''")
+    @Query("select u from User u where u.favoriteNovelGenre!= null and u.favoriteWebtoonGenre!= null and u.favoriteNovelGenre !='' and u.favoriteWebtoonGenre!= ''")
     List<User> findNotNewUser();
 
     @Query("select u from User u where u.gender= :gender and u.age = :age")
