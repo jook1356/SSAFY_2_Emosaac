@@ -76,33 +76,6 @@ public class genreController {
     }
 
 
-    ////---->
-
-    //<-----장르별 추천
-
-//    @GetMapping("/books")
-//    @ApiOperation(value = "장르코드 주면 장르별 책 추천, *안쓸것 같아요*", notes = "장르별 북 리스트를 반환")
-//    public ResponseEntity<CommonResponse> getBookByGenre(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-//                                                         @RequestParam(value = "genreId")
-//                                                         Long genreId,
-//                                                         @RequestParam(value = "typeCode")
-//                                                         int typeCd,
-//                                                         @RequestParam(required = false, defaultValue = "")
-//                                                         String criteria,
-//                                                         @RequestParam(value = "size", required = false, defaultValue = "10")
-//                                                         int size,
-//                                                         @RequestParam(value = "prevId", required = false, defaultValue = "20493")
-//                                                         Long prevId,
-//                                                         @RequestParam(value = "prevScore", required = false, defaultValue = "10")
-//                                                         Double prevScore) {
-//
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, "장르별 추천 조회 성공", genreService.getBookByGenre(userPrincipal.getId(), BookRequest.of(typeCd, criteria, size, prevId, prevScore, genreId))));
-//    }
-
-
-    ///----->
-
     ////<---통계
     @GetMapping("/total/amounts")
     @ApiOperation(value = "나의 장르별 읽음 통계 조회", notes = "장르별 읽음 수치 리스트를 반환 / typeCode: 0 : 웹툰/1:소설")
@@ -124,33 +97,17 @@ public class genreController {
     }
 
     @GetMapping("/total/one")
-    @ApiOperation(value = "통계기반 선호/비선호 탑 2 장르별 랜덤 조회 , 딱 하나만 랜덤으로 줍니다", notes = "typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)")
+    @ApiOperation(value = "통계기반 선호/비선호 탑 2 장르별 랜덤 조회 , count 개수만큼 줍니다", notes = "typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)/ count: 반환할 책 개수")
     public ResponseEntity<CommonResponse> getTotalUnlikeGenreBook(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                                                   @RequestParam(value = "typeCode") int typeCd,
-                                                                  @RequestParam(value = "isLike", defaultValue = "0") int isLike) {
+                                                                  @RequestParam(value = "isLike", defaultValue = "0") int isLike,
+                                                                  @RequestParam(value = "count", defaultValue = "1") int count) {
 
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, "장르별 선호/비선호 장르 탑2 책 랜덤 조회 성공", genreService.getTotalGenreBookOne(userPrincipal.getId(), typeCd, isLike)));
+                HttpStatus.OK, "장르별 선호/비선호 장르 탑2 책 랜덤 조회 성공", genreService.getTotalGenreBookCount(userPrincipal.getId(), typeCd, isLike, count)));
     }
 
-//    @GetMapping("/total/unlike")
-//    @ApiOperation(value = "통계기반 비선호 장르별 책 조회 *안쓸것 같아요*", notes = "typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)")
-//    public ResponseEntity<CommonResponse> getTotalUnlikeGenreBook(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-//                                                                  @RequestParam(value = "typeCode") int typeCd,
-//                                                                  @RequestParam(value = "order") int order,
-//                                                                  @ApiIgnore @RequestParam(value = "isLike", defaultValue = "0") int isLike,
-//                                                                  @RequestParam(required = false, defaultValue = "")
-//                                                                  String criteria,
-//                                                                  @RequestParam(value = "size", required = false, defaultValue = "10")
-//                                                                  int size,
-//                                                                  @RequestParam(value = "prevId", required = false, defaultValue = "20493")
-//                                                                  Long prevId,
-//                                                                  @RequestParam(value = "prevScore", required = false, defaultValue = "10")
-//                                                                  Double prevScore) {
-//
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, "장르별 비선호 책 조회 성공", genreService.getTotalUnlikeGenreBook(userPrincipal.getId(), BookRequest.of(typeCd, criteria, size, prevId, prevScore, isLike, order))));
-//    }
+
 
     @GetMapping("/total/like")
     @ApiOperation(value = "선호 장르별 책 조회", notes = " typeCode: 0: 웹툰, 1:소설 / order: 순위(1,2,3)")
