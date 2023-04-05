@@ -29,7 +29,6 @@ class UserBasedCFBook:
 
         self.cursor = connection.cursor()
         self.strSql = "SELECT user_id ,age,gender FROM user"
-        # self.strSql = "SELECT user_id ,age,gender FROM user"
         self.cursor.execute(self.strSql)
         self.users = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -43,7 +42,8 @@ class UserBasedCFBook:
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book on score.book_no = book.book_no where book.type_cd="+str(type_cd)
+        self.strSql = "SELECT user_no , score.book_no, score.score FROM score " \
+                      "join book on score.book_no = book.book_no where score.score>=8 and book.type_cd=" + str(type_cd)
         self.cursor.execute(self.strSql)
         self.scores = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -72,6 +72,7 @@ class UserBasedCFBook:
         self.hits_result['values'] = 0.5
         self.bookmarks_result['values'] = 1
         self.reads_result['values'] = 1
+        self.scores_result['score'] = 1
 
 
         users_books = pd.merge(
@@ -104,7 +105,6 @@ class UserBasedCFBook:
         # )
 
         # print(pivot_table)
-        print("/************")
         pivot_table = pd.pivot_table(
             users_books,
             index=['user_no'],
@@ -113,16 +113,13 @@ class UserBasedCFBook:
             aggfunc=sum,
         )
 
-        # result = pivot_table.groupby(['book_no'], axis=1).sum()
-        # result.fillna(0, inplace=True)
-        # print(result)
+
         result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
-        print("////////please")
         # print(user_similarity[(user_similarity.index.get_level_values('age') == 20)])
 
         user_based_book = {}

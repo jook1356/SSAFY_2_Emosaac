@@ -28,42 +28,11 @@ class UserBasedCFBookRequest:
         self.user_id = user_id
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id ,age,gender FROM user"
-        self.cursor.execute(self.strSql)
-        self.users = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.users_result = pd.DataFrame(data=self.users, columns=cols)
-
-        self.cursor = connection.cursor()
         self.strSql = "SELECT user_no , hit.book_no FROM hit join book on hit.book_no = book.book_no where book.type_cd=" + str(type_cd)
         self.cursor.execute(self.strSql)
         self.hits = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
         self.hits_result = pd.DataFrame(data=self.hits, columns=cols)
-
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , score.book_no, score.score FROM score join book " \
-                      "on score.book_no = book.book_no where book.type_cd=" + str(type_cd)
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.scores_result = pd.DataFrame(data=self.scores, columns=cols)
-
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_mark.book_no FROM book_mark join book on book_mark.book_no = book.book_no where book.type_cd=" + str(
-            type_cd)
-        self.cursor.execute(self.strSql)
-        self.bookmarks = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.bookmarks_result = pd.DataFrame(self.bookmarks, columns=cols)
-
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no , read_book.book_no FROM read_book join book on read_book.book_no = book.book_no where book.type_cd=" + str(
-            type_cd)
-        self.cursor.execute(self.strSql)
-        self.reads = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.reads_result = pd.DataFrame(self.reads, columns=cols)
 
         connection.commit()
         connection.close()
@@ -72,51 +41,29 @@ class UserBasedCFBookRequest:
 
         # 조회, 북마크, 읽음, 평점기반으로 유사성 검사
         self.hits_result['values'] = 0.5
-        self.bookmarks_result['values'] = 1
-        self.reads_result['values'] = 1
 
-        users_books = pd.merge(
-            self.hits_result, self.bookmarks_result, how='outer', on=["user_no", "book_no"]
-        )
-
-        users_books = pd.merge(
-            users_books, self.scores_result, how='outer', on=["user_no", "book_no"]
-        )
-
-        users_books = pd.merge(
-            users_books, self.reads_result, how='outer', on=["user_no", "book_no"]
-        )
 
         # print(pivot_table)
         print("/************")
         pivot_table = pd.pivot_table(
-            users_books,
+            self.hits_result,
             index=['user_no'],
             columns=['book_no'],
-            values=['values_x', 'values_y', 'score', 'values'],
+            values=['values'],
             aggfunc=sum,
         )
 
-        # result = pivot_table.groupby(['book_no'], axis=1).sum()
-        # result.fillna(0, inplace=True)
-        # print(result)
-        print("???????????????????????????????????")
         result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
         print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
-        print("////////please")
-
         user_based_book = {}
         # target_user: 추천 받을 대상
         # sim_users: 추천 받을 대상과 유사한 유저
 
-        # 나이와 성별 필터링 적용
-        # user_similarity = user_similarity[(user_similarity.index.get_level_values('age') == target_age) | (user_similarity.index.get_level_values('gender') == target_gender)]
         sim_users = user_similarity.sort_values(by=self.user_id, ascending=False).index[1:11]
-        # print(sim_users)
 
         # 데이터프레임의 행과 열을 바꾸어서 새로운 데이터프레임 객체 result.T를 생성
         result_T = result.T
@@ -125,12 +72,6 @@ class UserBasedCFBookRequest:
 
         best = []
         for i in sim_users:
-            # 유사도가 높은 10명의 사용자들이 평가점수를 높게 주었던 item list(상위 10개)를 가져온다.
-            # user가 읽지 않은 아이템을 추천해야한다.
-            # 1) 이미 평점을 남긴 책: 데이터프레임에서 target_user열의 값이 0인 행을 찾은 후, i번째 열의 값을 선택
-            # 2) - 조회만 한 책: 데이터프레임에서 target_user열의 값이 0.5인 행을 찾은 후, i번째 열의 값을 선택
-            #    - 0.5는 조회에 기반한 점수인데, 단순 조회를 한것만으로 읽었다고 가정할수 없어 추천 목록에서 제외하지 않았음
-            # 0.5-> 0.125 : sum->mean
             result_sorted = result_T.loc[:, i][
                 ((result_T.loc[:, self.user_id] == 0) | (result_T.loc[:, self.user_id] == 0.125) | (
                         result_T.loc[:, self.user_id] == 0.000))].sort_values(
@@ -142,7 +83,6 @@ class UserBasedCFBookRequest:
         for i in range(len(best)):
             for j in best[i]:
                 # setdefault: 키 값으로 j가 이미 있으면 원래 값에 1 추가, 없으면 1
-                # 키의 값은 그 도서를 추천한 유저의 수
                 most_common[j] = most_common.setdefault(j, 0) + 1
 
         #  도서를 추천한 사용자의 수에 따라 정렬하여 상위 20개의 도서를 추천 목록으로 저장
