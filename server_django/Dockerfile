@@ -37,8 +37,8 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 # cron 설정
-RUN service cron start
-RUN service cron status
+RUN service cron start && service cron status
+RUN #service cron status
 RUN python manage.py crontab add
 
 ## Run the application on the port 8080
