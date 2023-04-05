@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +32,12 @@ public class RecommandService {
     private final CommonService commonService;
     private final RecommandQueryRepository recommandQueryRepository;
     private final BookQueryRepository bookQueryRepository;
-    Long[] toonRec = {5L, 596L, 1190L, 404L, 2582L, 2306L, 2384L, 4453L, 4470L, 4463L};
-    Long[] novelRec = {6533L, 6535L, 6531L, 7145L, 9069L, 9952L, 9889L, 10938L, 10939L, 10944L};
+    Long[] toonRec = {1L ,3L, 5L, 119L, 190L, 192L, 194L, 198L, 200L, 404L,
+            421L, 596L, 950L, 1190L, 1195L, 1190L, 1159L, 2582L, 2306L, 2384L,
+            3124L, 3854L, 2468L, 2789L, 4000L, 4002L, 4021L, 4453L, 4470L, 4463L};
+    Long[] novelRec = {6533L, 6535L, 6538L, 6539L, 6544L, 6548L, 6549L, 6559L, 6739L, 7000L,
+            6531L, 7145L, 7232L, 7242L, 7252L, 7258L, 7259L,7270L, 8368L, 9069L,
+            8888L,8999L,9000L,9110L,9111L,9125L, 9889L, 10938L, 10939L, 10944L};
 
     public SlicedResponse<BookListResponse> findBestList(int typeCd) {
         Slice<BookListResponse> page = recommandQueryRepository.findBestList(typeCd, PageRequest.ofSize(30));
@@ -48,13 +52,25 @@ public class RecommandService {
     public SlicedResponse<BookListResponse> findMdList(int typeCd) {
         List<BookListResponse> res = new ArrayList<>();
 
+        int a[] = new int[10];
+        Random r = new Random();
+
+        for(int i = 0 ; i < 10 ; i++){
+            a[i] = r.nextInt(30);
+            for(int j = 0 ; j < i ; j++){
+                if(a[i] == a[j]){
+                    i--;
+                }
+            }
+        }
         Long[][] type = {toonRec, novelRec};
 
-        for (Long n : type[typeCd]) {
+        for (int val : a) {
+            Long n = type[typeCd][val];
             BookListResponse book = new BookListResponse(commonService.getBook(n));
             res.add(book);
         }
-//        return res;
+
         return new SlicedResponse<>(res, 1,  res.size(), true, true, false);
 
     }
