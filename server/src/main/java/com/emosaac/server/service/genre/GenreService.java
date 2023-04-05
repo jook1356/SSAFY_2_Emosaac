@@ -225,7 +225,7 @@ public class GenreService {
 
         List<BookListResponse> bookListResponses = new ArrayList<>();
 
-        int idx = 1;
+        int idx = 0;
         for (int i = 0; i < count; i++) {
             bookListResponses.add(bookListQueryResponses.get(randomIndex + idx++));
         }
