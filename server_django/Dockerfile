@@ -31,15 +31,15 @@ COPY . .
 RUN apt-get install -y python3-dev python3-pip
 RUN pip3 install Django
 RUN pip install --upgrade pip
-RUN pip install django-crontab
+# RUN pip install django-crontab
 RUN pip install django-cors-headers
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-# cron 설정
-RUN service cron start && service cron status
-RUN #service cron status
-RUN python manage.py crontab add
+# # cron 설정
+# RUN service cron start && service cron status
+# RUN #service cron status
+# RUN python manage.py crontab add
 
 ## Run the application on the port 8080
 EXPOSE 8000
