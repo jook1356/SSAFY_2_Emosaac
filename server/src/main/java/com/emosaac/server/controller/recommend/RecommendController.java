@@ -34,7 +34,7 @@ public class RecommendController {
                                                           int size,
                                                           @RequestParam(value = "prevId", required = false, defaultValue = "20000")
                                                           Long prevId,
-                                                          @RequestParam(value = "prevRegist", required = false, defaultValue = "2023.03.20")
+                                                          @RequestParam(value = "prevRegist", required = false, defaultValue = "2023.04.05")
                                                           String prevRegist,
                                                           @RequestParam(value = "typeCd", required = true)
                                                           int typeCd){

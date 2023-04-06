@@ -77,10 +77,10 @@ public class S3Uploader {
 
         String str = multipartFile.getOriginalFilename().toString().toLowerCase();
 
-        String extension = str.substring(str.length()-3, str.length());
+//        String extension = str.substring(str.length()-3, str.length());
 
-        if(!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg")){
-            throw new ArgumentMismatchException("파일 확장자는 jpg png만 가능합니다");
+        if(!str.contains("png") && !str.contains("jpg") && !str.contains("jpeg")){
+            throw new ArgumentMismatchException("파일 확장자는 jpg png, jpeg만 가능합니다");
         }
 
         if(convertFile.createNewFile()){

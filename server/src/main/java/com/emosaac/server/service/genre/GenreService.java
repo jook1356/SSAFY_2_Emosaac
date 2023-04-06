@@ -66,7 +66,7 @@ public class GenreService {
         Integer age = user.getAge();
         Integer gender = user.getGender();
 
-        for(User userTmp: userRepository.findAgeAndGenUser(gender, age)){
+        for (User userTmp : userRepository.findAgeAndGenUser(gender, age)) {
             postHits(userTmp, request.getNovelId());
             postHits(userTmp, request.getWebtoonId());
         }
@@ -204,7 +204,7 @@ public class GenreService {
     }
 
     //선호/비선호 : 랜덤으로 한개만 반환(선호/비선호 장르 중에 탑 2)
-    public BookListResponse getTotalGenreBookOne(Long userId, int typeCd, int isLike) {
+    public List<BookListResponse> getTotalGenreBookCount(Long userId, int typeCd, int isLike, int count) {
         List<TotalResponse> list = getTotalAmount(userId, typeCd);
 
         List<Long> tmpList = calcMinOrMax(list); //2
@@ -220,10 +220,17 @@ public class GenreService {
             top2List[1] = likeList[1];
         }
 
+        List<BookListResponse> bookListQueryResponses = genreQueryRepository.findBookLikeRandom(userId, typeCd, isLike, top2List);
+        int randomIndex = (int) (Math.random() * bookListQueryResponses.size() / 2);
 
-        List<BookListResponse> bookListResponses = genreQueryRepository.findBookLikeRandom(userId, typeCd, isLike, top2List);
-        int randomIndex = (int) (Math.random() * bookListResponses.size());
-        return bookListResponses.get(randomIndex);
+        List<BookListResponse> bookListResponses = new ArrayList<>();
+
+        int idx = 0;
+        for (int i = 0; i < count; i++) {
+            bookListResponses.add(bookListQueryResponses.get(randomIndex + idx++));
+        }
+
+        return bookListResponses;
     }
 
 

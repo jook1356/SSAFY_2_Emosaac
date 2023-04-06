@@ -101,8 +101,8 @@ public class EmopickQueryRepository {
         return cursorId == 0 ? null : emopick.EmopickId.lt(cursorId);
     }
 
-    public List<BookReveiwResponse> findEmopickDetailByEmopickId(Long emopickId, int type) {
-        return jpaQueryFactory.select(new QBookReveiwResponse(book, emopickDetail))
+    public List<BookReviewResponse> findEmopickDetailByEmopickId(Long emopickId, int type) {
+        return jpaQueryFactory.select(new QBookReviewResponse(book, emopickDetail))
                 .from(book).join(emopickDetail).on(book.bookId.eq(emopickDetail.book.bookId))
                 .where(
                         emopickDetail.emopick.EmopickId.eq(emopickId),
