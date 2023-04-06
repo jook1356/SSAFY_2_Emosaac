@@ -163,7 +163,10 @@ public class BookService {
             return curScore.getScore();
         }
 
-        toggleReadByBook(bookId, userId); // 평점 등록 시, 자동 읽음 처리
+        if(!readRepository.existsByBookIdAndUserId(bookId, userId).isPresent())
+            toggleReadByBook(bookId, userId);
+
+//        toggleReadByBook(bookId, userId); // 평점 등록 시, 자동 읽음 처리
 
         double result = book.setScore(Score.builder().book(book).user(user).score(score).build());
         book.setAvgScore();

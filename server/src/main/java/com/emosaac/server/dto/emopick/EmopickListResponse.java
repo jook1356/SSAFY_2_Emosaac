@@ -34,7 +34,7 @@ public class EmopickListResponse {
 
         this.writerInfo = WriterInfo.from(emopick.getUser());
         this.emopickId = emopick.getEmopickId();
-        this.title = emopick.getTitle();
+        this.title = emopick.getTitle().replaceAll("휴재$", "");
 
         this.createdDate = emopick.getCreatedDate().format(myFormatObj);
         if(emopick.getModifiedDate()!=null) {

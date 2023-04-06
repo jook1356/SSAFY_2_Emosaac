@@ -97,11 +97,11 @@ public class EmopickService {
     }
 
     // 이모픽 상세 조회
-    public EmopickDetailResponse<BookReveiwResponse> findEmopickDetail(Long emopickId, Long userId) {
+    public EmopickDetailResponse<BookReviewResponse> findEmopickDetail(Long emopickId, Long userId) {
         Emopick emopick = emopickRepository.findById(emopickId).orElseThrow(() -> new ResourceNotFoundException("emopick", "emopickId", emopickId));
 
-        List<BookReveiwResponse> webtoon = new ArrayList<>();
-        List<BookReveiwResponse> novel = new ArrayList<>();
+        List<BookReviewResponse> webtoon = new ArrayList<>();
+        List<BookReviewResponse> novel = new ArrayList<>();
 
         // type이 0인거 가져오기
         webtoon = emopickQueryRepository.findEmopickDetailByEmopickId(emopickId, 0);
@@ -114,8 +114,11 @@ public class EmopickService {
             emoLikeStatus = true;
 
         Long likeCnt = emopickQueryRepository.findLikeCnt(emopickId);
+
+        boolean isUpdate = false;
+        if (emopick.getUser().getUserId() == userId) isUpdate = true;
         
-        EmopickDetailResponse result = new EmopickDetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel, emoLikeStatus, likeCnt);
+        EmopickDetailResponse result = new EmopickDetailResponse(emopick.getUser(), emopick.getTitle(), emopick.getContent(), webtoon, novel, emoLikeStatus, likeCnt, isUpdate);
 
         return result;
     }
