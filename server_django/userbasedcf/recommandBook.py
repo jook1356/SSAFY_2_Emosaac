@@ -116,7 +116,7 @@ class UserBasedCFBook:
 
         result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
-        print(result)
+        # print(result)
 
         # 사용자 유사도 확인
         user_similarity = pd.DataFrame(cosine_similarity(result), index=result.index, columns=result.index)
@@ -138,8 +138,8 @@ class UserBasedCFBook:
 
             # 데이터프레임의 행과 열을 바꾸어서 새로운 데이터프레임 객체 result.T를 생성
             result_T = result.T
-            print("result_T")
-            print(result_T)
+            # print("result_T")
+            # print(result_T)
 
             best = []
             for i in sim_users:
@@ -155,7 +155,7 @@ class UserBasedCFBook:
                     ascending=False)
                 best.append(result_sorted.index[:10].tolist())
 
-            print(best)
+            # print(best)
             most_common = {}
             for i in range(len(best)):
                 for j in best[i]:
@@ -178,7 +178,7 @@ class UserBasedCFBook:
 
     def save(self):
         user_based_book = self.calcSimilarity()
-        print(user_based_book)
+        # print(user_based_book)
 
         # 기존 데이터 지우기
         self.deleteOriginData()
