@@ -11,7 +11,7 @@ class favoriteGenre():
         self.type_cd = type_cd
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id as user_no FROM user where favorite_novel_genre!=null and favorite_webtoon_genre!=null"
+        self.strSql = "SELECT user_id as user_no FROM user"
         self.cursor.execute(self.strSql)
         self.users = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
