@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BookReveiwResponse {
+public class BookReviewResponse {
     private Long bookId;
     private int platform;
     private String thumbnail;
@@ -24,10 +24,10 @@ public class BookReveiwResponse {
     private String grade;
     private double avgScore;
 
-    private String reveiw;
+    private String review;
 
     @QueryProjection
-    public BookReveiwResponse(Book book, EmopickDetail emopickDetail){
+    public BookReviewResponse(Book book, EmopickDetail emopickDetail){
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
@@ -40,6 +40,6 @@ public class BookReveiwResponse {
 
         this.avgScore = book.getScore();
 
-        this.reveiw = emopickDetail.getReview();
+        this.review = emopickDetail.getReview();
     }
 }
