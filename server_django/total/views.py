@@ -1,3 +1,5 @@
+from time import sleep
+
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from total import favoriteGenre, totalBookByAgeAndGender
@@ -15,6 +17,7 @@ def index(request):
 def favorite_genre(request):
     print("--------------------------web")
     favoriteGenre.execute_algorithm(0)
+    sleep(1)
     print("--------------------------nov")
     favoriteGenre.execute_algorithm(1)
 

@@ -11,7 +11,7 @@ class favoriteGenre():
         self.type_cd = type_cd
 
         self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id as user_no FROM user"
+        self.strSql = "SELECT user_id as user_no FROM user where favorite_novel_genre!=null and favorite_webtoon_genre!=null"
         self.cursor.execute(self.strSql)
         self.users = self.cursor.fetchall()
         cols = [column[0] for column in self.cursor.description]
@@ -88,7 +88,7 @@ class favoriteGenre():
             users_books, self.reads_result, how='outer', on=["user_no", "genre_cd"]
         )
 
-        print(users_books)
+        # print(users_books)
 
         # Create pivot table with age and gender
         pivot_table = pd.pivot_table(
@@ -99,13 +99,13 @@ class favoriteGenre():
             aggfunc=sum,
         )
 
-        print("/*******pivot_table*****")
-        print(pivot_table)
-
-        print("/*******result*****")
+        # print("/*******pivot_table*****")
+        # print(pivot_table)
+        #
+        # print("/*******result*****")
         result = pivot_table.groupby(['genre_cd'], axis=1).mean()
         result.fillna(0, inplace=True)
-        print(result)
+        # print(result)
 
         user_based_book={}
         for index, row in result.iterrows():
