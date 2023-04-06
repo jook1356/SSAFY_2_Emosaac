@@ -78,7 +78,7 @@ def item_based_cf(book_no):
         li.append(result[i] + 1)
     for i in li:
         res += str(i) + " "
-    print(res)
+    # print(res)
     return res
 
 def save(book_no):
