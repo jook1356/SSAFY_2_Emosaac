@@ -177,8 +177,8 @@ def execute_surprise(df):
 
     pred = algo.predict(user_id, item_id)
 
-    print(f'예측 평점: {pred.est}')
-    print("===============")
+    # print(f'예측 평점: {pred.est}')
+    # print("===============")
     return
 
 # 아직 보지 않은 영화 리스트 함수
@@ -196,7 +196,7 @@ def get_unseen_surprise(scores, books, userId):
     seen_cnt = len(seen_books)
     unseen_cnt = len(unseen_books)
 
-    print(f"전체 책 수: {total_book_cnt}, 평점 매긴 책 수: {seen_cnt}, 추천 대상 책 수: {unseen_cnt}")
+    # print(f"전체 책 수: {total_book_cnt}, 평점 매긴 책 수: {seen_cnt}, 추천 대상 책 수: {unseen_cnt}")
     return unseen_books
 
 def recomm_book_by_surprise(algo, userId, unseen_books, books, top_n):
@@ -218,14 +218,14 @@ def recomm_book_by_surprise(algo, userId, unseen_books, books, top_n):
     top_predictions = predictions[:top_n]
 
     # 책 아이디, 제목, 예측 평점 출력
-    print(f"유저 {userId} Top-{top_n} 추천 책 리스트")
+    # print(f"유저 {userId} Top-{top_n} 추천 책 리스트")
 
     for pred in top_predictions:
         book_id = int(pred.iid)
         book_title = books[books["book_id"] == book_id]["title"].tolist()
         book_rating = pred.est
 
-        print(f"{book_title}: {book_rating:.2f}")
+        # print(f"{book_title}: {book_rating:.2f}")
 
 if __name__ == "__main__":
     execute_surprise()

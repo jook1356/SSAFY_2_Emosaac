@@ -89,7 +89,7 @@ class totalBookByAgeAndGender():
             users_books, self.scores_result, how='outer', on=["age", "gender", "book_no"]
         )
 
-        print(users_books)
+        # print(users_books)
 
         # Create pivot table with age and gender
         pivot_table = pd.pivot_table(
@@ -105,13 +105,13 @@ class totalBookByAgeAndGender():
 
         result = pivot_table.groupby(['book_no'], axis=1).mean()
         result.fillna(0, inplace=True)
-        print(result)
+        # print(result)
 
         user_based_book={}
         for index, row in result.iterrows():
             # 높은 점수의 20개 구하기
             top_books = row.nlargest(20).index.tolist()
-            print(f"For user {index}, top 20 books: {top_books}")
+            # print(f"For user {index}, top 20 books: {top_books}")
             user_based_book[index] = top_books
 
         return user_based_book
@@ -140,7 +140,7 @@ class totalBookByAgeAndGender():
                 modified_dt=datetime.now()
             ).save()
 
-        print(user_based_book)
+        # print(user_based_book)
 
 
 def execute_algorithm(type_cd):
