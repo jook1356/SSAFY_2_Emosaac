@@ -35,7 +35,7 @@ public class BookDetailResponse {
         this.bookId = book.getBookId();
         this.platform = book.getPlatform();
         this.thumbnail = book.getThumbnail();
-        this.title = book.getTitle();
+        this.title = book.getTitle().replaceAll("휴재$", "");
         this.author = book.getAuthor();
         this.href = book.getHref();
         this.story = book.getStory();
