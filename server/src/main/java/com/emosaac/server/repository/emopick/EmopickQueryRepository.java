@@ -32,8 +32,8 @@ public class EmopickQueryRepository {
                         checkUserId(userId),
                         ltEmopickId(prevId)
                 )
-                .limit(page.getPageSize()+1)
                 .orderBy(emopick.EmopickId.desc())
+                .limit(page.getPageSize()+1)
                 .fetch();
 
         boolean hasNext = false;

@@ -39,8 +39,8 @@ public class BookQueryRepository {
                         cursorIdAndCursorScore(prevId, prevScore),
                         filterGenreCd(genreCode)
                 )
-                .limit(page.getPageSize()+1)
                 .orderBy(book.score.desc(),book.bookId.desc())  // 평점 추가
+                .limit(page.getPageSize()+1)
                 .fetch();
 
         boolean hasNext = false;
@@ -167,8 +167,8 @@ public class BookQueryRepository {
                         bookMark.user.userId.eq(userId),
                         cursorIdAndCursorTime("bookMark", prevId, prevTime)
                 )
-                .limit(page.getPageSize()+1)
                 .orderBy(bookMark.modifiedDate.desc(),book.bookId.desc())
+                .limit(page.getPageSize()+1)
                 .fetch();
 
         boolean hasNext = false;
@@ -188,8 +188,8 @@ public class BookQueryRepository {
                         readBook.user.userId.eq(userId),
                         cursorIdAndCursorTime("readBook", prevId, prevTime)
                 )
-                .limit(page.getPageSize()+1)
                 .orderBy(readBook.modifiedDate.desc(),book.bookId.desc())
+                .limit(page.getPageSize()+1)
                 .fetch();
 
         boolean hasNext = false;
@@ -209,8 +209,8 @@ public class BookQueryRepository {
                         score1.user.userId.eq(userId),
                         cursorIdAndCursorTime("score1", prevId, prevTime)
                 )
-                .limit(page.getPageSize()+1)
                 .orderBy(score1.modifiedDate.desc(),book.bookId.desc())
+                .limit(page.getPageSize()+1)
                 .fetch();
 
         boolean hasNext = false;
