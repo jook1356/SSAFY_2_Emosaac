@@ -1,113 +1,80 @@
-#배치로 선호 장르 반영하기!!
+# 배치로 선호 장르 반영하기!!
 import pandas as pd
 from django.db import connection
 
-from userbasedcf.models import User
+from userbasedcf.models import User, Hit, Score, ReadBook, BookMark
 
 
 class favoriteGenre():
     def __init__(self, type_cd):
 
         self.type_cd = type_cd
+        self.type_cd = type_cd
 
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT user_id as user_no FROM user"
-        self.cursor.execute(self.strSql)
-        self.users = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.users_result = pd.DataFrame(data=self.users, columns=cols)
+        self.users_result = pd.DataFrame.from_records(
+            User.objects.values_list("user_id"),
+            columns=["user_no"]
+        )
 
-        # self.cursor = connection.cursor()
-        # self.strSql = "SELECT user_id as user_no FROM user where favorite_novel_genre IS NOT NULL and favorite_webtoon_genre IS NOT NULL"
-        # self.cursor.execute(self.strSql)
-        # self.users = self.cursor.fetchall()
-        # cols = [column[0] for column in self.cursor.description]
-        # self.users_result = pd.DataFrame(data=self.users, columns=cols)
+        self.hits_result = pd.DataFrame.from_records(
+            Hit.objects.filter(book_no__type_cd=type_cd).values_list(
+                "user_no", "book_no__genre_cd"
+            ),
+            columns=["user_no", "genre_cd"]
 
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT hit.user_no, book.genre_cd FROM hit " \
-                      "join book on hit.book_no = book.book_no " \
-                      "where book.type_cd="+str(type_cd)
-        self.cursor.execute(self.strSql)
-        self.hits = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.hits_results = pd.DataFrame(data=self.hits, columns=cols)
+        )
 
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT score.user_no, book.genre_cd FROM score " \
-                      "join book on score.book_no = book.book_no " \
-                      "where score.score >= 8 and book.type_cd="+str(type_cd)
+        self.scores_result = pd.DataFrame.from_records(
+            Score.objects.filter(score__gte=7, book_no__type_cd=type_cd).values_list(
+                "user_no", "book_no__genre_cd"
+            ),
+            columns=["user_no", "genre_cd"]
 
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.scores_result = pd.DataFrame(data=self.scores, columns=cols)
+        )
 
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT  book_mark.user_no, book.genre_cd  FROM book_mark " \
-                      "join book on book_mark.book_no = book.book_no " \
-                      "where book.type_cd="+str(type_cd)
-        self.cursor.execute(self.strSql)
-        self.bookmarks = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.bookmarks_result = pd.DataFrame(self.bookmarks, columns=cols)
+        self.bookmarks_result = pd.DataFrame.from_records(
+            BookMark.objects.filter(book_no__type_cd=type_cd).values_list(
+                "user_no", "book_no__genre_cd"
+            ),
+            columns=["user_no", "genre_cd"]
 
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT read_book.user_no, book.genre_cd  FROM read_book " \
-                      "join book on read_book.book_no = book.book_no " \
-                      "where book.type_cd="+str(type_cd)
-        self.cursor.execute(self.strSql)
-        self.reads = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.reads_result = pd.DataFrame(self.reads, columns=cols)
+        )
 
-        connection.commit()
-        connection.close()
+        self.reads_result = pd.DataFrame.from_records(
+            ReadBook.objects.filter(book_no__type_cd=self.type_cd).values_list(
+                "user_no", "book_no__genre_cd"
+            ),
+            columns=["user_no", "genre_cd"]
+
+        )
 
     def calcSimilarity(self):
 
         # 조회, 북마크, 읽음 처리 기반으로 유사성 검사
-        self.reads_result['values'] = 2
-        self.hits_results['values'] = 1
-        self.bookmarks_result['values'] = 1
-        self.scores_result['score'] = 1
+        self.reads_result['read_values'] = 1
+        self.hits_result['hit_values'] = 0.5
+        self.bookmarks_result['bookmark_values'] = 1
+        self.scores_result['score_values'] = 1
 
-        users_books = pd.merge(
-            self.users_result, self.bookmarks_result, how='outer', on="user_no"
+        users_books = pd.concat(
+            [self.users_result, self.hits_result, self.scores_result, self.bookmarks_result, self.reads_result],
+            axis=0,
+            ignore_index=True,
         )
 
-        users_books = pd.merge(
-            users_books, self.hits_results, how='outer', on=["user_no", "genre_cd"]
-        )
-
-        users_books = pd.merge(
-            users_books, self.scores_result, how='outer', on=["user_no", "genre_cd"]
-        )
-
-        users_books = pd.merge(
-            users_books, self.reads_result, how='outer', on=["user_no", "genre_cd"]
-        )
-
-        # print(users_books)
-
-        # Create pivot table with age and gender
         pivot_table = pd.pivot_table(
             users_books,
             index=['user_no'],
             columns=['genre_cd'],
-            values=['values_x', 'values_y', 'score', 'values'],
+            values=['read_values', 'hit_values', 'bookmark_values', 'score_values'],
             aggfunc=sum,
         )
 
-        # print("/*******pivot_table*****")
-        # print(pivot_table)
-        #
-        # print("/*******result*****")
+
         result = pivot_table.groupby(['genre_cd'], axis=1).mean()
         result.fillna(0, inplace=True)
-        # print(result)
 
-        user_based_book={}
+        user_based_book = {}
         for index, row in result.iterrows():
             # 높은 점수의 3개 구하기
             top_genres = row.nlargest(3).index.tolist()
@@ -116,12 +83,11 @@ class favoriteGenre():
 
         return user_based_book
 
-
     def save(self):
         user_based_book = self.calcSimilarity()
 
         for user, book_list in user_based_book.items():
-            book_str=""
+            book_str = ""
             for book_no in book_list:
                 book_str += str(book_no)[:-2] + "^"
 
