@@ -89,7 +89,6 @@ class UserBasedCFBook:
 
             # 데이터프레임의 행과 열을 바꾸어서 새로운 데이터프레임 객체 result.T를 생성
             result_T = result.T
-            print(result_T)
 
             best = []
             for i in sim_users:

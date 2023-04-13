@@ -53,8 +53,6 @@ class UserBasedCFBookRequest:
 
         result_T = result.T
 
-        print(result_T)
-
         best = []
         for i in sim_users:
             result_sorted = result_T.loc[:, i][
