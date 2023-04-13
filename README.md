@@ -54,7 +54,7 @@
 - 검색창에서 작품을 검색
 - 최근 조회한 목록이 최상단으로 올 수 있도록 구성
 <div align="center">
-![이모픽_디테일](/uploads/fc137e0488b8ef9fccd3f9aecb6c395c/이모픽_디테일.gif)
+![검색](/uploads/0d9fed7ca4a4cb767cb9ad5403f81c54/검색.gif)
 </div>
 
 ### 웹툰 · 웹소설 추천
