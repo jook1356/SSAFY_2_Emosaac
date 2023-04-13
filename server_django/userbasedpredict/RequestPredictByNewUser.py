@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from django.db import connection
+from django.db.models import F,Q
 import operator
 import warnings
 
@@ -20,7 +21,7 @@ import django
 
 django.setup()
 
-from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBook
+from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBook, Hit
 
 class UserPredictedGrade:
     def __init__(self, user_id, type_cd):
@@ -29,43 +30,22 @@ class UserPredictedGrade:
         self.type_cd = type_cd
 
         # 북 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT book_no , title FROM book where type_cd = " + str(self.type_cd)
-        self.cursor.execute(self.strSql)
-        self.books = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.book_result = pd.DataFrame(data=self.books, columns=cols)
+        self.books = Book.objects.filter(type_cd=type_cd).values('book_no', 'title')
+        self.book_result = pd.DataFrame.from_records(self.books)
 
-        # # 읽은 책 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_no FROM read_book where user_no = " + str(self.user_id)
-        self.cursor.execute(self.strSql)
-        self.reads = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.readBook_result = pd.DataFrame(data=self.reads, columns=cols)
+        # 읽은 책 리스트
+        self.reads = ReadBook.objects.filter(user_no=self.user_id).values('user_no', 'book_no')
+        self.readBook_result = pd.DataFrame.from_records(self.reads)
 
-        # 선호장르에 기반한 평균 평점 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, book.score as score from hit join book using(book_no) " \
-                      "where type_cd = " + str(self.type_cd) + " and user_no = " + str(self.user_id)
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.hit_score_list = pd.DataFrame(data=self.scores, columns=cols)
+        # 조회수 리스트
+        self.scores = Hit.objects.filter(Q(book_no__type_cd=self.type_cd) & Q(user_no=self.user_id)).annotate(score=F('book_no__score')).values(
+            'user_no', 'book_no', 'score')
+        self.hit_score_list = pd.DataFrame(data=self.scores)
 
         # 평점 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, score.score as score " \
-                      "from score join book using(book_no) where book.type_cd = " + str(self.type_cd)
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.score_result = pd.DataFrame(data=self.scores, columns=cols)
-        self.user_score_list = self.score_result
-
-        # hit_score_list에서 user_no와 book_no가 score_result에 존재하는 행들만 선택
-        mask = (self.hit_score_list['user_no'].isin(self.score_result['user_no'])) & \
-               (self.hit_score_list['book_no'].isin(self.score_result['book_no']))
+        self.user_scores = Score.objects.select_related('book').filter(book_no__type_cd=self.type_cd).values('user_no', 'book_no', 'score')
+        self.user_score_list = pd.DataFrame.from_records(self.user_scores)
+        self.score_result = self.user_score_list
 
         # hit_score_list에서 선택된 행들과 score_result를 조인하여 score 값을 조정한 후 합침
         self.merged_df = pd.merge(self.hit_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
