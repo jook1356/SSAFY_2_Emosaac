@@ -32,9 +32,9 @@
 ### 메인페이지
 
 - 로그인 / 웹툰 / 웹소설로 이동할 수 있는 버튼과 이모작의 서비스 소개 페이지
-
+<div align="center">
 ![메인케러셀](/uploads/7ccff7a245f17e270e287af9836a36cd/메인케러셀.gif)
-
+</div>
 ### 로그인
 
 - OAuth2.0을 활용한 네이버 / 카카오 로그인
@@ -53,17 +53,22 @@
 
 - 알고리즘 방식을 활용한 개별 사용자에게 작품 추천
 - 가로 무한스크롤, 캐러셀 방식으로 구현
+<div align="center"> 
 ![작품캐러셀](/uploads/d842e57b8ca997a9e9daee803d010610/작품캐러셀.gif)
+</div>
 
 ### 디테일
-
+<div align="center"> 
 ![디테일](/uploads/e2a83d118e0e9e1a17f140404129afca/디테일.gif)
+</div>
+
 
 ### 이모픽
 
 - 사용자들이 직접 본인의 추천 리스트를 작성하는 공간
-
+<div align="center"> 
 ![이모픽](/uploads/d48151bbefb153e40cf78cbadbc445b2/이모픽.gif)
+</div>
 
 ### 마이 페이지
 
@@ -73,8 +78,9 @@
 
 - Google Cloud VIsion API를 활용한 OCR스캔 기능을 통해 사용자가 첨부한 사진을 스캔하여 작품을 읽음처리
 - 읽음처리 이후 평점을 매기게 하여 그를 바탕으로 한 알고리즘 분석으로 사용자에게 작품을 추천
-
+<div align="center"> 
 ![OCR](/uploads/050446640dfad941e617012bfd7f59c9/OCR.gif)
+</div>
 
 ---
 
