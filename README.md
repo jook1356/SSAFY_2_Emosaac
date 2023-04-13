@@ -85,6 +85,7 @@
 <div align="center">
 ![마이페이지](/uploads/5ab0eb1178939047f308e654e20a6871/마이페이지.gif)
 </div>
+
 ### OCR기능을 이용한 자동 읽음 처리
 
 - Google Cloud VIsion API를 활용한 OCR스캔 기능을 통해 사용자가 첨부한 사진을 스캔하여 작품을 읽음처리
@@ -94,6 +95,7 @@
 </div>
 
 ### 다크모드
+
 <div align="center">
 ![다크모드](/uploads/dc7cdf10f89b67493383b6438e0ffcff/다크모드.gif)
 </div>
