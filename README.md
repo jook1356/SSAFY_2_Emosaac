@@ -35,6 +35,7 @@
 <div align="center">
 ![메인케러셀](/uploads/7ccff7a245f17e270e287af9836a36cd/메인케러셀.gif)
 </div>
+
 ## 로그인
 
 - OAuth2.0을 활용한 네이버 / 카카오 로그인
