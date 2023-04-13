@@ -38,16 +38,24 @@
 ### 로그인
 
 - OAuth2.0을 활용한 네이버 / 카카오 로그인
-
+<div align="center">
+![로그인](/uploads/06e7b2c4970a2b773a430073f45187d6/로그인.gif)
+</div>
 
 ### 설문조사
 
 - 설문조사와 회원정보를 바탕으로 자체 알고리즘 분석으로 추천하기 위한 페이지
+<div align="center">
+![설문조사](/uploads/3151bb695b6f4f2ce9d1708888296a0b/설문조사.gif)
+</div>
 
 ### 검색기능
 
 - 검색창에서 작품을 검색
 - 최근 조회한 목록이 최상단으로 올 수 있도록 구성
+<div align="center">
+![이모픽_디테일](/uploads/fc137e0488b8ef9fccd3f9aecb6c395c/이모픽_디테일.gif)
+</div>
 
 ### 웹툰 · 웹소설 추천
 
@@ -68,18 +76,26 @@
 - 사용자들이 직접 본인의 추천 리스트를 작성하는 공간
 <div align="center"> 
 ![이모픽](/uploads/d48151bbefb153e40cf78cbadbc445b2/이모픽.gif)
+![이모픽_디테일](/uploads/fc137e0488b8ef9fccd3f9aecb6c395c/이모픽_디테일.gif)
 </div>
 
 ### 마이 페이지
 
 - ApexChart를 통한 사용자의 조회 장르 차트를 통해 사용자의 취향을 알려주는 기능
-
+<div align="center">
+![마이페이지](/uploads/5ab0eb1178939047f308e654e20a6871/마이페이지.gif)
+</div>
 ### OCR기능을 이용한 자동 읽음 처리
 
 - Google Cloud VIsion API를 활용한 OCR스캔 기능을 통해 사용자가 첨부한 사진을 스캔하여 작품을 읽음처리
 - 읽음처리 이후 평점을 매기게 하여 그를 바탕으로 한 알고리즘 분석으로 사용자에게 작품을 추천
 <div align="center"> 
 ![OCR](/uploads/050446640dfad941e617012bfd7f59c9/OCR.gif)
+</div>
+
+### 다크모드
+<div align="center">
+![다크모드](/uploads/dc7cdf10f89b67493383b6438e0ffcff/다크모드.gif)
 </div>
 
 ---
