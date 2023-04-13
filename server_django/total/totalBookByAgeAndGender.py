@@ -30,27 +30,27 @@ class totalBookByAgeAndGender():
 
 
         self.hits_result = pd.DataFrame.from_records(
-            Hit.objects.filter(book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no__book_no"),
+            Hit.objects.filter(book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no"),
             columns=["age", "gender", "book_no"]
         )
 
 
 
         self.scores_result = pd.DataFrame.from_records(
-            Score.objects.filter(score__gte=7, book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no__book_no"),
+            Score.objects.filter(score__gte=7, book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no"),
             columns=["age", "gender", "book_no"]
         )
 
 
 
         self.bookmarks_result = pd.DataFrame.from_records(
-            BookMark.objects.filter(book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no__book_no"),
+            BookMark.objects.filter(book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no"),
             columns=["age", "gender", "book_no"]
         )
 
 
         self.reads_result = pd.DataFrame.from_records(
-            ReadBook.objects.filter(book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no__book_no"),
+            ReadBook.objects.filter(book_no__type_cd=type_cd).values_list("user_no__age", "user_no__gender", "book_no"),
             columns=["age", "gender", "book_no"]
         )
 
