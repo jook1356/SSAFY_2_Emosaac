@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from django.db import connection
+from django.db.models import F,Q
 import operator
 import warnings
 
@@ -20,7 +21,7 @@ import django
 
 django.setup()
 
-from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBook
+from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBook, Hit
 
 # 여기는 디비를 지웠다가 다시 생성하므로 배치에 사용합니다.
 
@@ -28,42 +29,24 @@ from recommand.models import UserPredictedGradeModel, User, Book, Score, ReadBoo
 
 class UserPredictedGrade:
     def __init__(self, type_cd):
-
         self.type_cd = type_cd
 
         # 북 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT book_no , title FROM book where type_cd = " + str(self.type_cd)
-        self.cursor.execute(self.strSql)
-        self.books = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.book_result = pd.DataFrame(data=self.books, columns=cols)
+        self.books = Book.objects.filter(type_cd=type_cd).values('book_no', 'title')
+        self.book_result = pd.DataFrame.from_records(self.books)
 
         # 읽은 책 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "SELECT user_no, book_no FROM read_book"
-        self.cursor.execute(self.strSql)
-        self.reads = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.readBook_result = pd.DataFrame(data=self.reads, columns=cols)
+        self.reads = ReadBook.objects.all().values('user_no', 'book_no')
+        self.readBook_result = pd.DataFrame.from_records(self.reads)
 
         # 조회수 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, book.score as score from hit join book using(book_no) where type_cd = " + str(self.type_cd)
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.hit_score_list = pd.DataFrame(data=self.scores, columns=cols)
+        self.scores =  Hit.objects.filter(book_no__type_cd=self.type_cd).annotate(score=F('book_no__score')).values('user_no', 'book_no', 'score')
+        self.hit_score_list = pd.DataFrame(data=self.scores)
 
         # 평점 리스트
-        self.cursor = connection.cursor()
-        self.strSql = "select user_no, book_no, score.score as score " \
-                      "from score join book using(book_no) where book.type_cd = " + str(self.type_cd)
-        self.cursor.execute(self.strSql)
-        self.scores = self.cursor.fetchall()
-        cols = [column[0] for column in self.cursor.description]
-        self.score_result = pd.DataFrame(data=self.scores, columns=cols)
-        self.user_score_list = self.score_result
+        self.user_scores = Score.objects.filter(book_no__type_cd=type_cd).values('user_no', 'book_no', 'score')
+        self.user_score_list = pd.DataFrame.from_records(self.user_scores)
+        self.score_result = self.user_score_list
 
         self.merged_df = pd.merge(self.hit_score_list, self.score_result, on=['user_no', 'book_no'], how='outer')
         self.merged_df['score'] = self.merged_df['score_y'].fillna(self.merged_df['score_x'])
