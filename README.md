@@ -27,7 +27,12 @@
 
 ## 아키텍처
 
-- 찬희야 아키텍처 넣어주라
+![아키텍처](https://user-images.githubusercontent.com/108286046/231908787-2cb17a4a-0756-4294-b908-b05ed8c435eb.png)
+
+## DB
+
+![emosaac-db](https://user-images.githubusercontent.com/108286046/231909843-bab8d386-f82c-44b9-b677-d22556cff534.png)
+
 
 ## 메인페이지
 
@@ -70,6 +75,13 @@
 <div align="center"> 
 ![작품캐러셀](/uploads/d842e57b8ca997a9e9daee803d010610/작품캐러셀.gif)
 </div>
+
+### Item Based Recommendation : 최근 읽은 도서와 유사한 도서 추천
+![Item-based](https://user-images.githubusercontent.com/108286046/231909901-611dc7df-f7f3-43da-95f4-9f4ccd15eb46.png)
+
+
+### User Predicted Grade Recommendation : 사용자 예상 평점 상위 도서 추천
+![Predicted-Grade](https://user-images.githubusercontent.com/108286046/231909910-d26ad3aa-a32a-4418-bc9e-049596164d6a.png)
 
 ## 디테일
 
@@ -124,3 +136,6 @@
 - 김종혁 : Next.js를 활용한 SSR이 어떤 로직으로 돌아가는지를 몸소 체감할 수 있었던 점이 가장 큰 수확이었던 것 같다. 다만 배울 시간이 부족한 채로 프로젝트에 적용하여 전체적인 일정에 딜레이가 생겼던 점은 아쉽다. 반응형 웹으로 매번 깨지던 레이아웃을 팀원들 덕분에 완벽하게 구현할 수 있게 배운 점 또한 굉장히 만족스러웠다.
 - 김동주 : Next.js를 사용하게 되면서 페이지의 내용에 따라 SSR, CSR 중 어떤 방식을 사용할 지 생각하며 구현해 보았다. 또한 이번에는 Infinity Scroll, Carousel, Animated Modal 등을 라이브러리를 사용하지 않고 직접 구현해 볼 수 있는 좋은 기회가 되었다. 마지막으로 팀원들과의 팀워크가 좋아서 매우 만족스러웠다.
 - 김현영 :
+- 남현지 : 크롤링하여 데이터를 수집하고 데이터를 전처리하여 추천 기능을 구현해볼 수 있는 경험이었다. 의미 있는 추천을 위해 노력할 수 있었다. 배포가 어려웠지만 팀원들의 도움으로 잘 마무리 할 수 있었다. 
+- 박찬희 : 직접 수집한 데이터를 활용해 CF 알고리즘을 구현해볼 수 있었다. 그 과정에서 데이터 전처리의 중요성을 배웠다. Next.js 배포를 위해 gitlab-runner와 PM2를 활용했다. 무중단 배포를 하지 못한 점이 아쉽다.
+- 이나연 : 
