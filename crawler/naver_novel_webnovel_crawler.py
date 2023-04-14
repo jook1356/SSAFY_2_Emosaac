@@ -55,9 +55,6 @@ for i in range(len(genreCode)):
                 if p==28 and i==5 and j==14:
                     break
                 page = driver.find_element(By.XPATH,f'//*[@id="content"]/div/ul/li[{j}]')
-                # print(page)
-              
-                # title1 = driver.find_element(By.XPATH,f'//*[@id="content"]/div/ul/li[{j}]/div/h3/a').text
 
                 sleep(0.5)
 
@@ -107,33 +104,27 @@ for i in range(len(genreCode)):
                
                 
                 amount = driver.find_element(By.XPATH,'//*[@id="content"]/h5/strong').text
-                print("amount "+ amount)
                 amount_list.append(amount);
 
                     
                 id_list.append(num) ; num += 1  # id 리스트에 추가
-                print(num)
 
                 platform_list.append('네이버') # 플랫폼 리스트에 추가
 
 
                 author = driver.find_element(By.XPATH,'//*[@id="content"]/ul[1]/li/ul/li[3]/a').text
-                print(author)
                 author_list.append(author)
 
                 score = driver.find_element(By.XPATH,'//*[@id="content"]/div[1]/div[1]/em').text
-                print(score)
                 score_list.append(score)
 
                 isDoing = driver.find_element(By.XPATH,'//*[@id="content"]/ul[1]/li/ul/li[1]/span').text
-                print(isDoing)
                 isDoing_list.append(isDoing)
 
                 href_list.append(href)
 
                     
                 genre = driver.find_element(By.XPATH,'//*[@id="content"]/ul[1]/li/ul/li[2]/span/a').text
-                print(genre)
                 genre_list.append(genre)
 
                 tag_list.append(genre)  

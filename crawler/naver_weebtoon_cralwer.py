@@ -79,7 +79,6 @@ for i in range(7, 8):
 
     driver.get(uri)  # 요일별로 링크 가져옴
 
-
     sleep(0.5)
 
     # 스크롤 전 높이
@@ -137,7 +136,6 @@ for i in range(7, 8):
         sleep(0.5)
 
         href_list1.append(href)
-        print(href)
 
         sleep(0.5)
 
@@ -152,7 +150,6 @@ for i in range(7, 8):
 
         try:
             title = driver.find_element_by_xpath('//*[@id="content"]/div[1]/div/h2').text.replace('휴재', '')
-            print(title)
             if (title in title_list):  # 요일 두 개 이상이면 요일만 추가함
                 day_list[title_list.index(title)] += ' ' + day
                 driver.back()
@@ -165,66 +162,55 @@ for i in range(7, 8):
         grade_list.append(scores[idx])
 
         author_list.append(authors[idx])
-        print(authors[idx])
 
         id_list.append(num);
-        print(f"num {num}")
         num += 1  # id 리스트에 추가
 
         sleep(0.2)
 
         first = driver.find_element_by_xpath('//*[@id="content"]/div[3]/ul/li[1]/a/div[2]/div/span[2]').text
-        print(first)
         regist_list.append("20" + first)
 
         sleep(2)
 
         ## 이미지
-        try:
-            thumb = driver.find_element_by_xpath('//*[@id="content"]/div[1]/button/div/img').get_attribute('src')
-        except:
-            try:
-                thumb = driver.find_element_by_xpath('//*[@id="content"]/div[1]/button/div/img').get_attribute('src')
-            except:
-                thumb = driver.find_element_by_xpath('//*[@id="content"]/div[1]/button/div/img').get_attribute('src')
+        thumb = driver.find_element_by_xpath('//*[@id="content"]/div[1]/button/div/img').get_attribute('src')
 
-        print(thumb)
-        img_list.append(thumb)
+    img_list.append(thumb)
 
-        ## 요일
-        day_list.append(day)
+    ## 요일
+    day_list.append(day)
 
-        ## 줄거리
-        story = driver.find_element_by_xpath('//*[@id="content"]/div[1]/div/div[2]/p').text
-        #         print(story)
-        story_list.append(story)
+    ## 줄거리
+    story = driver.find_element_by_xpath('//*[@id="content"]/div[1]/div/div[2]/p').text
+    story_list.append(story)
 
-        ## 장르 & 태그
-        tags = driver.find_elements_by_xpath('//*[@id="content"]/div[1]/div/div[2]/div/div/a')
-        temp = ""
-        genre = tags[0].text.replace("#", "")
-        genre_list.append(genre)
+    ## 장르 & 태그
+    tags = driver.find_elements_by_xpath('//*[@id="content"]/div[1]/div/div[2]/div/div/a')
+    temp = ""
+    genre = tags[0].text.replace("#", "")
+    genre_list.append(genre)
 
-        for tag in tags:
-            temp += tag.text.replace("#", "") + " "
-        tag_list.append(temp)
+    for tag in tags:
+        temp += tag.text.replace("#", "") + " "
+    tag_list.append(temp)
 
-        viewer = driver.find_element_by_xpath('//*[@id="content"]/div[2]/div/button[1]/span[2]').text
-        viewer_list.append(viewer)
+    viewer = driver.find_element_by_xpath('//*[@id="content"]/div[2]/div/button[1]/span[2]').text
+    viewer_list.append(viewer)
 
-        try:
-            series = driver.find_element_by_xpath('//*[@id="content"]/div[3]/div[1]/div[1]').text
-        except:
-            series = driver.find_element_by_xpath('//*[@id="content"]/div[3]/div[2]/div[1]').text
-        series = series.replace("총 ", "")
-        series = series.replace("화", "")
-        series_list.append(series)
+    try:
+        series = driver.find_element_by_xpath('//*[@id="content"]/div[3]/div[1]/div[1]').text
+    except:
+        series = driver.find_element_by_xpath('//*[@id="content"]/div[3]/div[2]/div[1]').text
+    series = series.replace("총 ", "")
+    series = series.replace("화", "")
+    series_list.append(series)
 
-        platform_list.append("네이버")
+    platform_list.append("네이버")
 
-        driver.back()
+    driver.back()
 
-        idx += 1
+    idx += 1
 
 total_data = pd.DataFrame()
 total_data['id'] = id_list
